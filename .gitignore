@@ -1,0 +1,30 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Go outputs and diagnostics
+/bin/
+/build/
+/dist/
+/coverage/
+*.exe
+*.test
+*.prof
+*.log
+coverage.out
+
+# Browser test and frontend tooling outputs
+/node_modules/
+/playwright-report/
+/test-results/
+
+# Runtime data
+/.data/
+/var/media/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
