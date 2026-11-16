@@ -227,7 +227,7 @@ The selected HTML contains 73 distinct local `.html` href targets that do not ex
 | Template avatar/logo files not referenced by index-7-dark | 19 | 219,044 | Active refs are avatar-10..14, both favicon files, and logo-brand-01..10. Only other avatar/logo files are listed. |
 | Standalone demo video assets with no page/runtime reference | 2 | 2,013,779 | No selected-page HTML/CSS/JS URL ref and no browser request. |
 | Stylesheet not linked by index-7-dark | 1 | 2,288 | Not among the 9 stylesheet links and not imported by the active stylesheet graph. |
-| Scripts not linked or dynamically requested by index-7-dark | 11 | 96,768 | Not among the page’s 20 script tags; none appeared as a dynamic request in the three-viewport browser capture. |
+| Scripts not linked or dynamically requested by index-7-dark | 10 | 87,618 | Not among the page’s 20 script tags; none appeared as a dynamic request in the three-viewport browser capture. `horizontal-scroll-gallery.js` is kept because the final text cross-check found its path in `assets/css/main.css`. |
 
 
 ## C. Exact proposed deletion list
