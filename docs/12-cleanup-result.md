@@ -10,7 +10,7 @@
 | Removed from `template-source/` | 651 | 102,106,332 |
 | Remaining in `template-source/` | 166 | 18,829,461 |
 
-The staged deletions match the 651 unique paths in Section C of `docs/11-cleanup-dry-run.md` exactly: 0 missing and 0 extra. The approved generated project outputs listed in Section A of that report were also removed after validation:
+The committed deletions match the 651 unique paths in Section C of `docs/11-cleanup-dry-run.md` exactly: 0 missing and 0 extra. The approved generated project outputs listed in Section A of that report were also removed after validation:
 
 | Generated target | Files | Bytes |
 |---|---:|---:|

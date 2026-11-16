@@ -1,12 +1,12 @@
 # Cleanup Stage 1 — Dry-Run Inventory
 
-**Status: DRY RUN ONLY. No files have been deleted or moved, and `template-source/` has not been edited. Approval is required before any deletion.**
+**Status:** Stage 1 dry run complete; the approved Stage 2 deletion list has been applied. Final results and validation are recorded in `docs/12-cleanup-result.md`.
 
 Branch: `chore/cleanup-unused-files` (created from committed Phase 1–2 state).
 
 ## A. Project files outside `template-source/`
 
-These are the owner-approved generated targets for Stage 2 only. No source, configuration, CI, database, deployment, documentation, or baseline screenshot/snapshot files are included.
+These were the approved generated targets for Stage 2 and were removed after validation. No source, configuration, CI, database, deployment, documentation, or baseline screenshot/snapshot files were included.
 
 | Exact target | Files | Bytes | Why considered generated |
 |---|---:|---:|---|
@@ -230,9 +230,9 @@ The selected HTML contains 73 distinct local `.html` href targets that do not ex
 | Scripts not linked or dynamically requested by index-7-dark | 10 | 87,618 | Not among the page’s 20 script tags; none appeared as a dynamic request in the three-viewport browser capture. `horizontal-scroll-gallery.js` is kept because the final text cross-check found its path in `assets/css/main.css`. |
 
 
-## C. Exact proposed deletion list
+## C. Exact approved deletion list
 
-Only the following files under `template-source/` are proposed for deletion after approval. Paths below are exact and relative to `template-source/`.
+The following exact paths under `template-source/` were approved and deleted in Stage 2. Paths below are relative to `template-source/`.
 
 ### Other home demo image directories (home-6, home-8..home-15) — 327 files, 16,564,819 bytes
 
@@ -942,9 +942,9 @@ SHA-256 comparison found these identical-content groups. They are informational 
 ## Totals and approval boundary
 
 - Before: **817 files**, 120,935,793 bytes (115.33 MiB).
-- Proposed template deletions: **651 files**, 102,106,332 bytes (97.33 MiB).
-- Projected after approval: **166 files**, 18,829,461 bytes (17.96 MiB).
+- Approved and removed: **651 files**, 102,106,332 bytes (97.33 MiB).
+- Remaining after cleanup: **166 files**, 18,829,461 bytes (17.96 MiB).
 - Identical-content groups: **18**; see audit above.
 - No files have been deleted. This dry-run report is the only file added in this stage; no template file has been modified. Stage 2 must wait for explicit approval of the exact paths above.
 
-The homepage HTML, every runtime-loaded asset, Bootstrap/color-mode assets, linked source maps, fonts, icons, baseline screenshots/snapshots, docs, Go source, database, deployment files, and config files are protected or retained.
+During Stage 1, this document recorded the dry run without deleting files. After approval, Stage 2 applied the exact list above. The homepage, runtime-loaded assets, Bootstrap/color-mode assets, linked source maps, fonts, icons, baseline screenshots/snapshots, docs, Go source, database, deployment files, and configuration remain. No retained template file was modified; see `docs/12-cleanup-result.md` for final checks.
