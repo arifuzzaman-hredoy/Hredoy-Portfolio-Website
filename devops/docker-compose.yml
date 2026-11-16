@@ -1,3 +1,5 @@
+name: hredoy-portfolio-website
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -18,8 +20,8 @@ services:
 
   app:
     build:
-      context: .
-      dockerfile: deploy/Dockerfile
+      context: ..
+      dockerfile: devops/docker/Dockerfile
     environment:
       APP_ENV: ${APP_ENV:-development}
       APP_PORT: ${APP_PORT:-8080}
@@ -52,9 +54,9 @@ services:
       retries: 3
       start_period: 5s
     ports:
-      - "80:80"
+      - "127.0.0.1:8080:80"
     volumes:
-      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - portfolio-net
 

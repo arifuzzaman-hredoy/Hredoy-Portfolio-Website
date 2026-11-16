@@ -28,3 +28,9 @@ coverage.out
 # Editor and operating-system files
 .DS_Store
 Thumbs.db
+
+# Local editor settings
+.vscode/
+
+# Local editor settings
+.vscode/
