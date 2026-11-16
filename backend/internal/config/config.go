@@ -20,7 +20,7 @@ func Load() (*Config, error) {
 		AppPort:      env("APP_PORT", "8080"),
 		LogLevel:     env("LOG_LEVEL", "info"),
 		DatabaseURL:  env("DATABASE_URL", "postgres://portfolio:portfolio@postgres:5432/portfolio?sslmode=disable"),
-		MigrationURL: env("MIGRATION_PATH", "file://db/migrations"),
+		MigrationURL: env("MIGRATION_PATH", "file://../database/migrations"),
 	}
 
 	cfg.AppEnv = strings.ToLower(cfg.AppEnv)
@@ -32,7 +32,7 @@ func Load() (*Config, error) {
 		cfg.AppPort = "8080"
 	}
 	if cfg.MigrationURL == "" {
-		cfg.MigrationURL = "file://db/migrations"
+		cfg.MigrationURL = "file://../database/migrations"
 	}
 	return cfg, nil
 }
