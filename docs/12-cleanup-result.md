@@ -86,8 +86,8 @@ Dynamic paths in retained JavaScript were checked: `data-background`, `data-img-
 | `gofmt` | **PASS** — no unformatted Go files |
 | `go vet ./...` | **PASS** |
 | `go build -o build/portfolio.exe ./cmd/portfolio` | **PASS** |
-| `go test ./...` | **BLOCKED** — `TestHealthcheck` cannot bind/connect to `127.0.0.1:8049` because socket access is denied by the environment; Go telemetry token access is also denied |
-| Docker Compose runtime | **BLOCKED** — Docker config access to `C:\Users\USER\.docker\config.json` and the Docker engine named pipe are denied; no `compose up`, health, or fresh-database migration run was possible |
+| `go test ./...` | **BLOCKED** — `TestHealthcheck` cannot bind/connect to its localhost test port because socket access is denied by the environment; Go telemetry token access is also denied. Re-ran after the user reviewed policy; the denial persisted. |
+| Docker Compose runtime | **BLOCKED** — Docker config access to `C:\Users\USER\.docker\config.json` and the Docker engine named pipe are denied. Re-ran `docker compose -p portfolio-cleanup-validation up --build -d` after the user reviewed policy; it still could not connect, so no services, health checks, or fresh-database migration ran. |
 | Remaining template checksums | **PASS** — regenerated manifest and verified all 166 remaining files |
 | `git diff --check` | **PASS** — no whitespace errors; Git emitted only its LF/CRLF warning for the checksum manifest |
 
@@ -121,7 +121,7 @@ This keeps template bytes stable for the checksum manifest while normalizing Go,
 
 ## Remaining blockers
 
-- Review the environment policy to permit the localhost socket needed by `TestHealthcheck` and Docker engine access. No sandbox restrictions were bypassed.
+- The user reviewed the environment policy, but localhost socket and Docker engine denials persisted. No sandbox restrictions were bypassed.
 - Re-run `go test ./...`, `docker compose up`, container health checks, endpoint checks, and the fresh-database migration once access is available.
 - The visual and browser checks passed; no baseline or retained template file needs restoration.
 
