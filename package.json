@@ -1,0 +1,11 @@
+{
+  "name": "hredoy-portfolio-visual-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:visual": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1"
+  }
+}

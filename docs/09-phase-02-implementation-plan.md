@@ -15,6 +15,13 @@ The approved decisions supersede earlier Phase 01 proposals:
 - Admin: server-rendered Go templates, separate plain CSS, no Node build.
 - Deployment: Docker Compose on AWS EC2, Nginx, GitHub Actions, custom domain.
 - Public home page: `/`; single-owner admin: `/super-admin`.
+- Standalone public pages: `/about` and `/projects`; contact is a homepage
+  section with `POST /contact`; certifications appear on About.
+- Public CV download is enabled. Contact messages have no phone field, are
+  hard-deleted on owner-confirmed deletion, and are purged after 12 months.
+- Staging uses `staging.oxytumzone.com`, Basic Auth and noindex.
+- One Git branch per roadmap phase; commits stay small, CI passes before
+  merge, and secrets/build artifacts are never committed.
 - Do not modify `template-source/` during planning.
 - Only verified owner content may appear publicly. Unpopulated sections and
   unverified candidate projects stay unpublished or are removed.
@@ -156,10 +163,9 @@ where stated. The exact migration DDL is deferred until approval.
 
 | Table | Proposed columns and constraints | Relations and indexes |
 |---|---|---|
-| `site_settings` | Singleton `id smallint` constrained to `1`; `site_name`, `owner_name`, `professional_title`, `email`, optional `contact_phone`, `domain`, `canonical_base_url`, `github_url`, `linkedin_url`, optional `social_links jsonb`, `locale`; `updated_at`. These fields hold the approved Hredoy/site identity and links; templates must read them from this table. Never store account passwords or secrets here. | One row, created by a migration/seed. Check valid locale/URL formats in application validation; canonical host is environment-aware for staging. |
+| `site_settings` | Singleton `id smallint` constrained to `1`; `site_name`, `owner_name`, `professional_title`, `email`, `domain`, `canonical_base_url`, `github_url`, `linkedin_url`, optional `social_links jsonb` and `navigation_links jsonb`, `locale`; `updated_at`. These fields hold the approved Hredoy/site identity and links; templates must read them from this table. Never store account passwords or secrets here. | One row, created by a migration/seed. Check valid locale/URL formats in application validation; canonical host is environment-aware for staging. `navigation_links` contains only approved editable labels/targets; menu structure and order remain in the template. |
 | `home_sections` | `id uuid`, unique `section_key`, `sort_order`, `is_visible`, `eyebrow`, `heading`, `body`, `cta_label`, `cta_url`, `content jsonb`, `updated_at`. JSON stores section-specific structured text/labels, not executable markup. | Index `(is_visible, sort_order)`. Application validates the expected JSON shape for each known `section_key`. |
 | `pages` | `id uuid`, unique `page_key`, `slug` (nullable only for home), `title`, `summary`, `content jsonb`, `is_published`, `seo_title`, `meta_description`, `canonical_path`, `og_title`, `og_description`, `og_image_media_id`, `twitter_card`, timestamps. | Unique normalized slug for non-home routes; index `(is_published, page_key)`. Used for About and other content pages. |
-| `navigation_items` | `id uuid`, `location` (`header`/`footer`), `label`, `href`, `sort_order`, `is_visible`, `created_at`, `updated_at`. | Index `(location, is_visible, sort_order)`. Validate internal routes and allowlisted external URL schemes. |
 | `projects` | `id uuid`, unique lowercase `slug`, `title`, `summary`, `problem`, `solution`, `what_i_learned`, `status` constrained to `completed` or `in_progress`, `is_published`, `sort_order`, optional `started_at`/`completed_at`, `repository_url`, `live_url`, `seo_title`, `meta_description`, `canonical_path`, `og_title`, `og_description`, timestamps. | Index `(is_published, sort_order, updated_at)` and unique slug. The `status` is separate from publication; nothing is public until explicitly published. |
 | `project_media` | `id uuid`, `project_id`, server-generated `storage_key`, `alt_text`, `caption`, `sort_order`, `mime_type`, `byte_size`, `created_at`. | FK to `projects` with delete cascade; index `(project_id, sort_order)`. |
 | `skills` | `id uuid`, `name`, `category`, factual `description`/evidence, `usage_status` constrained to `studied` or `used`, `is_published`, `sort_order`, timestamps. No invented proficiency score. | Index `(is_published, category, sort_order)`. |
@@ -168,11 +174,10 @@ where stated. The exact migration DDL is deferred until approval.
 | `education` | `id uuid`, `institution`, `program_or_credential`, factual `description`, `status`, optional start/end dates, `is_published`, `sort_order`, timestamps. | Index `(is_published, sort_order)`. |
 | `media_assets` | `id uuid`, server-generated `storage_key`, `purpose`, `alt_text`, `mime_type`, `byte_size`, checksum, `created_at`. | Unique storage key; index `purpose`. No user-controlled path is used to locate files. |
 | `cv_files` | `id uuid`, unique `media_asset_id`, display name, version, `is_current`, `uploaded_at`. | FK to `media_assets`; partial unique index for a single `is_current = true` row. |
-| `contact_messages` | `id uuid`, `name`, `email`, optional `phone`, `message`, `is_read`, `received_at`, optional `read_at`, `deleted_at` only if soft-delete is approved. Do not persist the honeypot value. | Index `(is_read, received_at DESC)` and optionally `email`. Define retention policy before production. |
+| `contact_messages` | `id uuid`, `name`, `email`, `message`, `is_read`, `received_at`, optional `read_at`. No phone or soft-delete fields; do not persist the honeypot value. | Index `(is_read, received_at DESC)`. Hard-delete on owner-confirmed deletion and automatically purge at 12 months. |
 | `admin_users` | `id uuid`, unique normalized `email`, `password_hash`, `is_active`, `created_at`, `last_login_at`, `password_changed_at`. | Single active owner account enforced operationally; no public signup. |
 | `admin_sessions` | `id uuid`, `admin_user_id`, unique `session_token_hash`, `csrf_token_hash`, `created_at`, `expires_at`, `last_seen_at`. | FK to admin; index `(admin_user_id, expires_at)` and expiry cleanup index. Store only a hash of the opaque cookie token. |
-| `rate_limit_buckets` | `key_hash`, `bucket_start`, `request_count`, `expires_at`. Hash keys derived from normalized client/IP plus action; never store raw client IP for this limiter. | Composite primary key `(key_hash, bucket_start)`; index on `expires_at`. Nginx also applies coarse request limits. |
-| `admin_audit_log` | `id uuid`, `admin_user_id`, `action`, `entity_type`, `entity_id`, timestamp, limited metadata. Avoid secrets and message bodies. | FK to admin; index `(created_at DESC)` and `(entity_type, entity_id)`. |
+| `admin_audit_log` | Optional later; not part of the launch schema. If added, use `id uuid`, `admin_user_id`, `action`, `entity_type`, `entity_id`, timestamp, limited metadata. Avoid secrets and message bodies. | If added, FK to admin; index `(created_at DESC)` and `(entity_type, entity_id)`. |
 
 ### Site-settings and content guarantees
 
@@ -189,8 +194,13 @@ where stated. The exact migration DDL is deferred until approval.
 - The set of columns for SEO is repeated on project records because each
   project has its own slug and independently editable metadata. A later
   refactor to a shared SEO table is possible but not necessary initially.
-- Contact message deletion should be a hard delete only after confirmation;
-  otherwise use soft-delete plus a documented retention/cleanup policy.
+- Contact messages contain no phone field. Provide a confirmed hard-delete
+  action and a retention job that permanently removes messages at 12 months;
+  do not implement soft deletion.
+- Do not add a database rate-limit bucket table: Nginx provides coarse
+  `limit_req` controls and the single Go instance uses an in-memory limiter.
+- Header/footer menu structure remains in the template. Store only approved
+  editable link/label values in `site_settings`; do not add a navigation table.
 
 ## 4. Routes and endpoints
 
@@ -205,10 +215,8 @@ The list is proposed and may be refined before implementation.
 | `GET /about` | Factual owner bio, education and published certifications as approved. |
 | `GET /projects` | Published projects, with status labels and pagination only if needed. |
 | `GET /projects/{slug}` | Published project detail; unpublished/unknown slugs return 404. |
-| `GET /certifications` | Optional page if the owner approves a standalone page; completed/ongoing sections kept separate. |
 | `GET /cv` | Download/inline CV from the current validated `cv_files` entry; do not expose storage paths. |
-| `GET /contact` | Optional standalone contact page; otherwise use homepage section and anchor. |
-| `POST /contact` | Validate, rate-limit and save a message; redirect with a safe success/error state. The only public write route. |
+| `POST /contact` | Validate, rate-limit and save a message, then notify the owner by email; redirect with a safe success/error state. The only public write route. The form has no phone field. |
 | `GET /robots.txt` | Production crawler policy and sitemap location; staging policy is `noindex`/blocked. |
 | `GET /sitemap.xml` | Generated from canonical, published public pages and projects only. |
 | `GET /llms.txt` | Low-cost curated index of truthful public pages; no private/admin content. |
@@ -242,7 +250,6 @@ must not be cached publicly.
 | `POST /super-admin/messages/{id}/delete` | CSRF-protected deletion with confirmation. |
 | `GET, POST /super-admin/settings` | Edit site settings, home sections, SEO defaults and links. |
 | `GET, POST /super-admin/pages/*` | Edit page copy, visibility and page SEO. |
-| `GET, POST /super-admin/navigation` | Edit header/footer labels/order/links. |
 
 State changes use POST rather than GET. The admin is one owner account; no
 public signup, role system or multi-tenant abstraction is required.
@@ -256,7 +263,7 @@ mean a blank placeholder should be rendered.
 
 | Template area | Target content and source | Decision |
 |---|---|---|
-| Header/search/menu | `site_settings.site_name`; `navigation_items`; GitHub/LinkedIn/contact links from settings. Search overlay is not useful without an actual index. | Preserve header composition, replace Orisa/demo routes with real route links. Remove/hide search until a real search feature is approved. Remove the broken theme control. |
+| Header/search/menu | `site_settings.site_name` and approved editable labels/links; GitHub/LinkedIn/contact links from settings. Search overlay is not useful without an actual index. | Preserve the template menu structure, replace Orisa/demo routes with real route links. Remove/hide search until a real search feature is approved. Remove the broken theme control. |
 | 1. Hero | Owner name/title, concise factual introduction, CTA to Projects/Contact. Data from `site_settings` and `home_sections.hero`. | Keep styling; use exactly one homepage H1: “Arifuzzaman Hredoy, Junior DevOps Engineer” (editable through admin). Owner-approved image/visual only. |
 | 2. Startup/About and metrics | Short factual bio and optional CTA to About/CV; `home_sections.about` / About page data. | Remove all demo metrics, avatars, client counts and unsupported agency claims. Do not replace them with invented numbers. |
 | 3. Image carousel | Real screenshots from published `projects` and `project_media`, with project name and link. | Render only when at least one approved, published project has a suitable image; otherwise omit the carousel. |
@@ -267,8 +274,8 @@ mean a blank placeholder should be rendered.
 | 8. Team | Completed certifications from `certifications`, with completed/ongoing clearly separated, or another verified profile section. | Remove all demo team members/roles. Hide if there is not enough real credential content; never invent peers or awards. |
 | 9. Marquee | No required data source. Could use an owner-approved list of verified skills, but that duplicates Section 5. | Default: remove. Do not retain template marketing keywords as implied skills/services. |
 | 10. Articles | Published project write-ups from `projects`; detail page follows the project structure below. | Use only authored factual project content; hide the grid until entries are ready. Remove template authors, dates and article imagery. |
-| 11. Contact | Real contact fields from settings and a working `POST /contact` form. | Keep the contact design and implement DB persistence, validation, honeypot and rate limits. Whether phone is required remains an owner decision. |
-| Footer | Site settings, approved navigation, GitHub/LinkedIn/email, current year. | Replace Orisa address/hours and placeholder social URLs. Remove the newsletter form unless a real mailing-list service and consent process are approved. |
+| 11. Contact | Real contact email from settings and a working `POST /contact` form. | Keep the contact design and implement DB persistence, validation, honeypot, rate limits and owner email notification. Do not collect a phone number. |
+| Footer | Site settings, approved template links, GitHub/LinkedIn/email, current year. | Replace Orisa address/hours and placeholder social URLs. Remove the newsletter form; no mailing-list service is planned. |
 
 ### Candidate project workflow
 
@@ -282,11 +289,12 @@ The seven names supplied for consideration are:
 - Nexora Infrastructure Project
 - StudioSpace Deployment Project
 
-For each, the owner must confirm that it exists, assign `completed` or
+For each, the owner will later confirm that it exists, assign `completed` or
 `in_progress`, provide actual problem/solution/tools/learning content, choose
 screenshots and links, and explicitly publish it. Do not infer completion or
 technical stack from a project name. Draft/unpublished records are excluded
-from all public routes, sitemap and JSON-LD.
+from all public routes, sitemap and JSON-LD; this input does not block the
+foundation phase.
 
 ### Project detail content order
 
@@ -307,7 +315,8 @@ not use React/TypeScript or a client-side content renderer.
   canonical, OG/Twitter metadata, JSON-LD, and the original CSS/script
   includes in original order.
 - `public/partials/header.gohtml`: original Header 7 structure/classes,
-  populated with settings and the approved navigation items.
+  populated with the template's fixed menu structure and approved link/label
+  values from site settings.
 - `public/partials/search.gohtml`: omitted until search has a real behavior.
 - `public/partials/footer.gohtml`: original Footer 7 visual structure with
   real settings/social links; no fake contact details/newsletter.
@@ -315,8 +324,9 @@ not use React/TypeScript or a client-side content renderer.
   server `action`, CSRF token, honeypot and feedback region.
 - `public/pages/home.gohtml`: the retained Home 07 section sequence and
   section-specific classes.
-- `public/pages/about.gohtml`, `projects.gohtml`, `project.gohtml`,
-  `certifications.gohtml`: additional server-rendered public pages.
+- `public/pages/about.gohtml`, `projects.gohtml`, and `project.gohtml`:
+additional server-rendered public pages. Certifications are displayed on
+About, not on a standalone route.
 - `admin/layouts/base.gohtml`: separate layout and plain CSS, with no public
   Bootstrap stylesheet.
 
@@ -376,9 +386,9 @@ without a JavaScript build:
 10. **Page/SEO editor:** page visibility, title, summary, meta description,
     canonical/OG values and social image. Project-specific SEO remains in its
     project form.
-11. **Navigation and homepage sections:** menu labels/order/visibility and
-    known section copy/order/visibility. Do not offer arbitrary layout
-    construction or raw HTML editing.
+11. **Homepage sections:** known section copy/order/visibility. Menu structure
+    and order stay in the template; approved link/label values come from site
+    settings. Do not offer arbitrary layout construction or raw HTML editing.
 
 Start with normal server-rendered forms and POST/Redirect/GET. Plain JS may
 enhance confirmation or image preview. htmx is optional later, not a
@@ -401,8 +411,10 @@ dependency for core CRUD.
   for navigation), `Path=/`, and an appropriate expiry. Rotate the session
   after successful login and invalidate it on logout/password change.
 - Protect every mutation with a synchronizer CSRF token and origin checks.
-- Add login throttling at Nginx and the application. Avoid raw IP retention;
-  document bucket and message retention.
+- Add login throttling at Nginx and an in-memory application limiter for the
+  single instance. No database rate-limit buckets are used.
+- Optional TOTP two-factor authentication may be added after the initial
+  admin login/session flow; it is not required for first launch.
 
 ### Authorization, validation and uploads
 
@@ -424,10 +436,14 @@ dependency for core CRUD.
 ### Contact anti-abuse and data handling
 
 - Apply server validation and request-body limits, Nginx `limit_req`, and
-  application rate limiting. Use a honeypot that is not stored; silently
+  in-memory application rate limiting. Use a honeypot that is not stored; silently
   accept/discard honeypot submissions without revealing the trap.
-- Store only fields required to respond. Define deletion/retention and backup
-  handling for contact messages before production.
+- Store only name, email and message. Show unread count on the dashboard;
+  provide confirmed hard deletion and automatically purge after 12 months.
+  Include this retention behavior in encrypted-backup expiry/restore policy.
+- Notify the owner by SMTP or Amazon SES after a valid message is stored.
+  Email notification is its own implementation step; delivery failures must
+  be observable and must not discard the stored message.
 - The public form has no need to accept arbitrary HTML or attachments.
 - Do not log message bodies, credentials, CSRF tokens, cookies or upload
   contents. Use redacted operational logs.
@@ -491,8 +507,9 @@ dependency for core CRUD.
   the sitemap. Do not treat robots rules as access control.
 - `/super-admin` has authentication, `X-Robots-Tag: noindex, nofollow`, a
   robots disallow, and no sitemap entries.
-- Add a concise, factual `llms.txt` with links to public About, Projects and
-  Contact pages; keep it consistent with the site's actual public content.
+- Add a concise, factual `llms.txt` with links to public About and Projects
+  pages and the homepage contact section; keep it consistent with actual
+  public content.
 - Submit sitemap and verification in Google Search Console and Bing Webmaster
   Tools after DNS/canonical setup. Measure outcomes rather than promising
   rankings or AI citations.
@@ -525,6 +542,8 @@ Compose services:
 - `app`: Go binary container, non-root, listens on an internal port only.
 - `postgres`: PostgreSQL, private network, persistent named volume, health
   check; no public port binding in production.
+- A one-shot `migrate` profile runs migrations explicitly. The application
+  does not run schema migrations automatically at startup.
 
 Use a persistent upload/media volume mounted read-only to Nginx only where
 needed for static delivery, and writable by the app. Keep database and
@@ -561,7 +580,11 @@ Proposed workflow stages:
 7. Deploy production image, apply migrations in a controlled step, smoke test,
    and retain the prior image/DB backup for rollback.
 
-No Node installation is required. Use AWS OIDC/IAM role assumption where the
+Create one Git branch per roadmap phase, keep commits small, and merge only
+after required CI checks pass. Never commit secrets, local environment files,
+runtime uploads, generated build outputs, or deployment credentials.
+
+No Node installation is required for application/admin builds. Use AWS OIDC/IAM role assumption where the
 EC2 deployment method permits it; otherwise use a tightly scoped deployment
 credential. Do not place `.env`, SSH private keys, DB passwords or production
 uploads in the repository or build image.
@@ -571,9 +594,9 @@ uploads in the repository or build image.
 1. Inventory the current site, indexed URL paths, DNS records, TLS setup,
    analytics/Search Console and any existing data. Export old config and
    content; preserve a restorable backup before deletion.
-2. Build the new service on a staging subdomain over HTTPS, using a separate
-   database and staging-only secrets. Require password protection or
-   `noindex` for staging.
+2. Build the new service at `staging.oxytumzone.com` over HTTPS, using a
+   separate database and staging-only secrets. Require Nginx Basic Auth and
+   `noindex` for every staging response.
 3. Validate content, routes, admin isolation, backups, restore, contact
    delivery/storage, robots/sitemap, old-link redirects and visual/regression
    checks. Obtain explicit owner acceptance.
@@ -593,16 +616,17 @@ backup/rollback are confirmed.
 
 | Phase | Scope | Acceptance criteria |
 |---|---|---|
-| 0. Plan approval and content intake | Approve this plan; provide project status/content, bio, education, certifications, CV, image preferences, old URL inventory and deployment preferences. | Every candidate public claim has an owner-verified source; no project is presumed completed; unresolved content remains draft/hidden. |
-| 1. Baseline and asset audit | Preserve source package; capture original dark page at agreed viewports; map CSS/JS/assets and licenses; decide which sections can be retained. | Baseline screenshots and asset-reference inventory saved; source `template-source/` checksums unchanged; no cleanup before reference evidence. |
-| 2. Go/Postgres foundation | Go app, config, chi routing, PostgreSQL connection, sqlc and migration workflow; local Compose and health checks. | Fresh database migrates cleanly; app starts without secrets in repo; tests/vet pass; DB is private to Compose. |
+| 0. Plan approval and content intake | Approve this plan; owner supplies factual content/assets/licenses and old URL inventory when ready. | No project is presumed completed; unverified claims remain draft/hidden. Content intake does not block the foundation. |
+| 1. Baseline and asset audit | Preserve source package; capture the original dark page at 1440x900, 768x1024 and 390x844; map CSS/JS/assets and license references. | Screenshots and CSS/JS/asset-reference inventory saved; checksums recorded and verifiable; `template-source/` is unchanged. |
+| 2. Go/Postgres foundation | Go app, environment config, chi routing, PostgreSQL connection, sqlc and golang-migrate setup, health checks, structured logs, graceful shutdown, local Compose and minimal CI. | Initial migration applies cleanly; app starts without secrets in repo; gofmt/vet/tests/build/dependency checks and Docker build pass in CI; Postgres is not host-published. |
 | 3. Public template shell | Convert retained header/footer and sections to Go templates; retain original public CSS/JS/assets and script order; no dynamic data yet beyond test-only fixtures. | Page renders server-side; direct/nested routes resolve assets; no CSS console/load errors; original layout and animations remain visually equivalent. |
-| 4. Authentication and admin shell | Login/session/CSRF, rate limits, separate admin layout/CSS, audit support. | Unauthenticated admin routes redirect/deny; session cookie flags verified over HTTPS; CSRF and rate-limit tests pass; admin does not load public Bootstrap/theme styles. |
+| 4. Authentication and admin shell | Login/session/CSRF, Nginx plus in-memory rate limits and separate admin layout/CSS. Optional TOTP is a later enhancement. | Unauthenticated admin routes redirect/deny; session cookie flags verified over HTTPS; CSRF and rate-limit tests pass; admin does not load public Bootstrap/theme styles. |
 | 5. Schema and admin CRUD | Migrations and admin for site settings, sections/pages, projects, skills, certifications, education, CV and contact inbox. | Each required record can be created/edited/hidden/deleted as specified; uploaded files are validated and safely named; drafts never leak to public pages. |
-| 6. Dynamic public pages and contact | Home/About/Projects/Project/Contact/CV rendering, published-only queries, working DB-backed contact form. | Initial HTML contains complete content/meta; `POST /contact` validates, rate-limits, honeypot works and stores valid submissions; public content has no mutation/API route. |
+| 6. Dynamic public pages and contact | Home/About/Projects/Project/CV rendering, published-only queries, DB-backed contact form; SMTP/SES owner notification as its own step. | Initial HTML contains complete content/meta; `POST /contact` validates, rate-limits, honeypot works and stores valid submissions; email failure is observable and does not lose messages; public content has no mutation/API route. |
 | 7. SEO, accessibility and performance | Per-page metadata, JSON-LD, sitemap/robots/llms, semantics/alt audit, Nginx caching/compression and Web Vitals. | One H1 per page; schema validates and excludes drafts; `/super-admin` is authenticated/noindex; published pages appear in sitemap; agreed accessibility/perf checks pass. |
-| 8. Hardening and staging deployment | CI workflow, dependency/image scan, HTTPS staging, backups/restore, old URL redirects and operational runbook. | Staging noindex; CI green; restore test passes; contact/admin/security smoke tests pass; owner signs off on content and design. |
-| 9. Production cutover | Approved EC2 release, TLS, canonical URL, redirects, DNS, monitoring and rollback. | HTTPS/canonical/indexing/redirect checks pass; old site recoverable through rollback window; owner explicitly authorizes retirement of old site. |
+| 8. Hardening and staging deployment | CI workflow, dependency/image scan, HTTPS staging with Basic Auth/noindex, backups/restore and old URL redirects. | Staging access/noindex checks pass; CI green; restore test passes; contact/admin/security smoke tests pass; owner signs off on content and design. |
+| 9. Production cutover and operations | Approved EC2 release, TLS, canonical URL, redirects, DNS, uptime checks, basic logging/alerting and rollback. | HTTPS/canonical/indexing/redirect checks pass; uptime/logging/alerting verified; old site recoverable through rollback window; owner explicitly authorizes retirement of old site. |
+| 10. Optional post-launch infrastructure | Terraform for EC2, security group and networking. Not required for first launch. | Reviewed plan, least-privilege access and documented rollback; no production change without owner approval. |
 
 ### Visual-regression acceptance
 
@@ -634,39 +658,32 @@ references `index-7.html`, but that light HTML file is not present. Bootstrap
 color-mode code and theme tokens exist, but they are not a finished, visually
 validated Home 07 light variant. Therefore, a proper light theme needs a
 separate design/adaptation and visual QA phase; it is not safe to enable the
-existing switcher as-is. The Phase 02/initial public build will keep dark mode
-only and hide the non-working switch control.
+existing switcher as-is. The dark theme launches first with the non-working
+switch control hidden. A separate light-theme design/QA phase is approved
+after the dark launch.
 
-### Required owner decisions/input before content implementation
+### Owner-supplied material for later content phases
 
 1. For each of the seven candidate projects, confirm it is real, choose
    `completed` or `in_progress`, provide accurate problem/solution/tools/
    learning copy, and provide only real screenshots and repository/live URLs.
 2. Provide the factual About biography, current education, completed
    certifications and separately ongoing certifications/learning.
-3. Provide the CV file and confirm whether its download should be public.
-4. Choose the homepage image strategy: owner portrait, real project imagery,
-   or retaining any non-claim decorative template image. Confirm rights for
-   all images/logos. Template stock graphics may not accurately represent
-   DevOps work.
-5. Confirm whether the About, Certifications and Contact standalone routes
-   are wanted, or whether any of them should be homepage-only.
-6. Confirm whether phone is collected and required on the contact form. Email
-   is already specified; no location/address is assumed.
-7. Confirm whether contact messages should be DB-only or also emailed to
-   the owner, and specify a delivery provider if notifications are wanted.
-8. Set contact-message retention/deletion policy and whether soft deletion is
-   required.
-9. Provide/approve the staging hostname, AWS region/instance constraints,
-   domain DNS access and TLS/certificate approach.
-10. Provide the old site's known URLs or allow an inventory from its
-    sitemap/Search Console/logs before writing redirect rules.
-11. Approve hiding/removing the demo sections identified in Section 5 when
-    no authentic content exists, including partner logos, demo metrics,
-    team cards, marketing marquee and newsletter.
-12. Confirm whether a future light-theme phase is desired after dark launch;
-    if so, approve it as a new design/QA phase rather than part of initial
-    implementation.
+3. Provide the CV file and an owner-approved photo or neutral decorative
+   imagery; confirm rights for all supplied images/logos. CV download is
+   public. Do not retain stock imagery that implies work not performed.
+4. Provide the old site's known URLs or allow an inventory from its
+   sitemap/Search Console/logs before writing redirect rules.
+5. Provide template/font/GSAP license decisions and staging/AWS/DNS/TLS
+   details when those deployment phases are scheduled. Choose SMTP or Amazon
+   SES for owner notifications before that separate implementation step.
+
+These are already approved: `/about` and `/projects` are standalone; contact
+is a homepage section with no phone field; certifications are on About; CV
+download is public; staging is `staging.oxytumzone.com` with Basic Auth and
+noindex; demo sections without genuine content are removed; and a light theme
+is a separate post-launch design/QA phase. None of the later owner-supplied
+content blocks Phases 1 or 2.
 
 ### Main risks
 
