@@ -1,0 +1,100 @@
+name: Build and Deploy Portfolio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: true
+
+env:
+  FRONTEND_IMAGE: ghcr.io/arifuzzaman-hredoy/portfolio-frontend
+  APP_IMAGE: ghcr.io/arifuzzaman-hredoy/portfolio-app
+
+jobs:
+  build:
+    name: Build and push images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push app image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: devops/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.APP_IMAGE }}:latest
+            ${{ env.APP_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,scope=app,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          file: frontend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          build-args: |
+            PORTFOLIO_BACKEND_URL=http://app:8080
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy stack
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | ssh -o StrictHostKeyChecking=no ubuntu@"$EC2_HOST" \
+            "docker login ghcr.io -u '$GHCR_USER' --password-stdin && \
+             cd /opt/portfolio && \
+             docker compose pull && \
+             docker compose up -d && \
+             docker image prune -f"
+
+      - name: Verify public site
+        run: |
+          for i in $(seq 1 20); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' https://oxytumzone.com/api/v1/projects || true)"
+            if [ "$code" = "200" ]; then
+              echo "portfolio is healthy (HTTP $code)"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "portfolio health check failed (last HTTP $code)" >&2
+          exit 1
