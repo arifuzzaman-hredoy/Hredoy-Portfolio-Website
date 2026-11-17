@@ -1,0 +1,35 @@
+{{define "layout"}}<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{{.title}} · Hredoy Admin</title>
+  <link rel="icon" href="/super-admin/static/brand-logo.png">
+  <link rel="stylesheet" href="/super-admin/static/admin.css">
+</head>
+<body>
+  {{if .authenticated}}
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="/super-admin/static/brand-logo.png" alt="" width="32" height="32">
+      <span>Hredoy<span class="brand-sub">Admin</span></span>
+    </div>
+    <nav class="nav">
+      <a href="/super-admin" class="{{if eq .active "dashboard"}}active{{end}}">Dashboard</a>
+      <a href="/super-admin/projects" class="{{if eq .active "projects"}}active{{end}}">Projects</a>
+      <a href="/super-admin/content" class="{{if eq .active "content"}}active{{end}}">Content</a>
+      <a href="/super-admin/media" class="{{if eq .active "media"}}active{{end}}">Media</a>
+      <a href="/super-admin/messages" class="{{if eq .active "messages"}}active{{end}}">Messages{{if .unread}}<span class="pill">{{.unread}}</span>{{end}}</a>
+      <a href="/super-admin/settings" class="{{if eq .active "settings"}}active{{end}}">Site Settings</a>
+    </nav>
+    <form class="logout" method="post" action="/super-admin/logout">
+      <button type="submit">Log out</button>
+    </form>
+  </aside>
+  {{end}}
+  <main class="content {{if .authenticated}}with-sidebar{{end}}">
+    {{template "content" .}}
+  </main>
+</body>
+</html>{{end}}

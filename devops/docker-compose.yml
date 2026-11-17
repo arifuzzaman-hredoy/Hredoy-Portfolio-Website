@@ -18,6 +18,15 @@ services:
     networks:
       - portfolio-net
 
+  uploads-init:
+    image: alpine:3.20
+    command: ["sh", "-c", "chown -R 65532:65532 /uploads && chmod 755 /uploads"]
+    volumes:
+      - uploads_data:/uploads
+    restart: "no"
+    networks:
+      - portfolio-net
+
   app:
     build:
       context: ..
@@ -28,25 +37,51 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-info}
       DATABASE_URL: ${DATABASE_URL:-postgres://portfolio:portfolio@postgres:5432/portfolio?sslmode=disable}
       MIGRATION_PATH: ${MIGRATION_PATH:-file:///app/db/migrations}
+      SITE_URL: ${SITE_URL:-https://oxytumzone.com}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      UPLOAD_DIR: /app/uploads
     depends_on:
       postgres:
         condition: service_healthy
+      uploads-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "/app/portfolio", "healthcheck"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+    volumes:
+      - uploads_data:/app/uploads
     restart: unless-stopped
     networks:
       - portfolio-net
     expose:
       - "8080"
 
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        PORTFOLIO_BACKEND_URL: http://app:8080
+    environment:
+      NODE_ENV: production
+      PORTFOLIO_BACKEND_URL: http://app:8080
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - portfolio-net
+    expose:
+      - "3000"
+
   nginx:
     image: nginx:1.27-alpine
     depends_on:
       - app
+      - frontend
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/healthz || exit 1"]
       interval: 30s
@@ -62,6 +97,7 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:
 
 networks:
   portfolio-net:

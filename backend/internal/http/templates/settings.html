@@ -1,0 +1,56 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Site Settings</h1>
+  <p class="muted">Create, update, and delete the key/value pairs that power your portfolio content.</p>
+</header>
+{{if .success}}<p class="alert success">Settings saved.</p>{{end}}
+{{if .error}}<p class="alert">{{.error}}</p>{{end}}
+
+<section class="card stack">
+  <h2 class="card-title">Add new setting</h2>
+  <form method="post" action="/super-admin/settings/create" class="create-grid">
+    <label class="field">
+      <span>Key</span>
+      <input type="text" name="key" placeholder="e.g. twitter" required>
+    </label>
+    <label class="field">
+      <span>Value</span>
+      <input type="text" name="value" placeholder="https://x.com/arifuzzaman-hredoy" required>
+    </label>
+    <button class="btn" type="submit">Add setting</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Existing settings</h2>
+    <span class="muted">{{len .settings}} total</span>
+  </div>
+  {{if .settings}}
+  <div class="settings-list">
+    {{range .settings}}
+    <div class="setting-row">
+      <form method="post" action="/super-admin/settings/update" class="setting-form">
+        <label class="field">
+          <span class="key">{{.Key}}</span>
+          {{if gt (len .Value) 60}}
+          <textarea name="value" rows="3">{{.Value}}</textarea>
+          {{else}}
+          <input type="text" name="value" value="{{.Value}}">
+          {{end}}
+        </label>
+        <input type="hidden" name="key" value="{{.Key}}">
+        <button class="btn-sm" type="submit">Save</button>
+      </form>
+      <form method="post" action="/super-admin/settings/delete" onsubmit="return confirm('Delete this setting?')">
+        <input type="hidden" name="key" value="{{.Key}}">
+        <button class="btn-sm danger" type="submit">Delete</button>
+      </form>
+    </div>
+    {{end}}
+  </div>
+  {{else}}
+  <p class="empty">No settings yet.</p>
+  {{end}}
+</section>
+{{end}}

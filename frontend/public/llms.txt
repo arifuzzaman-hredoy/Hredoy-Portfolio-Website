@@ -1,0 +1,52 @@
+# Hredoy's Portfolio
+
+> Arifuzzaman Hredoy — Junior DevOps Engineer based in Bangladesh. A personal portfolio and project log covering Linux administration, cloud infrastructure, CI/CD, containers, and infrastructure as code.
+
+## About
+
+- Name: Arifuzzaman Hredoy
+- Role: Junior DevOps Engineer
+- Email: arifuzzamanhredoy@gmail.com
+- GitHub: https://github.com/arifuzzaman-hredoy
+- LinkedIn: https://www.linkedin.com/in/arifuzzaman-hredoy/
+
+## Skills
+
+- Operating systems: Linux (Ubuntu), Bash
+- Containers: Docker, Docker Compose
+- Orchestration: Kubernetes, Helm, Argo CD
+- Cloud: AWS (EC2, VPC)
+- Infrastructure as code: Terraform
+- CI/CD: GitHub Actions
+- Observability: Prometheus, Grafana
+- Security: Trivy
+- Languages: Python, Go, JavaScript
+- Version control: Git, GitHub
+
+## Projects
+
+- [TaskFlow DevOps Platform](https://github.com/arifuzzaman-hredoy/DevOps-Real-World-Project-By-Python) — Live: https://taskflow.oxytumzone.com/
+- [DevSecOps, Monitoring & Kubernetes Platform](https://github.com/arifuzzaman-hredoy/DevSecOps-Monitoring-Kubernetes-Platform)
+- [Automated CI/CD Pipeline](https://github.com/arifuzzaman-hredoy/Automated-CI-CD-Pipeline)
+- [AWS Cloud Infrastructure & EC2 Deployment](https://github.com/arifuzzaman-hredoy/AWS-Cloud-Infrastructure-EC2-Deployment)
+- [Infrastructure as Code with Terraform](https://github.com/arifuzzaman-hredoy/Terraform-Infrastructure-as-Code)
+- [Docker Compose Multi-Tier Platform](https://github.com/arifuzzaman-hredoy/Docker-compose-Multi-Tier-Platform)
+- [Nginx Reverse Proxy, Domain & SSL](https://github.com/arifuzzaman-hredoy/Nginx-Reverse-Proxy-Domain-SSL)
+- [Docker Containerization Platform](https://github.com/arifuzzaman-hredoy/Docker-Containerization-Platform)
+- [Production Linux Server Administration](https://github.com/arifuzzaman-hredoy/Production-Linux-Server-Administration)
+- [DevOps Network Engineering Lab](https://github.com/arifuzzaman-hredoy/DevOps-Network-Engineering-Lab)
+- [Bash & Git DevOps Automation Toolkit](https://github.com/arifuzzaman-hredoy/Bash-Git-Devops-Automation-Toolkit)
+- [Git Version Control Lab](https://github.com/arifuzzaman-hredoy/Git-Version-Control-Lab)
+- [GitHub Collaboration Lab](https://github.com/arifuzzaman-hredoy/GitHub-Collaboration-Lab)
+- [DevOps Workflow & SDLC Lab](https://github.com/arifuzzaman-hredoy/Devops-Workflow-And-SDLC-Lab)
+- [Nexora Three-Tier Infrastructure](https://github.com/arifuzzaman-hredoy/DevOps-Module-4-Assignment)
+
+## Contact
+
+- Email: arifuzzamanhredoy@gmail.com
+- GitHub: https://github.com/arifuzzaman-hredoy
+- LinkedIn: https://www.linkedin.com/in/arifuzzaman-hredoy/
+
+## License
+
+Content and projects are the work of Arifuzzaman Hredoy.

@@ -1,0 +1,42 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Messages</h1>
+  <p class="muted">All contact form submissions. Open a message to read it in full.</p>
+</header>
+{{if .messages}}
+<div class="table-wrap card">
+  <table class="table">
+    <thead>
+      <tr><th>From</th><th>Message</th><th>Received</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {{range .messages}}
+      <tr class="{{if not .IsRead}}unread{{end}}">
+        <td class="from-col"><a href="/super-admin/messages/{{.ID}}"><strong>{{.Name}}</strong></a><br><span class="muted">{{.Email}}</span></td>
+        <td class="msg-col">{{.Message}}</td>
+        <td class="time">{{.ReceivedAt.Format "02 Jan 2006, 15:04"}}</td>
+        <td>{{if .IsRead}}<span class="tag read">Read</span>{{else}}<span class="tag">New</span>{{end}}</td>
+        <td class="actions">
+          <a class="btn-sm" href="/super-admin/messages/{{.ID}}">View</a>
+          {{if .IsRead}}
+          <form method="post" action="/super-admin/messages/{{.ID}}/unread">
+            <button class="btn-sm" type="submit">Mark unread</button>
+          </form>
+          {{else}}
+          <form method="post" action="/super-admin/messages/{{.ID}}/read">
+            <button class="btn-sm" type="submit">Mark read</button>
+          </form>
+          {{end}}
+          <form method="post" action="/super-admin/messages/{{.ID}}/delete" onsubmit="return confirm('Delete this message?')">
+            <button class="btn-sm danger" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<p class="empty">No messages yet.</p>
+{{end}}
+{{end}}

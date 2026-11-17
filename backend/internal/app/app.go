@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -15,13 +16,18 @@ import (
 	portfoliohttp "github.com/arifuzzaman-hredoy/portfolio/internal/http"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/logging"
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	migratepgx "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func Run(ctx context.Context, cfg *config.Config) error {
 	logger := logging.New(cfg.LogLevel)
 	logger.Info("starting portfolio app", "env", cfg.AppEnv, "port", cfg.AppPort)
+
+	if cfg.AdminPassword == "" {
+		logger.Warn("ADMIN_PASSWORD is not set; /super-admin login is disabled")
+	}
 
 	if err := runMigrations(cfg.MigrationURL, cfg.DatabaseURL); err != nil {
 		return fmt.Errorf("run migrations: %w", err)
@@ -33,7 +39,7 @@ func Run(ctx context.Context, cfg *config.Config) error {
 	}
 	defer pool.Close()
 
-	router := portfoliohttp.NewRouter(logger, pool)
+	router := portfoliohttp.NewRouter(cfg, logger, pool)
 	server := &http.Server{
 		Addr:              ":" + cfg.AppPort,
 		Handler:           router,
@@ -73,8 +79,22 @@ func Run(ctx context.Context, cfg *config.Config) error {
 	return nil
 }
 
+// runMigrations applies pending migrations using the pgx driver so connection
+// options such as channel_binding are honoured (the lib/pq driver does not
+// understand them and would forward them to the server as runtime parameters).
 func runMigrations(migrationURL, databaseURL string) error {
-	m, err := migrate.New(migrationURL, databaseURL)
+	sqlDB, err := sql.Open("pgx/v5", databaseURL)
+	if err != nil {
+		return err
+	}
+	defer sqlDB.Close()
+
+	driver, err := migratepgx.WithInstance(sqlDB, &migratepgx.Config{})
+	if err != nil {
+		return err
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(migrationURL, "pgx5", driver)
 	if err != nil {
 		return err
 	}
