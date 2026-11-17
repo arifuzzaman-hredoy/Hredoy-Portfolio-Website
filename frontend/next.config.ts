@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  output: "standalone",
 
   // Proxy CMS API and uploaded media to the Go backend so the browser talks to
   // a single origin. The backend URL is configurable per environment.
