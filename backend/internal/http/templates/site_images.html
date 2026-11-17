@@ -1,51 +1,62 @@
 {{define "content"}}
-<header class="page-head">
-  <h1>Site Images</h1>
-  <p class="muted">Replace the images used across the public site. Uploads go directly to Cloudinary.</p>
+<div class="images-page">
+<header class="page-head page-head--split">
+  <div>
+    <p class="eyebrow">Content library</p>
+    <h1>Site Images</h1>
+    <p class="muted">Every image the public site renders, grouped by section. Replacing a slot publishes instantly to Cloudinary and the live site.</p>
+  </div>
+  <div class="page-stat">
+    <span class="page-stat__value">{{.total}}</span>
+    <span class="page-stat__label">image slots</span>
+  </div>
 </header>
+
 {{if .success}}<p class="alert success">Saved.</p>{{end}}
-{{if .error}}<p class="alert">Operation failed (allowed: png, jpg, jpeg, gif, webp, svg, mp4, webm · max 25&nbsp;MiB).</p>{{end}}
+{{if .error}}<p class="alert">Operation failed (allowed: png, jpg, jpeg, gif, webp, svg · max 25&nbsp;MiB).</p>{{end}}
+
+{{if .groups}}
+<nav class="chip-nav" aria-label="Image groups">
+  {{range .groups}}<a class="chip" href="#group-{{.Index}}">{{.Name}}<span class="chip-count">{{len .Images}}</span></a>{{end}}
+</nav>
+{{end}}
 
 {{range .groups}}
-<section class="card">
+<section class="card card--group" id="group-{{.Index}}">
   <div class="card-head">
     <h2>{{.Name}}</h2>
-    <span class="muted">{{len .Images}} images</span>
+    <span class="badge">{{len .Images}}</span>
   </div>
   <div class="media-grid">
     {{range .Images}}
     <figure class="media-card">
-      {{if .URL}}
-      <img src="{{.URL}}" alt="{{.Alt}}" loading="lazy">
-      {{else}}
-      <div class="media-empty">No image</div>
-      {{end}}
-      <figcaption>
-        <div class="media-name" title="{{.Key}}">{{.Label}}</div>
-        <div class="media-meta muted">{{.Key}}</div>
-        <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="setting-form">
+      <div class="media-preview{{if not .URL}} is-empty{{end}}">
+        {{if .URL}}<img src="{{.URL}}" alt="{{.Alt}}" loading="lazy">{{else}}<span class="media-empty__text">No image</span>{{end}}
+      </div>
+      <figcaption class="media-body">
+        <div class="media-title" title="{{.Label}}">{{.Label}}</div>
+        <div class="media-key" title="{{.Key}}">{{.Key}}</div>
+        <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="media-form">
           <input type="hidden" name="key" value="{{.Key}}">
-          <label class="field">
-            <span class="key">Replace image</span>
+          <label class="file-btn">
+            <span>Replace image</span>
             <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" required>
           </label>
-          <button class="btn-sm" type="submit">Replace</button>
+          <button class="btn-sm" type="submit">Upload</button>
         </form>
-        <form method="post" action="/super-admin/site-images/alt" class="setting-form">
-          <input type="hidden" name="key" value="{{.Key}}">
-          <label class="field">
-            <span class="key">Alt text</span>
-            <input type="text" name="alt" value="{{.Alt}}">
-          </label>
-          <button class="btn-sm" type="submit">Save</button>
-        </form>
-        {{if .URL}}
-        <div class="media-meta muted" style="word-break:break-all">{{.URL}}</div>
-        {{end}}
+        <details class="alt-box">
+          <summary>Alt text{{if .Alt}}<span class="alt-state">{{.Alt}}</span>{{end}}</summary>
+          <form method="post" action="/super-admin/site-images/alt" class="media-form">
+            <input type="hidden" name="key" value="{{.Key}}">
+            <input type="text" name="alt" value="{{.Alt}}" placeholder="Describe this image">
+            <button class="btn-sm" type="submit">Save</button>
+          </form>
+        </details>
       </figcaption>
     </figure>
     {{end}}
   </div>
 </section>
 {{end}}
+</div>
 {{end}}

@@ -71,6 +71,20 @@ func TestRenderAdminPages(t *testing.T) {
 			"unread": 0, "success": false,
 			"settings": []db.SiteSetting{{Key: "owner_name", Value: "Arifuzzaman Hredoy"}},
 		}},
+		{"site_images", map[string]any{
+			"title": "Site Images", "authenticated": true, "active": "site-images",
+			"unread": 0, "total": 2, "success": false, "error": "",
+			"groups": []siteImageGroupView{
+				{
+					Name:  "Branding",
+					Index: 0,
+					Images: []siteImageView{
+						{Key: "brand-logo", Label: "Brand Logo", Group: "Branding", URL: "https://example.com/logo.png", Alt: "Hredoy"},
+						{Key: "favicon", Label: "Favicon", Group: "Branding"},
+					},
+				},
+			},
+		}},
 	}
 
 	for _, tc := range cases {
