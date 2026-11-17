@@ -15,9 +15,12 @@ import (
 
 const testMessageID = "123e4567-e89b-12d3-a456-426614174000"
 
-func withURLParam(r *http.Request, key, value string) *http.Request {
+func withURLParam(r *http.Request, key, value string, rest ...string) *http.Request {
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add(key, value)
+	for i := 0; i+1 < len(rest); i += 2 {
+		rctx.URLParams.Add(rest[i], rest[i+1])
+	}
 	return r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
 }
 

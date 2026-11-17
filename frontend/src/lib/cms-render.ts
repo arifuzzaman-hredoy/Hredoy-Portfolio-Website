@@ -594,6 +594,11 @@ export function applyCMSContent(
 export const SITE_IMAGE_DEFAULTS: Record<string, string> = {
   "brand-logo": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png",
   "hero-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp",
+  "hero-badge-docker": "/assets/imgs/hero-tools/docker-v3.svg",
+  "hero-badge-kubernetes": "/assets/imgs/hero-tools/kubernetes-v3.svg",
+  "hero-badge-aws": "/assets/imgs/hero-tools/aws-v3.svg",
+  "hero-badge-terraform": "/assets/imgs/hero-tools/terraform-v3.svg",
+  "hero-badge-grafana": "/assets/imgs/hero-tools/grafana-v3.svg",
   "star-asterisk": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg",
   "avatar-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg",
   "avatar-docker": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg",
@@ -671,6 +676,484 @@ export function applySiteImages(
 
     return out;
   });
+}
+
+// ---------------------------------------------------------------------------
+// Repeatable lists (content_items)
+//
+// Every list on the page is one parent_key. Each renderer below rebuilds the
+// inner HTML of its container from the stored rows. The container markup is
+// never touched when the rebuilt HTML matches what is already there (whitespace
+// ignored), so an untouched list stays byte-identical to the template.
+// ---------------------------------------------------------------------------
+
+export type ListItem = {
+  title: string;
+  body: string;
+  meta: Record<string, string | string[]>;
+  sort_order: number;
+};
+
+export type ContentGroups = Record<string, ListItem[]>;
+
+const LIST_INDENT = "                                ";
+
+function metaText(item: ListItem, key: string): string {
+  const raw = item.meta?.[key];
+  if (Array.isArray(raw)) return raw.join(", ");
+  return typeof raw === "string" ? raw : "";
+}
+
+function metaList(item: ListItem, key: string): string[] {
+  const raw = item.meta?.[key];
+  if (Array.isArray(raw)) return raw.filter((v) => typeof v === "string");
+  if (typeof raw === "string" && raw.trim()) {
+    return raw
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+// The template's own decorative SVGs. They are duplicated here so a rebuilt
+// list carries exactly the same markup as the static page.
+const FOOTER_ARROW_SVG =
+  '<svg class="footer-7__nav-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="13" viewBox="0 0 14 13" fill="none" aria-hidden="true">\n' +
+  '                                    <path d="M11.0037 3.41421L2.39712 12.0208L0.98291 10.6066L9.5895 2H2.00373V0H13.0037V11H11.0037V3.41421Z" fill="currentColor" />\n' +
+  "                                </svg>";
+
+const ACC_PLUS_SVG =
+  '<svg class="sec-5-home-7__acc-plus" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">\n' +
+  '                                                        <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />\n' +
+  "                                                    </svg>";
+
+const MARQUEE_STAR =
+  "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg";
+
+// nthIndexOf returns the start of the nth (1-based) occurrence, or -1.
+function nthIndexOf(html: string, needle: string, n: number): number {
+  let from = 0;
+  for (let i = 0; i < n; i++) {
+    const at = html.indexOf(needle, from);
+    if (at === -1) return -1;
+    from = at + needle.length;
+    if (i === n - 1) return at;
+  }
+  return -1;
+}
+
+// replaceInner swaps the HTML between `start` (just after an opening tag) and
+// the next `close`. When the rebuilt HTML matches the current one the input is
+// returned unchanged, which is what keeps the static render byte-identical.
+function replaceInner(html: string, start: number, close: string, next: string): string {
+  const end = html.indexOf(close, start);
+  if (end === -1) return html;
+  if (collapse(html.slice(start, end)) === collapse(next)) return html;
+  return html.slice(0, start) + next + html.slice(end);
+}
+
+// replaceDivInner finds the </div> that closes the <div> opening at `start`,
+// counting nesting so cards inside a container do not end it early.
+function replaceDivInner(html: string, start: number, next: string): string {
+  const tagRe = /<div\b|<\/div>/g;
+  tagRe.lastIndex = start;
+  let depth = 1;
+  let match: RegExpExecArray | null;
+  while ((match = tagRe.exec(html))) {
+    if (match[0] !== "</div>") {
+      depth++;
+      continue;
+    }
+    depth--;
+    if (depth === 0) {
+      if (collapse(html.slice(start, match.index)) === collapse(next)) return html;
+      return html.slice(0, start) + next + html.slice(match.index);
+    }
+  }
+  return html;
+}
+
+function replaceAfterTag(
+  html: string,
+  anchorStart: number,
+  open: string,
+  close: string,
+  next: string,
+): string {
+  const openAt = html.indexOf(open, anchorStart);
+  if (openAt === -1) return html;
+  return replaceInner(html, openAt + open.length, close, next);
+}
+
+function replaceAllTag(html: string, open: string, close: string, next: string): string {
+  let out = html;
+  for (let guard = 0; guard < 32; guard++) {
+    const at = out.indexOf(open);
+    if (at === -1) return out;
+    const start = at + open.length;
+    const end = out.indexOf(close, start);
+    if (end === -1) return out;
+    if (collapse(out.slice(start, end)) === collapse(next)) {
+      // Already correct here: skip past this container so the next one is checked.
+      const skip = end + close.length;
+      const rest = replaceAllTag(out.slice(skip), open, close, next);
+      return out.slice(0, skip) + rest;
+    }
+    out = out.slice(0, start) + next + out.slice(end);
+  }
+  return out;
+}
+
+// isExternal decides whether a rebuilt link needs target/rel, matching the
+// template: absolute http(s) links open in a new tab, in-page anchors do not.
+function isExternal(href: string): boolean {
+  return /^https?:\/\//i.test(href);
+}
+
+function linkAttrs(href: string): string {
+  return isExternal(href) ? ' target="_blank" rel="noopener"' : "";
+}
+
+function renderHeroTags(items: ListItem[]): string {
+  return items
+    .map(
+      (item, i) =>
+        `${LIST_INDENT}<a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.${i + 1}">\n` +
+        `${LIST_INDENT}    <span>${escapeHTML(item.title)}</span>\n` +
+        `${LIST_INDENT}    ${TAG_ARROW_SVG}\n` +
+        `${LIST_INDENT}</a>`,
+    )
+    .join("\n");
+}
+
+function renderNavDropdown(items: ListItem[]): string {
+  return items
+    .map((item) => {
+      const href = metaText(item, "href") || "#";
+      return `${LIST_INDENT}    <li><a href="${escapeHTML(href)}"${linkAttrs(href)}>${escapeHTML(item.title)}</a></li>`;
+    })
+    .join("\n");
+}
+
+function renderSubmenu(items: ListItem[]): string {
+  return items
+    .map((item) => {
+      const href = metaText(item, "href") || "#";
+      return `${LIST_INDENT}    <li><a href="${escapeHTML(href)}"${linkAttrs(href)}>${escapeHTML(item.title)}</a></li>`;
+    })
+    .join("\n");
+}
+
+function renderAccordion(items: ListItem[]): string {
+  return items
+    .map((item, i) => {
+      const n = i + 1;
+      const open = i === 0;
+      const tags = metaList(item, "tags");
+      const tagRow = tags.length
+        ? `\n${LIST_INDENT}                <div class="sec-5-home-7__tags d-flex flex-wrap gap-2 pt-4">\n` +
+          tags
+            .map((t) => `${LIST_INDENT}                    <span class="sec-5-home-7__tag">${escapeHTML(t)}</span>`)
+            .join("\n") +
+          `\n${LIST_INDENT}                </div>`
+        : "";
+      return (
+        `${LIST_INDENT}<div class="accordion-item sec-5-home-7__acc-item scroll-move-up">\n` +
+        `${LIST_INDENT}    <h3 class="accordion-header" id="headingSec5H7${n}">\n` +
+        `${LIST_INDENT}        <button class="accordion-button sec-5-home-7__acc-btn${open ? "" : " collapsed"}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSec5H7${n}" aria-expanded="${open ? "true" : "false"}" aria-controls="collapseSec5H7${n}">\n` +
+        `${LIST_INDENT}            <span class="sec-5-home-7__acc-title">${escapeHTML(item.title)}</span>\n` +
+        `${LIST_INDENT}            <span class="sec-5-home-7__acc-toggle" aria-hidden="true">\n` +
+        `${LIST_INDENT}                ${ACC_PLUS_SVG}\n` +
+        `${LIST_INDENT}            </span>\n` +
+        `${LIST_INDENT}        </button>\n` +
+        `${LIST_INDENT}    </h3>\n` +
+        `${LIST_INDENT}    <div id="collapseSec5H7${n}" class="accordion-collapse collapse${open ? " show" : ""}" data-bs-parent="#accordionSec5Home7">\n` +
+        `${LIST_INDENT}        <div class="accordion-body sec-5-home-7__acc-body">\n` +
+        `${LIST_INDENT}            <p class="sec-5-home-7__acc-text mb-0">${escapeHTML(item.body)}</p>${tagRow}\n` +
+        `${LIST_INDENT}        </div>\n` +
+        `${LIST_INDENT}    </div>\n` +
+        `${LIST_INDENT}</div>`
+      );
+    })
+    .join("\n");
+}
+
+function renderCapsules(items: ListItem[]): string {
+  return items.map((item) => `${LIST_INDENT}    <li>${escapeHTML(item.title)}</li>`).join("\n");
+}
+
+function renderProcessChips(items: ListItem[]): string {
+  return items
+    .map((item, i) => {
+      // The staircase only offsets chips after the first; the template carries
+      // that as data-fade-offset.
+      const offset = i === 0 ? "" : ' data-fade-offset="100"';
+      return (
+        `${LIST_INDENT}    <span class="sec-6-home-7__chip sec-6-home-7__chip--${i + 1} at_fade_anim"${offset} data-delay="0.${i + 1}">\n` +
+        `${LIST_INDENT}        <span class="sec-6-home-7__chip-text">${escapeHTML(item.title)}</span>\n` +
+        `${LIST_INDENT}    </span>`
+      );
+    })
+    .join("\n");
+}
+
+function renderProcessCards(items: ListItem[]): string {
+  return items
+    .map((item, i) => {
+      const delay = metaText(item, "delay") || `0.${i * 2 + 1}`;
+      const image = metaText(item, "image");
+      const alt = metaText(item, "image_alt") || item.title;
+      const media = image
+        ? `\n${LIST_INDENT}            <div class="sec-6-home-7__card-media">\n` +
+          `${LIST_INDENT}                <img src="${escapeHTML(image)}" alt="${escapeHTML(alt)}" width="1200" height="900" />\n` +
+          `${LIST_INDENT}            </div>`
+        : "";
+      return (
+        `${LIST_INDENT}    <div class="sec-6-home-7__card-wrap at_fade_anim" data-delay="${escapeHTML(delay)}">\n` +
+        `${LIST_INDENT}        <div class="sec-6-home-7__card">\n` +
+        `${LIST_INDENT}            <div class="sec-6-home-7__card-body">\n` +
+        `${LIST_INDENT}                <p class="sec-6-home-7__card-num mb-0">[${String(i + 1).padStart(2, "0")}]</p>\n` +
+        `${LIST_INDENT}                <h3 class="sec-6-home-7__card-title mb-0">${escapeHTML(item.title)}</h3>\n` +
+        `${LIST_INDENT}                <p class="sec-6-home-7__card-desc mb-0">\n` +
+        `${LIST_INDENT}                    ${escapeHTML(item.body)}\n` +
+        `${LIST_INDENT}                </p>\n` +
+        `${LIST_INDENT}            </div>${media}\n` +
+        `${LIST_INDENT}        </div>\n` +
+        `${LIST_INDENT}    </div>`
+      );
+    })
+    .join("\n\n");
+}
+
+function renderMarqueeItems(items: ListItem[]): string {
+  const row = items
+    .map(
+      (item) =>
+        `${LIST_INDENT}    <li class="sec-9-home-7__item">${escapeHTML(item.title)}</li>\n` +
+        `${LIST_INDENT}    <li class="sec-9-home-7__sep"><img src="${MARQUEE_STAR}" alt="" /></li>`,
+    )
+    .join("\n");
+  return row;
+}
+
+function renderCtaFeatures(items: ListItem[]): string {
+  return items
+    .map(
+      (item, i) =>
+        `${LIST_INDENT}    <li class="sec-7-home-7__feature at_fade_anim" data-delay="0.${i + 1}">\n` +
+        `${LIST_INDENT}        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg" alt="" width="18" height="18" aria-hidden="true" />\n` +
+        `${LIST_INDENT}        <span>${escapeHTML(item.title)}</span>\n` +
+        `${LIST_INDENT}    </li>`,
+    )
+    .join("\n");
+}
+
+function renderFooterNav(items: ListItem[]): string {
+  return items
+    .map((item, i) => {
+      const href = metaText(item, "href") || "#";
+      const current = href === "/" ? ' aria-current="page"' : "";
+      return (
+        `${LIST_INDENT}    <a class="footer-7__nav-link at_fade_anim" data-delay="0.${i + 1}" href="${escapeHTML(href)}"${current}>\n` +
+        `${LIST_INDENT}        <span>${escapeHTML(item.title)}</span>\n` +
+        `${LIST_INDENT}        ${FOOTER_ARROW_SVG}\n` +
+        `${LIST_INDENT}    </a>`
+      );
+    })
+    .join("\n");
+}
+
+const SOCIAL_ICONS: Record<string, string> = {
+  github: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z\" fill=\"currentColor\"/></svg>",
+  linkedin: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\" fill=\"none\" aria-hidden=\"true\"><path d=\"M15.3352 15.339H12.6697V11.1622C12.6697 10.1662 12.6495 8.8845 11.2807 8.8845C9.89102 8.8845 9.67872 9.9683 9.67872 11.0887V15.339H7.01322V6.75H9.57372V7.9207H9.60822C9.96602 7.2457 10.836 6.53325 12.1357 6.53325C14.8365 6.53325 15.336 8.3108 15.336 10.6245L15.3352 15.339ZM4.00275 5.57475C3.14475 5.57475 2.4555 4.88025 2.4555 4.026C2.4555 3.1725 3.1455 2.47875 4.00275 2.47875C4.85775 2.47875 5.55075 3.1725 5.55075 4.026C5.55075 4.88025 4.857 5.57475 4.00275 5.57475ZM5.33925 15.339H2.66625V6.75H5.33925V15.339ZM16.6687 0H1.32825C0.594 0 0 0.5805 0 1.29675V16.7033C0 17.4202 0.594 18 1.32825 18H16.6665C17.4 18 18 17.4202 18 16.7033V1.29675C18 0.5805 17.4 0 16.6665 0H16.6687Z\" fill=\"currentColor\"/></svg>",
+  email: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M1.5 5.25A1.5 1.5 0 0 1 3 3.75h18a1.5 1.5 0 0 1 1.5 1.5v13.5A1.5 1.5 0 0 1 21 20.25H3A1.5 1.5 0 0 1 1.5 18.75V5.25zm2.2.5L12 12l8.3-6.25H3.7zM21 7.32l-8.4 6.3a1 1 0 0 1-1.2 0L3 7.32V18.75h18V7.32z\" fill=\"currentColor\"/></svg>",
+  facebook: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.7-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z\" fill=\"currentColor\"/></svg>",
+  instagram: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.2a1.5 1.5 0 1 1-1.5-1.5 1.5 1.5 0 0 1 1.5 1.5z\" fill=\"currentColor\"/></svg>",
+};
+
+const SOCIAL_ARROW =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M7.60201e-05 6.26559L0 2.03894e-05L1.49997 -4.58971e-07L1.50004 4.87322L9.12873 4.87329L6.16652 2.12355L7.22714 1.139L12 5.56948L7.22713 10L6.16652 9.01545L9.12876 6.26566L7.60201e-05 6.26559Z" fill="currentColor" /></svg>';
+
+// socialLinkAttrs reuses the target/rel attributes the template already has on
+// the nth social link. The markup is inconsistent (GitHub and LinkedIn open in
+// place, Facebook and Instagram in a new tab), so preserving it per row is the
+// only way a rebuilt list stays byte-identical.
+function socialLinkAttrs(html: string, index: number): string {
+  const anchor = html.indexOf('<div class="alt-footer-social-item">');
+  if (anchor === -1) return "";
+  const open = '<ul class="list-unstyled mb-0">';
+  const at = html.indexOf(open, anchor);
+  if (at === -1) return "";
+  const start = at + open.length;
+  const end = html.indexOf("</ul>", start);
+  if (end === -1) return "";
+  const tags = html.slice(start, end).match(/<a\b[^>]*>/g) ?? [];
+  const attrs = tags[index]?.match(/\s(?:target|rel)="[^"]*"/g);
+  return attrs ? attrs.join("") : "";
+}
+
+function renderSocials(html: string, items: ListItem[]): string {
+  return items
+    .map((item, i) => {
+      const href = metaText(item, "href") || "#";
+      const icon = SOCIAL_ICONS[metaText(item, "icon")] ?? SOCIAL_ICONS.github;
+      return (
+        `${LIST_INDENT}    <li class="at_fade_anim" data-delay="0.${i + 1}">\n` +
+        `${LIST_INDENT}        <a href="${escapeHTML(href)}"${socialLinkAttrs(html, i)} aria-label="${escapeHTML(item.title)}">\n` +
+        `${LIST_INDENT}            <div class="d-flex align-items-center gap-2">\n` +
+        `${LIST_INDENT}                <div class="icon-social">\n` +
+        `${LIST_INDENT}                    ${icon}\n` +
+        `${LIST_INDENT}                </div>\n` +
+        `${LIST_INDENT}                ${escapeHTML(item.title)}\n` +
+        `${LIST_INDENT}            </div>\n` +
+        `${LIST_INDENT}            ${SOCIAL_ARROW}\n` +
+        `${LIST_INDENT}        </a>\n` +
+        `${LIST_INDENT}    </li>`
+      );
+    })
+    .join("\n");
+}
+
+function renderFooterLinks(items: ListItem[]): string {
+  return items
+    .map((item) => {
+      const href = metaText(item, "href") || "#";
+      return `${LIST_INDENT}    <li><a href="${escapeHTML(href)}"${linkAttrs(href)}>${escapeHTML(item.title)}</a></li>`;
+    })
+    .join("\n");
+}
+
+// ---------------------------------------------------------------------------
+// Application
+// ---------------------------------------------------------------------------
+
+// Each entry knows how to locate its container and how to rebuild it. The
+// anchor-based entries exist because two containers share a class and can only
+// be told apart by what precedes them.
+const LIST_RENDERERS: Record<string, (html: string, items: ListItem[]) => string> = {
+  "hero.tags": (html, items) => {
+    const open = '<div class="sec-1-home-7__tags">';
+    const at = html.indexOf(open);
+    if (at === -1) return html;
+    return replaceInner(html, at + open.length, "</div>", renderHeroTags(items));
+  },
+
+  "nav.dropdown.core": (html, items) => {
+    const box = nthIndexOf(html, '<div class="at-megamenu-box">', 1);
+    if (box === -1) return html;
+    return replaceAfterTag(html, box, "<ul>", "</ul>", renderNavDropdown(items));
+  },
+
+  "nav.dropdown.cloud": (html, items) => {
+    const box = nthIndexOf(html, '<div class="at-megamenu-box">', 2);
+    if (box === -1) return html;
+    return replaceAfterTag(html, box, "<ul>", "</ul>", renderNavDropdown(items));
+  },
+
+  "nav.dropdown.projects": (html, items) => {
+    const anchor = html.indexOf('<a href="#">Projects</a>');
+    if (anchor === -1) return html;
+    return replaceAfterTag(html, anchor, '<ul class="at-submenu submenu">', "</ul>", renderSubmenu(items));
+  },
+
+  "nav.dropdown.links": (html, items) => {
+    const anchor = html.indexOf('<a href="#">Links</a>');
+    if (anchor === -1) return html;
+    return replaceAfterTag(html, anchor, '<ul class="at-submenu submenu">', "</ul>", renderSubmenu(items));
+  },
+
+  "skills.accordion": (html, items) => {
+    const open = '<div class="accordion accordion-flush sec-5-home-7__accordion" id="accordionSec5Home7">';
+    const at = html.indexOf(open);
+    if (at === -1) return html;
+    return replaceDivInner(html, at + open.length, renderAccordion(items));
+  },
+
+  "skills.throwables": (html, items) =>
+    replaceFirst(html, '<ul class="visually-hidden tech-phys-a11y">', "</ul>", renderCapsules(items)),
+
+  "process.chips": (html, items) =>
+    replaceFirst(
+      html,
+      '<div class="sec-6-home-7__chips d-none d-lg-flex flex-column mb-80">',
+      "</div>",
+      renderProcessChips(items),
+    ),
+
+  "process.cards": (html, items) => {
+    const open = '<div class="sec-6-home-7__cards pb-120">';
+    const at = html.indexOf(open);
+    if (at === -1) return html;
+    return replaceDivInner(html, at + open.length, renderProcessCards(items));
+  },
+
+  "marquee.items": (html, items) => {
+    // The ticker duplicates the row so the GSAP loop is seamless, and both
+    // rows (left and right) carry the same doubled content.
+    const row = renderMarqueeItems(items);
+    const doubled = `${row}\n${row}`;
+    const left = replaceAllTag(
+      html,
+      '<ul class="d-flex align-items-center gap-4 carouselTicker__list scroll-move-left list-unstyled mb-0 sec-9-home-7__list">',
+      "</ul>",
+      doubled,
+    );
+    return replaceAllTag(
+      left,
+      '<ul class="d-flex align-items-center gap-4 carouselTicker__list scroll-move-right list-unstyled mb-0 sec-9-home-7__list">',
+      "</ul>",
+      doubled,
+    );
+  },
+
+  "cta.list": (html, items) =>
+    replaceFirst(
+      html,
+      '<ul class="sec-7-home-7__features list-unstyled mb-4 mb-lg-60">',
+      "</ul>",
+      renderCtaFeatures(items),
+    ),
+
+  "footer.nav": (html, items) =>
+    replaceFirst(html, '<nav class="footer-7__nav" aria-label="Footer navigation">', "</nav>", renderFooterNav(items)),
+
+  "footer.socials": (html, items) => {
+    const anchor = html.indexOf('<div class="alt-footer-social-item">');
+    if (anchor === -1) return html;
+    return replaceAfterTag(html, anchor, '<ul class="list-unstyled mb-0">', "</ul>", renderSocials(html, items));
+  },
+
+  "footer.links": (html, items) =>
+    replaceFirst(
+      html,
+      '<ul class="footer-7__policies list-unstyled d-flex flex-wrap gap-3 mb-0">',
+      "</ul>",
+      renderFooterLinks(items),
+    ),
+};
+
+// replaceFirst swaps the inner HTML of the first `open` ... `close` pair.
+function replaceFirst(html: string, open: string, close: string, next: string): string {
+  const at = html.indexOf(open);
+  if (at === -1) return html;
+  return replaceInner(html, at + open.length, close, next);
+}
+
+/**
+ * Apply the repeatable homepage lists. A group that is missing, empty, or whose
+ * rebuilt markup matches the container leaves the page untouched, so the static
+ * template render stays the fallback.
+ */
+export function applyContentItems(html: string, groups: ContentGroups): string {
+  let out = html;
+  for (const [key, render] of Object.entries(LIST_RENDERERS)) {
+    const items = groups[key];
+    if (!items || items.length === 0) continue;
+    const next = render(out, items);
+    if (next !== out) out = next;
+  }
+  return out;
 }
 
 function renderFeaturedCard(project: Project): string {

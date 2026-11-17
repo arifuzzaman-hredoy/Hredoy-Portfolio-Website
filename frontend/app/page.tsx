@@ -3,6 +3,7 @@ import HomeContent from "@/components/public/HomeContent";
 import SiteInteractions from "@/components/public/SiteInteractions";
 import {
   getContent,
+  getContentItems,
   getProjects,
   getSiteImageAlts,
   getSiteImages,
@@ -10,9 +11,10 @@ import {
 } from "@/lib/cms";
 
 export default async function Home() {
-  const [content, projects, images, imageAlts, identity] = await Promise.all([
+  const [content, projects, lists, images, imageAlts, identity] = await Promise.all([
     getContent(),
     getProjects(),
+    getContentItems(),
     getSiteImages(),
     getSiteImageAlts(),
     getSiteSettings(),
@@ -25,6 +27,7 @@ export default async function Home() {
         content={content.values}
         defaults={content.defaults}
         projects={projects}
+        lists={lists}
         images={images}
         imageAlts={imageAlts}
         identity={identity}

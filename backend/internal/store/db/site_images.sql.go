@@ -19,9 +19,7 @@ func (q *Queries) DeleteSiteImage(ctx context.Context, key string) error {
 }
 
 const getSiteImage = `-- name: GetSiteImage :one
-SELECT id, key, label, group_name, url, public_id, alt, updated_at
-FROM site_images
-WHERE key = $1
+SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt FROM site_images WHERE key = $1
 `
 
 func (q *Queries) GetSiteImage(ctx context.Context, key string) (SiteImage, error) {
@@ -36,14 +34,14 @@ func (q *Queries) GetSiteImage(ctx context.Context, key string) (SiteImage, erro
 		&i.PublicID,
 		&i.Alt,
 		&i.UpdatedAt,
+		&i.DefaultUrl,
+		&i.DefaultAlt,
 	)
 	return i, err
 }
 
 const listSiteImages = `-- name: ListSiteImages :many
-SELECT id, key, label, group_name, url, public_id, alt, updated_at
-FROM site_images
-ORDER BY group_name, key
+SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt FROM site_images ORDER BY group_name, key
 `
 
 func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
@@ -64,6 +62,8 @@ func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
 			&i.PublicID,
 			&i.Alt,
 			&i.UpdatedAt,
+			&i.DefaultUrl,
+			&i.DefaultAlt,
 		); err != nil {
 			return nil, err
 		}
@@ -73,6 +73,17 @@ func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const resetSiteImageToDefault = `-- name: ResetSiteImageToDefault :exec
+UPDATE site_images
+SET url = default_url, alt = default_alt, public_id = '', updated_at = NOW()
+WHERE key = $1
+`
+
+func (q *Queries) ResetSiteImageToDefault(ctx context.Context, key string) error {
+	_, err := q.db.Exec(ctx, resetSiteImageToDefault, key)
+	return err
 }
 
 const updateSiteImageAlt = `-- name: UpdateSiteImageAlt :exec

@@ -31,6 +31,18 @@ type ContentBlock struct {
 	DefaultValue string
 }
 
+type ContentItem struct {
+	ID        pgtype.UUID
+	ParentKey string
+	Title     string
+	Body      string
+	Meta      []byte
+	SortOrder int32
+	Published bool
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
 type Medium struct {
 	ID         pgtype.UUID
 	Filename   string
@@ -59,14 +71,16 @@ type Project struct {
 }
 
 type SiteImage struct {
-	ID        pgtype.UUID
-	Key       string
-	Label     string
-	GroupName string
-	Url       string
-	PublicID  string
-	Alt       string
-	UpdatedAt pgtype.Timestamptz
+	ID         pgtype.UUID
+	Key        string
+	Label      string
+	GroupName  string
+	Url        string
+	PublicID   string
+	Alt        string
+	UpdatedAt  pgtype.Timestamptz
+	DefaultUrl string
+	DefaultAlt string
 }
 
 type SiteSetting struct {

@@ -86,6 +86,7 @@ func (r *Revalidator) call() {
 // actions (login, message read/unread) do not churn the cache.
 var publicContentPrefixes = []string{
 	"/super-admin/content",
+	"/super-admin/lists",
 	"/super-admin/site-images",
 	"/super-admin/projects",
 	"/super-admin/media",

@@ -1,0 +1,118 @@
+{{define "content"}}
+<div class="lists-page">
+<header class="page-head page-head--split">
+  <div>
+    <p class="eyebrow">{{.schema.Group}} · <a href="/super-admin/lists">all lists</a></p>
+    <h1>{{.schema.Label}}</h1>
+    <p class="muted">Items render in this order on the public page. Hiding an item keeps it saved but removes it from the site.</p>
+  </div>
+  <div class="page-stat">
+    <span class="page-stat__value">{{.total}}</span>
+    <span class="page-stat__label">items</span>
+  </div>
+</header>
+
+{{if .success}}<p class="alert success">Saved.</p>{{end}}
+{{if .error}}<p class="alert">{{.error}}</p>{{end}}
+
+<section class="card">
+  <div class="card-head">
+    <h2>Add item</h2>
+  </div>
+  <form method="post" action="/super-admin/lists/{{.schema.ParentKey}}/create" class="list-form">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+    <label class="field">
+      <span>{{.schema.TitleLabel}}</span>
+      <input type="text" name="title" required maxlength="200">
+    </label>
+    {{if .schema.HasBody}}
+    <label class="field">
+      <span>{{.schema.BodyLabel}}</span>
+      <textarea name="body" rows="3" maxlength="2000"></textarea>
+    </label>
+    {{end}}
+    {{range .schema.Fields}}
+    <label class="field">
+      <span>{{.Label}}</span>
+      {{if .IsSelect}}
+      <select name="f_{{.Name}}">
+        <option value="">None</option>
+        {{range .Options}}<option value="{{.}}">{{.}}</option>{{end}}
+      </select>
+      {{else}}
+      <input type="text" name="f_{{.Name}}" placeholder="{{if .IsTags}}Comma separated{{end}}">
+      {{end}}
+    </label>
+    {{end}}
+    <button class="btn-sm" type="submit">Add item</button>
+  </form>
+</section>
+
+{{if .items}}
+<section class="card">
+  <div class="card-head">
+    <h2>Items</h2>
+    <span class="badge">{{.total}}</span>
+  </div>
+  <ul class="list-list">
+    {{$schema := .schema}}
+    {{range .items}}
+    {{$item := .}}
+    <li class="list-item{{if not .Published}} is-hidden{{end}}">
+      <form method="post" action="/super-admin/lists/{{$schema.ParentKey}}/{{.ID}}/update" class="list-form list-form--row">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+        <span class="list-item__num">{{.Number}}</span>
+        <div class="list-item__fields">
+          <label class="field">
+            <span>{{$schema.TitleLabel}}</span>
+            <input type="text" name="title" value="{{.Title}}" required maxlength="200">
+          </label>
+          {{if $schema.HasBody}}
+          <label class="field">
+            <span>{{$schema.BodyLabel}}</span>
+            <textarea name="body" rows="2" maxlength="2000">{{.Body}}</textarea>
+          </label>
+          {{end}}
+          {{range $schema.Fields}}
+          {{$field := .}}
+          <label class="field">
+            <span>{{.Label}}</span>
+            {{if .IsSelect}}
+            <select name="f_{{$field.Name}}">
+              <option value="">None</option>
+              {{range .Options}}<option value="{{.}}"{{if eq . (index $item.Meta $field.Name)}} selected{{end}}>{{.}}</option>{{end}}
+            </select>
+            {{else}}
+            <input type="text" name="f_{{$field.Name}}" value="{{index $item.Meta $field.Name}}">
+            {{end}}
+          </label>
+          {{end}}
+        </div>
+        <div class="list-item__actions">
+          <button class="btn-sm" type="submit">Save</button>
+          {{if .CanMoveUp}}
+          <button class="btn-sm" type="submit" formaction="/super-admin/lists/{{$schema.ParentKey}}/{{.ID}}/move" name="direction" value="up">Up</button>
+          {{end}}
+          {{if .CanMoveDown}}
+          <button class="btn-sm" type="submit" formaction="/super-admin/lists/{{$schema.ParentKey}}/{{.ID}}/move" name="direction" value="down">Down</button>
+          {{end}}
+        </div>
+      </form>
+      <div class="list-item__meta">
+        <form method="post" action="/super-admin/lists/{{$schema.ParentKey}}/{{.ID}}/toggle" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+          <span class="badge">{{if .Published}}Published{{else}}Hidden{{end}}</span>
+          <button class="btn-sm" type="submit">{{if .Published}}Hide{{else}}Show{{end}}</button>
+        </form>
+        <form method="post" action="/super-admin/lists/{{$schema.ParentKey}}/{{.ID}}/delete" class="inline-form" onsubmit="return confirm('Delete this item? This cannot be undone.');">
+          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+          <button class="btn-sm btn-danger" type="submit">Delete</button>
+        </form>
+      </div>
+    </li>
+    {{end}}
+  </ul>
+</section>
+{{end}}
+</div>
+{{end}}

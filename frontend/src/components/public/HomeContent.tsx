@@ -8,7 +8,7 @@
 // Phase 2: CMS-managed values (content blocks + projects) are injected at
 // render time by applyCMSContent; the static markup below is the fallback.
 
-import { applyCMSContent, applySiteImages, type Project } from "@/lib/cms-render";
+import { applyCMSContent, applyContentItems, applySiteImages, type ContentGroups, type Project } from "@/lib/cms-render";
 
 const BODY_HTML = `    <!-- prettier-ignore -->
     <!--search-form-start -->
@@ -1619,6 +1619,7 @@ type HomeContentProps = {
   content?: Record<string, string>;
   defaults?: Record<string, string>;
   projects?: Project[];
+  lists?: ContentGroups;
   images?: Record<string, string>;
   imageAlts?: Record<string, string>;
   identity?: Record<string, string>;
@@ -1628,11 +1629,13 @@ export default function HomeContent({
   content,
   defaults,
   projects,
+  lists,
   images,
   imageAlts,
   identity,
 }: HomeContentProps) {
   let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
+  html = applyContentItems(html, lists ?? {});
   html = applySiteImages(html, images ?? {}, imageAlts ?? {});
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

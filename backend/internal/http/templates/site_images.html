@@ -13,7 +13,7 @@
 </header>
 
 {{if .success}}<p class="alert success">Saved.</p>{{end}}
-{{if .error}}<p class="alert">Operation failed (allowed: png, jpg, jpeg, gif, webp, svg · max 25&nbsp;MiB).</p>{{end}}
+{{if .error}}<p class="alert">{{.error}}</p>{{end}}
 
 {{if .groups}}
 <nav class="chip-nav" aria-label="Image groups">
@@ -54,6 +54,20 @@
             <button class="btn-sm" type="submit">Save</button>
           </form>
         </details>
+        {{if .DefaultURL}}
+        <div class="media-reset">
+          {{if .IsDefault}}
+          <span class="badge">Default</span>
+          {{else}}
+          <span class="media-reset__hint">Default: <code>{{.DefaultURL}}</code></span>
+          <form method="post" action="/super-admin/site-images/reset" class="media-form">
+            <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+            <input type="hidden" name="key" value="{{.Key}}">
+            <button class="btn-sm" type="submit">Reset to default</button>
+          </form>
+          {{end}}
+        </div>
+        {{end}}
       </figcaption>
     </figure>
     {{end}}

@@ -39,6 +39,22 @@ export type SiteImagesPayload = {
   urls: Record<string, string>;
 };
 
+// One repeatable row from content_items. `meta` carries the list-specific keys
+// (href, icon, tags, image, ...) declared by the backend list schema.
+export type ContentItem = {
+  id: string;
+  parent_key: string;
+  title: string;
+  body: string;
+  meta: Record<string, string | string[]>;
+  sort_order: number;
+};
+
+export type ContentItemsPayload = {
+  count: number;
+  groups: Record<string, ContentItem[]>;
+};
+
 // Owner identity as stored in site_settings. The fallbacks mirror the values the
 // template shipped with, so a missing row never changes the rendered page.
 export const SITE_SETTINGS_DEFAULTS: Record<string, string> = {
@@ -88,6 +104,16 @@ export async function getProjects(): Promise<Project[]> {
   cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
   return data?.projects ?? [];
+}
+
+// Repeatable homepage lists, grouped by parent_key. Missing groups simply mean
+// "keep the template markup", which is what the renderers expect.
+export async function getContentItems(): Promise<Record<string, ContentItem[]>> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const data = await getJSON<ContentItemsPayload>("/api/v1/content-items");
+  return data?.groups ?? {};
 }
 
 export async function getSiteImages(): Promise<Record<string, string>> {

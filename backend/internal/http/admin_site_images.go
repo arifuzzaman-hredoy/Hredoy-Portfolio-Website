@@ -17,13 +17,15 @@ import (
 // ---------------------------------------------------------------------------
 
 type siteImageView struct {
-	Key       string
-	Label     string
-	Group     string
-	URL       string
-	PublicID  string
-	Alt       string
-	UpdatedAt string
+	Key        string
+	Label      string
+	Group      string
+	URL        string
+	PublicID   string
+	Alt        string
+	DefaultURL string
+	IsDefault  bool
+	UpdatedAt  string
 }
 
 type siteImageGroupView struct {
@@ -36,13 +38,15 @@ func toSiteImageViews(rows []db.SiteImage) []siteImageView {
 	views := make([]siteImageView, 0, len(rows))
 	for _, row := range rows {
 		views = append(views, siteImageView{
-			Key:       row.Key,
-			Label:     row.Label,
-			Group:     row.GroupName,
-			URL:       row.Url,
-			PublicID:  row.PublicID,
-			Alt:       row.Alt,
-			UpdatedAt: row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Key:        row.Key,
+			Label:      row.Label,
+			Group:      row.GroupName,
+			URL:        row.Url,
+			PublicID:   row.PublicID,
+			Alt:        row.Alt,
+			DefaultURL: row.DefaultUrl,
+			IsDefault:  row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:  row.UpdatedAt.Time.Format("2006-01-02 15:04"),
 		})
 	}
 	return views
@@ -80,13 +84,15 @@ func groupSiteImages(rows []db.SiteImage) []siteImageGroupView {
 			order = append(order, group)
 		}
 		byGroup[group] = append(byGroup[group], siteImageView{
-			Key:       row.Key,
-			Label:     row.Label,
-			Group:     group,
-			URL:       row.Url,
-			PublicID:  row.PublicID,
-			Alt:       row.Alt,
-			UpdatedAt: row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Key:        row.Key,
+			Label:      row.Label,
+			Group:      group,
+			URL:        row.Url,
+			PublicID:   row.PublicID,
+			Alt:        row.Alt,
+			DefaultURL: row.DefaultUrl,
+			IsDefault:  row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:  row.UpdatedAt.Time.Format("2006-01-02 15:04"),
 		})
 	}
 
@@ -133,8 +139,35 @@ func (d HandlerDeps) adminSiteImages(w http.ResponseWriter, r *http.Request) {
 		"groups":        groupSiteImages(rows),
 		"total":         len(rows),
 		"success":       r.URL.Query().Get("saved") == "1",
-		"error":         r.URL.Query().Get("error"),
+		"error":         siteImageErrorMessage(r.URL.Query().Get("error")),
 	})
+}
+
+// siteImageErrorMessage turns an error code from the query string into a
+// sentence. Unknown codes stay empty so a stray parameter cannot inject text.
+func siteImageErrorMessage(code string) string {
+	switch code {
+	case "":
+		return ""
+	case "size":
+		return "That file is too large (max 25 MiB)."
+	case "type":
+		return "Unsupported file type (allowed: png, jpg, jpeg, gif, webp, svg)."
+	case "key":
+		return "Choose an image slot first."
+	case "file", "read":
+		return "That file could not be read. Try uploading it again."
+	case "cloudinary":
+		return "The upload failed. Please try again."
+	case "no-default":
+		return "This slot has no default image, so it cannot be reset."
+	case "notfound":
+		return "That image slot no longer exists."
+	case "failed":
+		return "The change could not be saved. Please try again."
+	default:
+		return ""
+	}
 }
 
 // adminSiteImageReplace uploads a new file to Cloudinary and updates the slot.
@@ -202,6 +235,42 @@ func (d HandlerDeps) adminSiteImageReplace(w http.ResponseWriter, r *http.Reques
 		_ = old
 	}
 
+	http.Redirect(w, r, "/super-admin/site-images?saved=1", http.StatusSeeOther)
+}
+
+// adminSiteImageReset restores a slot to the file that ships with the code.
+// Without it a mis-upload is unrecoverable from the admin.
+func (d HandlerDeps) adminSiteImageReset(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form", http.StatusBadRequest)
+		return
+	}
+	key := strings.TrimSpace(r.FormValue("key"))
+	if key == "" {
+		http.Redirect(w, r, "/super-admin/site-images", http.StatusSeeOther)
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	// A slot with no code default must never be reset: that would blank the
+	// image. The admin screen hides the button, and this refuses the request.
+	existing, err := d.Queries.GetSiteImage(ctx, key)
+	if err != nil {
+		d.Logger.Error("get site image failed", "key", key, "error", err)
+		http.Redirect(w, r, "/super-admin/site-images?error=notfound", http.StatusSeeOther)
+		return
+	}
+	if strings.TrimSpace(existing.DefaultUrl) == "" {
+		http.Redirect(w, r, "/super-admin/site-images?error=no-default", http.StatusSeeOther)
+		return
+	}
+
+	if err := d.Queries.ResetSiteImageToDefault(ctx, key); err != nil {
+		d.Logger.Error("reset site image failed", "key", key, "error", err)
+		http.Redirect(w, r, "/super-admin/site-images?error=failed", http.StatusSeeOther)
+		return
+	}
 	http.Redirect(w, r, "/super-admin/site-images?saved=1", http.StatusSeeOther)
 }
 

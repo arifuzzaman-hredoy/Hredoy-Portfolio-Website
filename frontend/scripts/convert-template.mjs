@@ -325,13 +325,20 @@ const component = `"use client";
 // Phase 2: CMS-managed values (content blocks + projects + owner identity) are
 // injected at render time by applyCMSContent; the static markup below is the
 // fallback. Phase 3: CMS-managed image URLs and alt text are injected by
-// applySiteImages.
+// applySiteImages, and the repeatable homepage lists (nav dropdowns, hero pills,
+// skills, process, marquee, CTA, footer) by applyContentItems.
 //
 // Regenerating this file drops the extra props below (defaults, imageAlts,
-// identity) because the generator has no way to know about them. Re-add them
-// after regenerating, or the CMS silently stops applying.
+// identity, lists) because the generator has no way to know about them. Re-add
+// them after regenerating, or the CMS silently stops applying.
 
-import { applyCMSContent, applySiteImages, type Project } from "@/lib/cms-render";
+import {
+  applyCMSContent,
+  applyContentItems,
+  applySiteImages,
+  type ContentGroups,
+  type Project,
+} from "@/lib/cms-render";
 
 const BODY_HTML = \`${escaped}\`;
 
@@ -339,6 +346,7 @@ type HomeContentProps = {
   content?: Record<string, string>;
   defaults?: Record<string, string>;
   projects?: Project[];
+  lists?: ContentGroups;
   images?: Record<string, string>;
   imageAlts?: Record<string, string>;
   identity?: Record<string, string>;
@@ -348,11 +356,13 @@ export default function HomeContent({
   content,
   defaults,
   projects,
+  lists,
   images,
   imageAlts,
   identity,
 }: HomeContentProps) {
   let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
+  html = applyContentItems(html, lists ?? {});
   html = applySiteImages(html, images ?? {}, imageAlts ?? {});
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

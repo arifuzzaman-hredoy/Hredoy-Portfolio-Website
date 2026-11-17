@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
@@ -58,6 +59,17 @@ type siteImageJSON struct {
 	Group string `json:"group"`
 	URL   string `json:"url"`
 	Alt   string `json:"alt"`
+}
+
+// contentItemJSON is one repeatable item. Meta is passed through as an object so
+// the frontend can read whichever keys its list uses (href, tags, image, icon).
+type contentItemJSON struct {
+	ID        string         `json:"id"`
+	ParentKey string         `json:"parent_key"`
+	Title     string         `json:"title"`
+	Body      string         `json:"body"`
+	Meta      map[string]any `json:"meta"`
+	SortOrder int32          `json:"sort_order"`
 }
 
 func toProjectJSON(row db.Project) projectJSON {
@@ -224,6 +236,48 @@ func (d HandlerDeps) apiContentKey(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, toContentBlockJSON(
 		row.Key, row.Label, row.GroupName, row.Value, row.Type, row.SortOrder, row.DefaultValue,
 	))
+}
+
+// apiContentItems returns every published repeatable list, grouped by
+// parent_key and ordered by sort_order. The frontend uses one call for the whole
+// page and falls back to the template markup if this request fails.
+func (d HandlerDeps) apiContentItems(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := d.Queries.ListPublishedContentItems(ctx)
+	if err != nil {
+		d.Logger.Error("list content items failed", "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load content items"})
+		return
+	}
+
+	groups := make(map[string][]contentItemJSON, len(listSchemas))
+	for _, row := range rows {
+		meta := map[string]any{}
+		if len(row.Meta) > 0 {
+			if err := json.Unmarshal(row.Meta, &meta); err != nil {
+				d.Logger.Warn("content item meta is not an object", "id", uuidToString(row.ID), "error", err)
+			}
+		}
+		groups[row.ParentKey] = append(groups[row.ParentKey], contentItemJSON{
+			ID:        uuidToString(row.ID),
+			ParentKey: row.ParentKey,
+			Title:     row.Title,
+			Body:      row.Body,
+			Meta:      meta,
+			SortOrder: row.SortOrder,
+		})
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"count":  len(rows),
+		"groups": groups,
+	})
 }
 
 func (d HandlerDeps) apiMedia(w http.ResponseWriter, r *http.Request) {

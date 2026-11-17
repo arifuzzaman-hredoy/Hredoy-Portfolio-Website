@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"io"
@@ -12,11 +13,21 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+// newUUIDBytes gives the fake store a fresh row id without a database.
+func newUUIDBytes() [16]byte {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		panic(err)
+	}
+	return b
+}
 
 // fakeStore is an in-memory Store used to exercise handlers without a database.
 type fakeStore struct {
@@ -49,7 +60,14 @@ type fakeStore struct {
 	siteImages      []db.SiteImage
 	updatedImgURL   []db.UpdateSiteImageURLParams
 	updatedImgAlt   []db.UpdateSiteImageAltParams
+	resetImgKeys    []string
 	deletedImgKeys  []string
+	contentItems    []db.ContentItem
+	createdItems    []db.InsertContentItemParams
+	updatedItems    []db.UpdateContentItemParams
+	reorderedItems  []db.UpdateContentItemOrderParams
+	toggledItems    []db.SetContentItemPublishedParams
+	deletedItems    []string
 }
 
 func (f *fakeStore) CreateContactMessage(_ context.Context, arg db.CreateContactMessageParams) error {
@@ -300,6 +318,140 @@ func (f *fakeStore) DeleteSiteImage(_ context.Context, key string) error {
 	defer f.mu.Unlock()
 	f.deletedImgKeys = append(f.deletedImgKeys, key)
 	return nil
+}
+
+func (f *fakeStore) ResetSiteImageToDefault(_ context.Context, key string) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.resetImgKeys = append(f.resetImgKeys, key)
+	for i := range f.siteImages {
+		if f.siteImages[i].Key == key {
+			f.siteImages[i].Url = f.siteImages[i].DefaultUrl
+			f.siteImages[i].Alt = f.siteImages[i].DefaultAlt
+			f.siteImages[i].PublicID = ""
+		}
+	}
+	return nil
+}
+
+func (f *fakeStore) ListPublishedContentItems(_ context.Context) ([]db.ContentItem, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.listErr != nil {
+		return nil, f.listErr
+	}
+	return f.contentItems, nil
+}
+
+func (f *fakeStore) ListAllContentItems(_ context.Context) ([]db.ContentItem, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.listErr != nil {
+		return nil, f.listErr
+	}
+	return f.contentItems, nil
+}
+
+func (f *fakeStore) ListContentItemsByParent(_ context.Context, parentKey string) ([]db.ContentItem, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	out := make([]db.ContentItem, 0, len(f.contentItems))
+	for _, item := range f.contentItems {
+		if item.ParentKey == parentKey {
+			out = append(out, item)
+		}
+	}
+	return out, nil
+}
+
+func (f *fakeStore) GetContentItem(_ context.Context, id pgtype.UUID) (db.ContentItem, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	for _, item := range f.contentItems {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+	return db.ContentItem{}, pgx.ErrNoRows
+}
+
+func (f *fakeStore) InsertContentItem(_ context.Context, arg db.InsertContentItemParams) (db.ContentItem, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	item := db.ContentItem{
+		ID:        pgtype.UUID{Bytes: newUUIDBytes(), Valid: true},
+		ParentKey: arg.ParentKey,
+		Title:     arg.Title,
+		Body:      arg.Body,
+		Meta:      arg.Meta,
+		SortOrder: arg.SortOrder,
+		Published: arg.Published,
+		CreatedAt: pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		UpdatedAt: pgtype.Timestamptz{Time: time.Now(), Valid: true},
+	}
+	f.contentItems = append(f.contentItems, item)
+	f.createdItems = append(f.createdItems, arg)
+	return item, nil
+}
+
+func (f *fakeStore) UpdateContentItem(_ context.Context, arg db.UpdateContentItemParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.updatedItems = append(f.updatedItems, arg)
+	for i := range f.contentItems {
+		if f.contentItems[i].ID == arg.ID {
+			f.contentItems[i].Title = arg.Title
+			f.contentItems[i].Body = arg.Body
+			f.contentItems[i].Meta = arg.Meta
+			f.contentItems[i].UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Valid: true}
+		}
+	}
+	return nil
+}
+
+func (f *fakeStore) UpdateContentItemOrder(_ context.Context, arg db.UpdateContentItemOrderParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.reorderedItems = append(f.reorderedItems, arg)
+	return nil
+}
+
+func (f *fakeStore) SetContentItemPublished(_ context.Context, arg db.SetContentItemPublishedParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.toggledItems = append(f.toggledItems, arg)
+	for i := range f.contentItems {
+		if f.contentItems[i].ID == arg.ID {
+			f.contentItems[i].Published = arg.Published
+		}
+	}
+	return nil
+}
+
+func (f *fakeStore) DeleteContentItem(_ context.Context, id pgtype.UUID) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.deletedItems = append(f.deletedItems, uuidToString(id))
+	out := f.contentItems[:0]
+	for _, item := range f.contentItems {
+		if item.ID != id {
+			out = append(out, item)
+		}
+	}
+	f.contentItems = out
+	return nil
+}
+
+func (f *fakeStore) NextContentItemSortOrder(_ context.Context, parentKey string) (int32, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	var max int32
+	for _, item := range f.contentItems {
+		if item.ParentKey == parentKey && item.SortOrder > max {
+			max = item.SortOrder
+		}
+	}
+	return max + 1, nil
 }
 
 func testDeps(store Store) HandlerDeps {

@@ -542,3 +542,33 @@ input:focus, textarea:focus { outline: 2px solid var(--primary); border-color: t
   .content { padding: 24px 16px; }
   .table th, .table td { font-size: 13px; }
 }
+/* ---------------------------------------------------------------------------
+   Repeatable content lists
+   --------------------------------------------------------------------------- */
+.list-index { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.list-index__link {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+  text-decoration: none; color: inherit; background: var(--surface, transparent);
+}
+.list-index__link:hover { border-color: var(--accent, #14b8a6); }
+.list-index__label { font-weight: 600; }
+
+.list-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.list-item { border: 1px solid var(--border); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.list-item.is-hidden { opacity: 0.62; }
+.list-item__num { font-variant-numeric: tabular-nums; color: var(--muted, #94a3b8); font-size: 12px; }
+.list-item__fields { flex: 1 1 auto; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.list-item__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.list-item__meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.list-form { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+.list-form--row { flex-direction: row; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.list-form .field { display: flex; flex-direction: column; gap: 4px; }
+.list-form .field span { font-size: 12px; color: var(--muted, #94a3b8); }
+.inline-form { display: inline-flex; gap: 8px; align-items: center; margin: 0; }
+.btn-danger { border-color: #dc2626; color: #dc2626; }
+.btn-danger:hover { background: #dc2626; color: #fff; }
+
+.media-reset { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.media-reset__hint { font-size: 11px; color: var(--muted, #94a3b8); word-break: break-all; }
+.media-reset__hint code { font-size: 11px; }

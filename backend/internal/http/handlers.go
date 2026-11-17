@@ -52,7 +52,18 @@ type Store interface {
 	GetSiteImage(ctx context.Context, key string) (db.SiteImage, error)
 	UpdateSiteImageURL(ctx context.Context, arg db.UpdateSiteImageURLParams) error
 	UpdateSiteImageAlt(ctx context.Context, arg db.UpdateSiteImageAltParams) error
+	ResetSiteImageToDefault(ctx context.Context, key string) error
 	DeleteSiteImage(ctx context.Context, key string) error
+	ListPublishedContentItems(ctx context.Context) ([]db.ContentItem, error)
+	ListAllContentItems(ctx context.Context) ([]db.ContentItem, error)
+	ListContentItemsByParent(ctx context.Context, parentKey string) ([]db.ContentItem, error)
+	GetContentItem(ctx context.Context, id pgtype.UUID) (db.ContentItem, error)
+	InsertContentItem(ctx context.Context, arg db.InsertContentItemParams) (db.ContentItem, error)
+	UpdateContentItem(ctx context.Context, arg db.UpdateContentItemParams) error
+	UpdateContentItemOrder(ctx context.Context, arg db.UpdateContentItemOrderParams) error
+	SetContentItemPublished(ctx context.Context, arg db.SetContentItemPublishedParams) error
+	DeleteContentItem(ctx context.Context, id pgtype.UUID) error
+	NextContentItemSortOrder(ctx context.Context, parentKey string) (int32, error)
 }
 
 type HandlerDeps struct {

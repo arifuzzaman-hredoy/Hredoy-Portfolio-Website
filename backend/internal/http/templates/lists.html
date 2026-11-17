@@ -1,0 +1,34 @@
+{{define "content"}}
+<div class="lists-page">
+<header class="page-head page-head--split">
+  <div>
+    <p class="eyebrow">Content library</p>
+    <h1>Content Lists</h1>
+    <p class="muted">Every repeatable list on the public page. Add, edit, reorder and hide items without touching code.</p>
+  </div>
+  <div class="page-stat">
+    <span class="page-stat__value">{{.total}}</span>
+    <span class="page-stat__label">lists</span>
+  </div>
+</header>
+
+{{range .groups}}
+<section class="card card--group" id="group-{{.Name}}">
+  <div class="card-head">
+    <h2>{{.Name}}</h2>
+    <span class="badge">{{len .Items}}</span>
+  </div>
+  <ul class="list-index">
+    {{range .Items}}
+    <li>
+      <a class="list-index__link" href="/super-admin/lists/{{.Key}}">
+        <span class="list-index__label">{{.Label}}</span>
+        <span class="badge">{{.Count}} items</span>
+      </a>
+    </li>
+    {{end}}
+  </ul>
+</section>
+{{end}}
+</div>
+{{end}}

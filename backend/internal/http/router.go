@@ -65,6 +65,7 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 	r.Get("/api/v1/projects/{slug}", deps.apiProjectBySlug)
 	r.Get("/api/v1/content", deps.apiContent)
 	r.Get("/api/v1/content/{key}", deps.apiContentKey)
+	r.Get("/api/v1/content-items", deps.apiContentItems)
 	r.Get("/api/v1/media", deps.apiMedia)
 	r.Get("/api/v1/site-images", deps.apiSiteImages)
 
@@ -115,9 +116,18 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		r.Post("/super-admin/content/update", deps.adminContentUpdate)
 		r.Post("/super-admin/content/reset", deps.adminContentReset)
 
+		r.Get("/super-admin/lists", deps.adminLists)
+		r.Get("/super-admin/lists/{parentKey}", deps.adminListItems)
+		r.Post("/super-admin/lists/{parentKey}/create", deps.adminListCreate)
+		r.Post("/super-admin/lists/{parentKey}/{id}/update", deps.adminListUpdate)
+		r.Post("/super-admin/lists/{parentKey}/{id}/delete", deps.adminListDelete)
+		r.Post("/super-admin/lists/{parentKey}/{id}/toggle", deps.adminListToggle)
+		r.Post("/super-admin/lists/{parentKey}/{id}/move", deps.adminListMove)
+
 		r.Get("/super-admin/site-images", deps.adminSiteImages)
 		r.Post("/super-admin/site-images/replace", deps.adminSiteImageReplace)
 		r.Post("/super-admin/site-images/alt", deps.adminSiteImageAlt)
+		r.Post("/super-admin/site-images/reset", deps.adminSiteImageReset)
 	})
 
 	return r
