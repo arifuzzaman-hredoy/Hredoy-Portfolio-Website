@@ -301,11 +301,25 @@ const component = `"use client";
 // Rendered verbatim via dangerouslySetInnerHTML so the browser parses the
 // original markup exactly (identical design + animations).
 // Regenerate with: node scripts/convert-template.mjs
+//
+// Phase 2: CMS-managed values (content blocks + projects) are injected at
+// render time by applyCMSContent; the static markup below is the fallback.
+// Phase 3: CMS-managed image URLs are injected by applySiteImages.
+
+import { applyCMSContent, applySiteImages, type Project } from "@/lib/cms-render";
 
 const BODY_HTML = \`${escaped}\`;
 
-export default function HomeContent() {
-  return <div dangerouslySetInnerHTML={{ __html: BODY_HTML }} />;
+type HomeContentProps = {
+  content?: Record<string, string>;
+  projects?: Project[];
+  images?: Record<string, string>;
+};
+
+export default function HomeContent({ content, projects, images }: HomeContentProps) {
+  let html = applyCMSContent(BODY_HTML, content ?? {}, projects ?? []);
+  html = applySiteImages(html, images ?? {});
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 `;
 

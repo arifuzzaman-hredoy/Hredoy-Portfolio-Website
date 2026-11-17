@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { getSiteImages } from "@/lib/cms";
 import "./globals.css";
 
 const SITE_URL = "https://oxytumzone.com";
@@ -6,7 +7,6 @@ const SITE_NAME = "Hredoy's Portfolio";
 const SITE_TITLE = "Hredoy's Portfolio — Junior DevOps Engineer";
 const SITE_DESCRIPTION =
   "Arifuzzaman Hredoy — Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code.";
-const SITE_IMAGE = "https://res.cloudinary.com/dvatduo79/image/upload/og/og-home.png";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -36,35 +36,46 @@ const structuredData = {
   ],
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  keywords: ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"],
-  authors: [{ name: "Arifuzzaman Hredoy", url: SITE_URL }],
-  creator: "Arifuzzaman Hredoy",
-  alternates: { canonical: "/" },
-  openGraph: {
+const DEFAULT_OG_IMAGE = "https://res.cloudinary.com/dvatduo79/image/upload/og/og-home.png";
+const DEFAULT_FAVICON = "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png";
+const DEFAULT_APPLE_ICON = "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const images = await getSiteImages();
+  const ogImage = images["og-image"] || DEFAULT_OG_IMAGE;
+  const favicon = images["favicon"] || DEFAULT_FAVICON;
+  const appleIcon = images["apple-touch-icon"] || DEFAULT_APPLE_ICON;
+
+  return {
+    metadataBase: new URL(SITE_URL),
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    url: "/",
-    siteName: SITE_NAME,
-    locale: "en_US",
-    type: "website",
-    images: [{ url: SITE_IMAGE, width: 1200, height: 630, alt: SITE_TITLE }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    images: [SITE_IMAGE],
-  },
-  icons: {
-    icon: [{ url: "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png", type: "image/png", sizes: "64x64" }],
-    apple: [{ url: "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-  },
-  robots: { index: true, follow: true },
-};
+    keywords: ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"],
+    authors: [{ name: "Arifuzzaman Hredoy", url: SITE_URL }],
+    creator: "Arifuzzaman Hredoy",
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: SITE_TITLE,
+      description: SITE_DESCRIPTION,
+      url: "/",
+      siteName: SITE_NAME,
+      locale: "en_US",
+      type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: SITE_TITLE }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: SITE_TITLE,
+      description: SITE_DESCRIPTION,
+      images: [ogImage],
+    },
+    icons: {
+      icon: [{ url: favicon, type: "image/png", sizes: "64x64" }],
+      apple: [{ url: appleIcon, sizes: "180x180", type: "image/png" }],
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

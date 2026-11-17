@@ -25,6 +25,12 @@ export type ProjectsPayload = {
   projects: Project[];
 };
 
+export type SiteImagesPayload = {
+  count: number;
+  images: { key: string; label: string; group: string; url: string; alt: string }[];
+  urls: Record<string, string>;
+};
+
 const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
@@ -59,4 +65,11 @@ export async function getProjects(): Promise<Project[]> {
   cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
   return data?.projects ?? [];
+}
+
+export async function getSiteImages(): Promise<Record<string, string>> {
+  "use cache";
+  cacheLife("minutes");
+  const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
+  return data?.urls ?? {};
 }
