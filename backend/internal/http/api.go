@@ -1,0 +1,220 @@
+package http
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
+)
+
+// ---------------------------------------------------------------------------
+// Public JSON API consumed by the Next.js frontend.
+// ---------------------------------------------------------------------------
+
+type projectJSON struct {
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Slug        string    `json:"slug"`
+	Summary     string    `json:"summary"`
+	Description string    `json:"description"`
+	Tech        string    `json:"tech"`
+	RepoURL     string    `json:"repo_url"`
+	LiveURL     string    `json:"live_url"`
+	ImagePath   string    `json:"image_path"`
+	SortOrder   int32     `json:"sort_order"`
+	Published   bool      `json:"published"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type contentBlockJSON struct {
+	Key   string `json:"key"`
+	Label string `json:"label"`
+	Group string `json:"group"`
+	Value string `json:"value"`
+}
+
+type mediaJSON struct {
+	ID        string    `json:"id"`
+	Filename  string    `json:"filename"`
+	Path      string    `json:"path"`
+	Mime      string    `json:"mime"`
+	Size      int64     `json:"size"`
+	Alt       string    `json:"alt"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func toProjectJSON(row db.Project) projectJSON {
+	return projectJSON{
+		ID:          uuidToString(row.ID),
+		Title:       row.Title,
+		Slug:        row.Slug,
+		Summary:     row.Summary,
+		Description: row.Description,
+		Tech:        row.Tech,
+		RepoURL:     row.RepoUrl,
+		LiveURL:     row.LiveUrl,
+		ImagePath:   row.ImagePath,
+		SortOrder:   row.SortOrder,
+		Published:   row.Published,
+		CreatedAt:   row.CreatedAt.Time,
+		UpdatedAt:   row.UpdatedAt.Time,
+	}
+}
+
+func toProjectJSONs(rows []db.Project) []projectJSON {
+	views := make([]projectJSON, 0, len(rows))
+	for _, row := range rows {
+		views = append(views, toProjectJSON(row))
+	}
+	return views
+}
+
+func toContentBlockJSON(row db.ContentBlock) contentBlockJSON {
+	return contentBlockJSON{
+		Key:   row.Key,
+		Label: row.Label,
+		Group: row.GroupName,
+		Value: row.Value,
+	}
+}
+
+func toMediaJSON(row db.Medium) mediaJSON {
+	return mediaJSON{
+		ID:        uuidToString(row.ID),
+		Filename:  row.Filename,
+		Path:      row.Path,
+		Mime:      row.Mime,
+		Size:      row.Size,
+		Alt:       row.Alt,
+		CreatedAt: row.CreatedAt.Time,
+	}
+}
+
+func (d HandlerDeps) apiProjects(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := d.Queries.ListPublishedProjects(ctx)
+	if err != nil {
+		d.Logger.Error("list projects failed", "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load projects"})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"count":    len(rows),
+		"projects": toProjectJSONs(rows),
+	})
+}
+
+func (d HandlerDeps) apiProjectBySlug(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	slug := strings.TrimSpace(chi.URLParam(r, "slug"))
+	if slug == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "slug is required"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	row, err := d.Queries.GetProjectBySlug(ctx, slug)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "project not found"})
+			return
+		}
+		d.Logger.Error("get project failed", "slug", slug, "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load project"})
+		return
+	}
+	writeJSON(w, http.StatusOK, toProjectJSON(row))
+}
+
+func (d HandlerDeps) apiContent(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := d.Queries.ListContentBlocks(ctx)
+	if err != nil {
+		d.Logger.Error("list content blocks failed", "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load content"})
+		return
+	}
+	blocks := make([]contentBlockJSON, 0, len(rows))
+	values := make(map[string]string, len(rows))
+	for _, row := range rows {
+		blocks = append(blocks, toContentBlockJSON(row))
+		values[row.Key] = row.Value
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"count":  len(blocks),
+		"blocks": blocks,
+		"values": values,
+	})
+}
+
+func (d HandlerDeps) apiContentKey(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	key := strings.TrimSpace(chi.URLParam(r, "key"))
+	if key == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "key is required"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	row, err := d.Queries.GetContentBlock(ctx, key)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "content block not found"})
+			return
+		}
+		d.Logger.Error("get content block failed", "key", key, "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load content"})
+		return
+	}
+	writeJSON(w, http.StatusOK, toContentBlockJSON(row))
+}
+
+func (d HandlerDeps) apiMedia(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := d.Queries.ListMedia(ctx)
+	if err != nil {
+		d.Logger.Error("list media failed", "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load media"})
+		return
+	}
+	items := make([]mediaJSON, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, toMediaJSON(row))
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"count": len(items),
+		"media": items,
+	})
+}

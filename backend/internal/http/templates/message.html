@@ -1,0 +1,34 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Message from {{.message.Name}}</h1>
+  <p class="muted"><a href="/super-admin/messages">← Back to messages</a></p>
+</header>
+
+{{if .message}}
+<section class="card message-detail">
+  <div class="message-meta">
+    <strong>{{.message.Name}}</strong>
+    <a href="mailto:{{.message.Email}}">{{.message.Email}}</a>
+    <span class="time">{{.message.ReceivedAt.Format "02 Jan 2006, 15:04"}}</span>
+    {{if .message.IsRead}}<span class="tag read">Read</span>{{else}}<span class="tag">New</span>{{end}}
+  </div>
+  <p class="message-body">{{.message.Message}}</p>
+  <div class="actions">
+    {{if .message.IsRead}}
+    <form method="post" action="/super-admin/messages/{{.message.ID}}/unread">
+      <button class="btn-sm" type="submit">Mark unread</button>
+    </form>
+    {{else}}
+    <form method="post" action="/super-admin/messages/{{.message.ID}}/read">
+      <button class="btn-sm" type="submit">Mark read</button>
+    </form>
+    {{end}}
+    <form method="post" action="/super-admin/messages/{{.message.ID}}/delete" onsubmit="return confirm('Delete this message?')">
+      <button class="btn-sm danger" type="submit">Delete</button>
+    </form>
+  </div>
+</section>
+{{else}}
+<p class="empty">Message not found.</p>
+{{end}}
+{{end}}

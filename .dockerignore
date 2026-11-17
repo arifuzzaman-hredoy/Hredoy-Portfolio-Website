@@ -13,7 +13,10 @@ build
 /dist
 /test-results
 /docs
-/template-source
+/frontend
+/tests
+/scripts
 /var
 **/*.log
 **/.DS_Store
+*.exe

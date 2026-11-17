@@ -1,0 +1,22 @@
+{{define "content"}}
+<div class="login-wrap">
+  <div class="card login-card">
+    <div class="brand">
+      <img src="/super-admin/static/brand-logo.png" alt="" width="34" height="34">
+      <span>Hredoy<span class="brand-sub">Admin</span></span>
+    </div>
+    {{if .error}}<p class="alert">{{.error}}</p>{{end}}
+    <form method="post" action="/super-admin/login" class="stack">
+      <label class="field">
+        <span>Username</span>
+        <input type="text" name="username" autocomplete="username" autofocus required>
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn" type="submit">Sign in</button>
+    </form>
+  </div>
+</div>
+{{end}}

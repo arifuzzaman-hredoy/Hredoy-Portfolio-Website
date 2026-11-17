@@ -24,7 +24,17 @@ coverage.out
 # Runtime data
 /.data/
 /var/media/
+/backend/uploads/
 
 # Editor and operating-system files
 .DS_Store
 Thumbs.db
+
+# Local editor settings
+.vscode/
+
+# Local editor settings
+.vscode/
+
+# Kilo agent local config
+.kilo/

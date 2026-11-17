@@ -1,0 +1,96 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Projects</h1>
+  <p class="muted">Manage the projects shown on your public portfolio.</p>
+</header>
+{{if .success}}<p class="alert success">Saved.</p>{{end}}
+{{if .error}}<p class="alert">Could not save the project. Check the title and try again.</p>{{end}}
+
+<section class="card stack">
+  <h2 class="card-title">Add project</h2>
+  <form method="post" action="/super-admin/projects/create" class="create-grid">
+    <label class="field">
+      <span>Title</span>
+      <input type="text" name="title" required>
+    </label>
+    <label class="field">
+      <span>Slug (optional)</span>
+      <input type="text" name="slug" placeholder="auto-generated">
+    </label>
+    <label class="field">
+      <span>Repo URL</span>
+      <input type="text" name="repo_url" placeholder="https://github.com/...">
+    </label>
+    <label class="field">
+      <span>Live URL</span>
+      <input type="text" name="live_url" placeholder="https://...">
+    </label>
+    <label class="field">
+      <span>Image path</span>
+      <input type="text" name="image_path" placeholder="/assets/imgs/portfolio/projects/....svg">
+    </label>
+    <label class="field">
+      <span>Tech (comma separated)</span>
+      <input type="text" name="tech" placeholder="Docker, AWS, Terraform">
+    </label>
+    <label class="field">
+      <span>Sort order</span>
+      <input type="number" name="sort_order" value="0">
+    </label>
+    <label class="field">
+      <span>Published</span>
+      <input type="checkbox" name="published" checked>
+    </label>
+    <button class="btn" type="submit">Add project</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Projects</h2>
+    <span class="muted">{{len .projects}} total</span>
+  </div>
+  {{if .projects}}
+  <div class="settings-list">
+    {{range .projects}}
+    <div class="setting-row">
+      <div style="flex:1 1 220px;">
+        <strong>{{.Title}}</strong>
+        <div class="muted" style="font-size:13px;">{{.Slug}}</div>
+        {{if .LiveURL}}<a href="{{.LiveURL}}" target="_blank" rel="noopener">Live →</a>{{end}}
+        {{if .RepoURL}} · <a href="{{.RepoURL}}" target="_blank" rel="noopener">Repo →</a>{{end}}
+        {{if .Published}}<span class="tag" style="margin-left:8px;">Published</span>{{else}}<span class="tag read" style="margin-left:8px;">Hidden</span>{{end}}
+      </div>
+      <form method="post" action="/super-admin/projects/delete" onsubmit="return confirm('Delete this project?')">
+        <input type="hidden" name="id" value="{{.ID}}">
+        <button class="btn-sm danger" type="submit">Delete</button>
+      </form>
+    </div>
+    <details class="edit-details">
+      <summary>Edit</summary>
+      <form method="post" action="/super-admin/projects/update" class="stack" style="padding:14px 0;">
+        <input type="hidden" name="id" value="{{.ID}}">
+        <div class="create-grid">
+          <label class="field"><span>Title</span><input type="text" name="title" value="{{.Title}}" required></label>
+          <label class="field"><span>Slug</span><input type="text" name="slug" value="{{.Slug}}"></label>
+          <label class="field"><span>Sort order</span><input type="number" name="sort_order" value="{{.SortOrder}}"></label>
+          <label class="field"><span>Published</span><input type="checkbox" name="published" {{if .Published}}checked{{end}}></label>
+        </div>
+        <label class="field"><span>Summary</span><textarea name="summary" rows="2">{{.Summary}}</textarea></label>
+        <label class="field"><span>Description</span><textarea name="description" rows="3">{{.Description}}</textarea></label>
+        <div class="create-grid">
+          <label class="field"><span>Tech</span><input type="text" name="tech" value="{{.Tech}}"></label>
+          <label class="field"><span>Repo URL</span><input type="text" name="repo_url" value="{{.RepoURL}}"></label>
+          <label class="field"><span>Live URL</span><input type="text" name="live_url" value="{{.LiveURL}}"></label>
+          <label class="field"><span>Image path</span><input type="text" name="image_path" value="{{.ImagePath}}"></label>
+        </div>
+        <button class="btn-sm" type="submit">Save changes</button>
+      </form>
+    </details>
+    {{end}}
+  </div>
+  {{else}}
+  <p class="empty">No projects yet.</p>
+  {{end}}
+</section>
+{{end}}
