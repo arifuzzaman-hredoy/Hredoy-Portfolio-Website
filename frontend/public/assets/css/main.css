@@ -38278,3 +38278,83 @@ body.at-magic-cursor #magic-cursor {
         height: 56px;
     }
 }
+
+/*----------------------------------------*/
+/*  Header 7 — page-load reveal
+/*----------------------------------------*/
+/* The brand logo ships with width/height attributes (added for CLS) but no CSS
+   size, so it renders at 256x256 until main.js applies data-width. That makes
+   the absolutely positioned bar ~268px tall on the first frame, which pushes
+   the desktop nav (centred at top:50%) down onto the hero. Size it in CSS so
+   the bar has its final height from the very first paint. */
+.header-7 .at-header-area .at-header-logo img {
+  width: 30px;
+  height: auto;
+}
+
+/* Hidden state — applied only when JS is available, so the no-JS fallback
+   keeps the navbar visible. */
+.has-js .header-7 .at-header-area {
+  opacity: 0;
+  translate: 0 -20px;
+  will-change: opacity, translate;
+}
+
+/* Reveal once the page has finished loading. */
+.has-js .header-7.nav-ready .at-header-area {
+  animation: nav-reveal-bar 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes nav-reveal-bar {
+  from {
+    opacity: 0;
+    translate: 0 -20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Stagger the menu items for a softer entrance. */
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li {
+  animation: nav-reveal-item 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li:nth-child(1) { animation-delay: 0.16s; }
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li:nth-child(2) { animation-delay: 0.23s; }
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li:nth-child(3) { animation-delay: 0.30s; }
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li:nth-child(4) { animation-delay: 0.37s; }
+.has-js .header-7.nav-ready #header7Nav > nav > ul > li:nth-child(5) { animation-delay: 0.44s; }
+
+@keyframes nav-reveal-item {
+  from {
+    opacity: 0;
+    translate: 0 -10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Drop every animation leftover once the sequence is done, so hover, dropdown
+   and any sticky/fixed behaviour keep working normally. */
+.has-js .header-7.nav-settled .at-header-area,
+.has-js .header-7.nav-settled #header7Nav > nav > ul > li {
+  animation: none;
+  opacity: 1;
+  translate: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-js .header-7 .at-header-area,
+  .has-js .header-7.nav-ready .at-header-area,
+  .has-js .header-7.nav-ready #header7Nav > nav > ul > li {
+    animation: none;
+    opacity: 1;
+    translate: none;
+    will-change: auto;
+  }
+}
