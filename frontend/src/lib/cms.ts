@@ -29,10 +29,11 @@ const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
 
-async function getJSON<T>(path: string, revalidate = 30): Promise<T | null> {
+async function getJSON<T>(path: string, revalidate = 60): Promise<T | null> {
   try {
     const res = await fetch(`${BACKEND_URL}${path}`, {
       next: { revalidate },
+      cache: "force-cache",
       headers: { Accept: "application/json" },
     });
     if (!res.ok) return null;

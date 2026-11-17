@@ -77,14 +77,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-bs-theme="dark" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href="/assets/css/vendors/bootstrap.min.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/carouselTicker.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/swiper-bundle.min.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/nice-select.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/font-awesome-pro.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/magnific-popup.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/odometer.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/spacing.css" />
+        <link rel="preload" href="/assets/css/vendors/bootstrap.min.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/carouselTicker.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/swiper-bundle.min.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/nice-select.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/font-awesome-pro.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/magnific-popup.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/odometer.css" as="style" />
+        <link rel="preload" href="/assets/css/vendors/spacing.css" as="style" />
         <link rel="stylesheet" href="/assets/css/main.css" />
         <script
           type="application/ld+json"
