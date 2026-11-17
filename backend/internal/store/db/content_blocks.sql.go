@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const deleteContentBlock = `-- name: DeleteContentBlock :exec
@@ -19,46 +21,76 @@ func (q *Queries) DeleteContentBlock(ctx context.Context, key string) error {
 }
 
 const getContentBlock = `-- name: GetContentBlock :one
-SELECT id, key, label, group_name, value, updated_at
+SELECT id, key, label, group_name, value, type, sort_order, default_value, updated_at
 FROM content_blocks
 WHERE key = $1
 `
 
-func (q *Queries) GetContentBlock(ctx context.Context, key string) (ContentBlock, error) {
+type GetContentBlockRow struct {
+	ID           pgtype.UUID
+	Key          string
+	Label        string
+	GroupName    string
+	Value        string
+	Type         string
+	SortOrder    int32
+	DefaultValue string
+	UpdatedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) GetContentBlock(ctx context.Context, key string) (GetContentBlockRow, error) {
 	row := q.db.QueryRow(ctx, getContentBlock, key)
-	var i ContentBlock
+	var i GetContentBlockRow
 	err := row.Scan(
 		&i.ID,
 		&i.Key,
 		&i.Label,
 		&i.GroupName,
 		&i.Value,
+		&i.Type,
+		&i.SortOrder,
+		&i.DefaultValue,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const listContentBlocks = `-- name: ListContentBlocks :many
-SELECT id, key, label, group_name, value, updated_at
+SELECT id, key, label, group_name, value, type, sort_order, default_value, updated_at
 FROM content_blocks
-ORDER BY group_name ASC, key ASC
+ORDER BY sort_order ASC, key ASC
 `
 
-func (q *Queries) ListContentBlocks(ctx context.Context) ([]ContentBlock, error) {
+type ListContentBlocksRow struct {
+	ID           pgtype.UUID
+	Key          string
+	Label        string
+	GroupName    string
+	Value        string
+	Type         string
+	SortOrder    int32
+	DefaultValue string
+	UpdatedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) ListContentBlocks(ctx context.Context) ([]ListContentBlocksRow, error) {
 	rows, err := q.db.Query(ctx, listContentBlocks)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ContentBlock
+	var items []ListContentBlocksRow
 	for rows.Next() {
-		var i ContentBlock
+		var i ListContentBlocksRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Key,
 			&i.Label,
 			&i.GroupName,
 			&i.Value,
+			&i.Type,
+			&i.SortOrder,
+			&i.DefaultValue,
 			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
@@ -69,6 +101,71 @@ func (q *Queries) ListContentBlocks(ctx context.Context) ([]ContentBlock, error)
 		return nil, err
 	}
 	return items, nil
+}
+
+const resetContentBlockToDefault = `-- name: ResetContentBlockToDefault :exec
+UPDATE content_blocks
+SET value = default_value, updated_at = NOW()
+WHERE key = $1
+`
+
+func (q *Queries) ResetContentBlockToDefault(ctx context.Context, key string) error {
+	_, err := q.db.Exec(ctx, resetContentBlockToDefault, key)
+	return err
+}
+
+const syncContentBlockMeta = `-- name: SyncContentBlockMeta :exec
+INSERT INTO content_blocks (key, label, group_name, value, type, sort_order, default_value)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (key) DO UPDATE
+SET label = EXCLUDED.label,
+    group_name = EXCLUDED.group_name,
+    type = EXCLUDED.type,
+    sort_order = EXCLUDED.sort_order,
+    default_value = EXCLUDED.default_value,
+    updated_at = NOW()
+`
+
+type SyncContentBlockMetaParams struct {
+	Key          string
+	Label        string
+	GroupName    string
+	Value        string
+	Type         string
+	SortOrder    int32
+	DefaultValue string
+}
+
+// SyncContentBlockMeta inserts manifest entries that do not exist yet and keeps
+// label/group/type/sort_order/default_value aligned with the code-owned
+// manifest. The owner-edited value is deliberately never touched here.
+func (q *Queries) SyncContentBlockMeta(ctx context.Context, arg SyncContentBlockMetaParams) error {
+	_, err := q.db.Exec(ctx, syncContentBlockMeta,
+		arg.Key,
+		arg.Label,
+		arg.GroupName,
+		arg.Value,
+		arg.Type,
+		arg.SortOrder,
+		arg.DefaultValue,
+	)
+	return err
+}
+
+const updateContentBlockValue = `-- name: UpdateContentBlockValue :exec
+UPDATE content_blocks
+SET value = $2, updated_at = NOW()
+WHERE key = $1
+`
+
+type UpdateContentBlockValueParams struct {
+	Key   string
+	Value string
+}
+
+func (q *Queries) UpdateContentBlockValue(ctx context.Context, arg UpdateContentBlockValueParams) error {
+	_, err := q.db.Exec(ctx, updateContentBlockValue, arg.Key, arg.Value)
+	return err
 }
 
 const upsertContentBlock = `-- name: UpsertContentBlock :exec

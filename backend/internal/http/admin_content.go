@@ -7,13 +7,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/mail"
+	"net/url"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/cmsgen"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -47,10 +49,17 @@ type mediaView struct {
 }
 
 type contentBlockView struct {
-	Key   string
-	Label string
-	Group string
-	Value string
+	Key       string
+	Label     string
+	Group     string
+	Value     string
+	Type      string
+	Default   string
+	Hint      string
+	SortOrder int32
+	InputType string
+	Multiline bool
+	Rows      int
 }
 
 type contentGroupView struct {
@@ -91,54 +100,6 @@ func toMediaViews(rows []db.Medium) []mediaView {
 		})
 	}
 	return views
-}
-
-var preferredGroups = []string{
-	"Hero", "About", "Stats", "Mission", "Skills", "Process",
-	"Call to action", "Who I Am", "Projects", "Contact", "Footer",
-}
-
-func groupContentBlocks(rows []db.ContentBlock) []contentGroupView {
-	rank := make(map[string]int, len(preferredGroups))
-	for i, name := range preferredGroups {
-		rank[name] = i
-	}
-
-	byGroup := make(map[string][]contentBlockView)
-	order := make([]string, 0)
-	for _, row := range rows {
-		group := strings.TrimSpace(row.GroupName)
-		if group == "" {
-			group = "general"
-		}
-		if _, ok := byGroup[group]; !ok {
-			order = append(order, group)
-		}
-		byGroup[group] = append(byGroup[group], contentBlockView{
-			Key:   row.Key,
-			Label: row.Label,
-			Group: group,
-			Value: row.Value,
-		})
-	}
-
-	sort.SliceStable(order, func(i, j int) bool {
-		ri, iok := rank[order[i]]
-		rj, jok := rank[order[j]]
-		if iok && jok {
-			return ri < rj
-		}
-		if iok != jok {
-			return iok
-		}
-		return order[i] < order[j]
-	})
-
-	groups := make([]contentGroupView, 0, len(order))
-	for _, name := range order {
-		groups = append(groups, contentGroupView{Name: name, Blocks: byGroup[name]})
-	}
-	return groups
 }
 
 // ---------------------------------------------------------------------------
@@ -461,9 +422,16 @@ func (d HandlerDeps) adminMediaDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 // ---------------------------------------------------------------------------
-// Content blocks
+// ---------------------------------------------------------------------------
+// Content blocks (manifest driven)
 // ---------------------------------------------------------------------------
 
+// maxContentValueLen bounds a single text block. It is a guard against
+// accidental pastes, not a real limit.
+const maxContentValueLen = 20000
+
+// adminContent renders the code-owned manifest as a grouped editor: one card
+// per manifest section, one typed input per key, in manifest order.
 func (d HandlerDeps) adminContent(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
@@ -476,35 +444,102 @@ func (d HandlerDeps) adminContent(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
+	values := make(map[string]string, len(rows))
+	for _, row := range rows {
+		values[row.Key] = row.Value
+	}
+
+	groups := make([]contentGroupView, 0, 16)
+	index := make(map[string]int, 16)
+	for _, entry := range cmsgen.Ordered() {
+		value, ok := values[entry.Key]
+		if !ok {
+			value = entry.Default
+		}
+		view := contentBlockView{
+			Key:       entry.Key,
+			Label:     entry.Label,
+			Group:     entry.Group,
+			Value:     value,
+			Type:      string(entry.Type),
+			Default:   entry.Default,
+			Hint:      entry.Hint,
+			SortOrder: entry.SortOrder,
+			InputType: "text",
+			Rows:      4,
+		}
+		switch entry.Type {
+		case cmsgen.TypeHTML, cmsgen.TypeRichText, cmsgen.TypeList:
+			view.Multiline = true
+		case cmsgen.TypeNumber:
+			view.InputType = "number"
+		case cmsgen.TypeURL:
+			view.InputType = "url"
+		case cmsgen.TypeEmail:
+			view.InputType = "email"
+		}
+
+		position, ok := index[entry.Group]
+		if !ok {
+			groups = append(groups, contentGroupView{Name: entry.Group})
+			position = len(groups) - 1
+			index[entry.Group] = position
+		}
+		groups[position].Blocks = append(groups[position].Blocks, view)
+	}
+
 	renderPage(w, r, "content", map[string]any{
 		"title":         "Content",
 		"authenticated": true,
 		"active":        "content",
 		"unread":        unread,
-		"groups":        groupContentBlocks(rows),
+		"groups":        groups,
 		"success":       r.URL.Query().Get("saved") == "1",
-		"error":         r.URL.Query().Get("error"),
+		"error":         contentSaveError(r.URL.Query().Get("error")),
 	})
 }
 
+// contentSaveError turns a redirect flag into a message the owner can act on.
+func contentSaveError(flag string) string {
+	switch flag {
+	case "":
+		return ""
+	case "number":
+		return "That field must be a whole number."
+	case "url":
+		return "That field must be a full http:// or https:// URL."
+	case "email":
+		return "That field must be a valid email address."
+	case "length":
+		return "That value is too long."
+	default:
+		return "Could not save. Check the value and try again."
+	}
+}
+
+// adminContentUpdate validates the submitted value against the manifest type
+// and stores it. The key must be a manifest key.
 func (d HandlerDeps) adminContentUpdate(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
 	key := strings.TrimSpace(r.FormValue("key"))
-	if key == "" {
-		http.Redirect(w, r, "/super-admin/content?error=key", http.StatusSeeOther)
+	entry, known := cmsgen.ByKey()[key]
+	if !known {
+		http.Redirect(w, r, "/super-admin/content?error=unknown", http.StatusSeeOther)
 		return
 	}
-	value := r.FormValue("value")
+
+	value, flag := validateContentValue(entry, r.FormValue("value"))
+	if flag != "" {
+		http.Redirect(w, r, "/super-admin/content?error="+flag, http.StatusSeeOther)
+		return
+	}
 
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
-	if err := d.Queries.UpsertContentBlock(ctx, db.UpsertContentBlockParams{
-		Key:   key,
-		Value: value,
-	}); err != nil {
+	if err := d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{Key: key, Value: value}); err != nil {
 		d.Logger.Error("update content block failed", "key", key, "error", err)
 		http.Redirect(w, r, "/super-admin/content?error=failed", http.StatusSeeOther)
 		return
@@ -512,58 +547,64 @@ func (d HandlerDeps) adminContentUpdate(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, "/super-admin/content?saved=1", http.StatusSeeOther)
 }
 
-func (d HandlerDeps) adminContentCreate(w http.ResponseWriter, r *http.Request) {
+// validateContentValue trims and checks a value against the entry type. It
+// returns the value to store and a non-empty flag when the value is rejected.
+func validateContentValue(entry cmsgen.Entry, value string) (string, string) {
+	switch entry.Type {
+	case cmsgen.TypeNumber:
+		value = strings.TrimSpace(value)
+		if value == "" {
+			return "", "number"
+		}
+		if _, err := strconv.ParseInt(value, 10, 64); err != nil {
+			return "", "number"
+		}
+	case cmsgen.TypeURL:
+		value = strings.TrimSpace(value)
+		if value != "" {
+			parsed, err := url.Parse(value)
+			if err != nil || parsed.Host == "" || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+				return "", "url"
+			}
+		}
+	case cmsgen.TypeEmail:
+		value = strings.TrimSpace(value)
+		if value != "" {
+			if _, err := mail.ParseAddress(value); err != nil {
+				return "", "email"
+			}
+		}
+	default:
+		if len(value) > maxContentValueLen {
+			return "", "length"
+		}
+	}
+	return value, ""
+}
+
+// adminContentReset restores a field to its manifest default. The public page
+// then renders the template markup again, which is the same value.
+func (d HandlerDeps) adminContentReset(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
 	key := strings.TrimSpace(r.FormValue("key"))
-	if key == "" {
-		http.Redirect(w, r, "/super-admin/content?error=key", http.StatusSeeOther)
+	if _, known := cmsgen.ByKey()[key]; !known {
+		http.Redirect(w, r, "/super-admin/content?error=unknown", http.StatusSeeOther)
 		return
 	}
-	group := strings.TrimSpace(r.FormValue("group"))
-	if group == "" {
-		group = "general"
-	}
-	label := strings.TrimSpace(r.FormValue("label"))
-	if label == "" {
-		label = key
-	}
-
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
-	if err := d.Queries.UpsertContentBlock(ctx, db.UpsertContentBlockParams{
-		Key:       key,
-		Label:     label,
-		GroupName: group,
-		Value:     strings.TrimSpace(r.FormValue("value")),
-	}); err != nil {
-		d.Logger.Error("create content block failed", "key", key, "error", err)
+	if err := d.Queries.ResetContentBlockToDefault(ctx, key); err != nil {
+		d.Logger.Error("reset content block failed", "key", key, "error", err)
 		http.Redirect(w, r, "/super-admin/content?error=failed", http.StatusSeeOther)
 		return
 	}
 	http.Redirect(w, r, "/super-admin/content?saved=1", http.StatusSeeOther)
 }
 
-func (d HandlerDeps) adminContentDelete(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "invalid form", http.StatusBadRequest)
-		return
-	}
-	key := strings.TrimSpace(r.FormValue("key"))
-	if key == "" {
-		http.Redirect(w, r, "/super-admin/content", http.StatusSeeOther)
-		return
-	}
-	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
-	defer cancel()
-	if err := d.Queries.DeleteContentBlock(ctx, key); err != nil {
-		d.Logger.Error("delete content block failed", "key", key, "error", err)
-	}
-	http.Redirect(w, r, "/super-admin/content", http.StatusSeeOther)
-}
-
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------

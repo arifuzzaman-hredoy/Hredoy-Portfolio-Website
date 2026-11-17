@@ -127,53 +127,137 @@ func TestAdminContentUpdate(t *testing.T) {
 	if loc := rr.Header().Get("Location"); loc != "/super-admin/content?saved=1" {
 		t.Fatalf("location = %q", loc)
 	}
-	if len(store.upsertedContent) != 1 {
-		t.Fatalf("upsertedContent = %d, want 1", len(store.upsertedContent))
+	if len(store.updatedContent) != 1 {
+		t.Fatalf("updatedContent = %d, want 1", len(store.updatedContent))
 	}
-	if store.upsertedContent[0].Key != "hero.desc" || store.upsertedContent[0].Value != "Updated hero text." {
-		t.Fatalf("upsert = %+v", store.upsertedContent[0])
+	if store.updatedContent[0].Key != "hero.desc" || store.updatedContent[0].Value != "Updated hero text." {
+		t.Fatalf("update = %+v", store.updatedContent[0])
 	}
 }
 
-func TestAdminContentCreate(t *testing.T) {
+func TestAdminContentUpdateRejectsUnknownKey(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
-	form := urlForm{"key": "hero.cta.2", "label": "Second CTA", "group": "Hero", "value": "Contact me"}
-	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/create", form.body())
+	form := urlForm{"key": "not.a.real.key", "value": "x"}
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/update", form.body())
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
-	deps.adminContentCreate(rr, req)
+	deps.adminContentUpdate(rr, req)
+
+	if loc := rr.Header().Get("Location"); loc != "/super-admin/content?error=unknown" {
+		t.Fatalf("location = %q", loc)
+	}
+	if len(store.updatedContent) != 0 {
+		t.Fatal("unknown key must not be stored")
+	}
+}
+
+func TestAdminContentUpdateValidatesNumber(t *testing.T) {
+	for _, value := range []string{"abc", "  ", "1.5"} {
+		store := &fakeStore{}
+		deps := testDeps(store)
+
+		form := urlForm{"key": "stats.tools.value", "value": value}
+		req := httptest.NewRequest(http.MethodPost, "/super-admin/content/update", form.body())
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		rr := httptest.NewRecorder()
+
+		deps.adminContentUpdate(rr, req)
+
+		if loc := rr.Header().Get("Location"); loc != "/super-admin/content?error=number" {
+			t.Fatalf("value %q: location = %q", value, loc)
+		}
+		if len(store.updatedContent) != 0 {
+			t.Fatalf("value %q must not be stored", value)
+		}
+	}
+}
+
+func TestAdminContentUpdateAcceptsValidNumber(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	form := urlForm{"key": "stats.tools.value", "value": "25"}
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/update", form.body())
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	deps.adminContentUpdate(rr, req)
 
 	if loc := rr.Header().Get("Location"); loc != "/super-admin/content?saved=1" {
 		t.Fatalf("location = %q", loc)
 	}
-	if len(store.upsertedContent) != 1 {
-		t.Fatalf("upsertedContent = %d, want 1", len(store.upsertedContent))
-	}
-	got := store.upsertedContent[0]
-	if got.Key != "hero.cta.2" || got.GroupName != "Hero" || got.Label != "Second CTA" {
-		t.Fatalf("upsert = %+v", got)
+	if len(store.updatedContent) != 1 || store.updatedContent[0].Value != "25" {
+		t.Fatalf("updatedContent = %+v", store.updatedContent)
 	}
 }
 
-func TestAdminContentDelete(t *testing.T) {
+func TestAdminContentReset(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
 	form := urlForm{"key": "footer.tagline"}
-	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/delete", form.body())
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/reset", form.body())
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
-	deps.adminContentDelete(rr, req)
+	deps.adminContentReset(rr, req)
 
-	if loc := rr.Header().Get("Location"); loc != "/super-admin/content" {
+	if loc := rr.Header().Get("Location"); loc != "/super-admin/content?saved=1" {
 		t.Fatalf("location = %q", loc)
 	}
-	if len(store.deletedContent) != 1 || store.deletedContent[0] != "footer.tagline" {
-		t.Fatalf("deletedContent = %v", store.deletedContent)
+	if len(store.resetContent) != 1 || store.resetContent[0] != "footer.tagline" {
+		t.Fatalf("resetContent = %v", store.resetContent)
+	}
+}
+
+func TestAdminContentResetRejectsUnknownKey(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	form := urlForm{"key": "nope.nope"}
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/content/reset", form.body())
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+
+	deps.adminContentReset(rr, req)
+
+	if loc := rr.Header().Get("Location"); loc != "/super-admin/content?error=unknown" {
+		t.Fatalf("location = %q", loc)
+	}
+	if len(store.resetContent) != 0 {
+		t.Fatal("unknown key must not be reset")
+	}
+}
+
+func TestAdminContentPageRendersManifest(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	req := httptest.NewRequest(http.MethodGet, "/super-admin/content", nil)
+	rr := httptest.NewRecorder()
+	deps.adminContent(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("status = %d", rr.Code)
+	}
+	body := rr.Body.String()
+	for _, want := range []string{
+		"<h2>SEO</h2>",
+		"<h2>Navbar</h2>",
+		"<h2>Hero</h2>",
+		"<h2>Footer</h2>",
+		`type="number"`,
+		`name="value"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("content page is missing %q", want)
+		}
+	}
+	if strings.Contains(body, "Add content block") {
+		t.Fatal("manifest keys are code-owned; the free-form add form must be gone")
 	}
 }
 
@@ -267,9 +351,9 @@ func TestAPIProjectBySlugNotFound(t *testing.T) {
 }
 
 func TestAPIContent(t *testing.T) {
-	store := &fakeStore{contentBlocks: []db.ContentBlock{
-		{Key: "hero.desc", Label: "Hero description", GroupName: "Hero", Value: "Hello"},
-		{Key: "footer.tagline", Label: "Tagline", GroupName: "Footer", Value: "Ops"},
+	store := &fakeStore{contentBlocks: []db.ListContentBlocksRow{
+		{Key: "hero.desc", Label: "Hero description", GroupName: "Hero", Value: "Hello", Type: "text", SortOrder: 5, DefaultValue: "Default hero"},
+		{Key: "footer.tagline", Label: "Tagline", GroupName: "Footer", Value: "Ops", Type: "text", SortOrder: 90, DefaultValue: "Default tagline"},
 	}}
 	deps := testDeps(store)
 
@@ -281,14 +365,18 @@ func TestAPIContent(t *testing.T) {
 		t.Fatalf("status = %d", rr.Code)
 	}
 	var body struct {
-		Count  int               `json:"count"`
-		Values map[string]string `json:"values"`
+		Count    int               `json:"count"`
+		Values   map[string]string `json:"values"`
+		Defaults map[string]string `json:"defaults"`
 	}
 	if err := json.Unmarshal(rr.Body.Bytes(), &body); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
 	if body.Count != 2 || body.Values["hero.desc"] != "Hello" || body.Values["footer.tagline"] != "Ops" {
 		t.Fatalf("unexpected body: %s", rr.Body.String())
+	}
+	if body.Defaults["hero.desc"] != "Default hero" || body.Defaults["footer.tagline"] != "Default tagline" {
+		t.Fatalf("defaults missing: %s", rr.Body.String())
 	}
 }
 

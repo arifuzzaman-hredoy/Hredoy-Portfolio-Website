@@ -12,12 +12,16 @@ export type ContentBlock = {
   label: string;
   group: string;
   value: string;
+  type: string;
+  sort_order: number;
+  default: string;
 };
 
 export type ContentPayload = {
   count: number;
   blocks: ContentBlock[];
   values: Record<string, string>;
+  defaults: Record<string, string>;
 };
 
 export type ProjectsPayload = {
@@ -52,11 +56,12 @@ export async function getContent(): Promise<ContentPayload> {
   "use cache";
   cacheLife("minutes");
   const data = await getJSON<ContentPayload>("/api/v1/content");
-  if (!data) return { count: 0, blocks: [], values: {} };
+  if (!data) return { count: 0, blocks: [], values: {}, defaults: {} };
   return {
     count: data.count ?? data.blocks?.length ?? 0,
     blocks: data.blocks ?? [],
     values: data.values ?? {},
+    defaults: data.defaults ?? {},
   };
 }
 

@@ -13,7 +13,12 @@ export default async function Home() {
   return (
     <>
       <ScriptLoader />
-      <HomeContent content={content.values} projects={projects} images={images} />
+      <HomeContent
+        content={content.values}
+        defaults={content.defaults}
+        projects={projects}
+        images={images}
+      />
       <SiteInteractions />
     </>
   );

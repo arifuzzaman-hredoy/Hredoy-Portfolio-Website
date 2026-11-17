@@ -42,9 +42,11 @@ type Store interface {
 	CreateMedia(ctx context.Context, arg db.CreateMediaParams) (db.Medium, error)
 	UpdateMediaAlt(ctx context.Context, arg db.UpdateMediaAltParams) error
 	DeleteMedia(ctx context.Context, id pgtype.UUID) error
-	ListContentBlocks(ctx context.Context) ([]db.ContentBlock, error)
-	GetContentBlock(ctx context.Context, key string) (db.ContentBlock, error)
+	ListContentBlocks(ctx context.Context) ([]db.ListContentBlocksRow, error)
+	GetContentBlock(ctx context.Context, key string) (db.GetContentBlockRow, error)
 	UpsertContentBlock(ctx context.Context, arg db.UpsertContentBlockParams) error
+	UpdateContentBlockValue(ctx context.Context, arg db.UpdateContentBlockValueParams) error
+	ResetContentBlockToDefault(ctx context.Context, key string) error
 	DeleteContentBlock(ctx context.Context, key string) error
 	ListSiteImages(ctx context.Context) ([]db.SiteImage, error)
 	GetSiteImage(ctx context.Context, key string) (db.SiteImage, error)

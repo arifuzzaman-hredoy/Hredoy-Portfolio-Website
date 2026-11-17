@@ -95,6 +95,7 @@ a:hover { text-decoration: underline; }
 .content.with-sidebar { margin-left: 240px; }
 .page-head h1 { margin: 0 0 4px; font-size: 28px; }
 .muted { color: var(--muted); }
+.hint { color: var(--muted); font-size: 12px; }
 
 .card {
   background: var(--panel);

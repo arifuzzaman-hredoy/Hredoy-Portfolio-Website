@@ -19,12 +19,15 @@ type ContactMessage struct {
 }
 
 type ContentBlock struct {
-	ID        pgtype.UUID
-	Key       string
-	Label     string
-	GroupName string
-	Value     string
-	UpdatedAt pgtype.Timestamptz
+	ID           pgtype.UUID
+	Key          string
+	Label        string
+	GroupName    string
+	Value        string
+	UpdatedAt    pgtype.Timestamptz
+	Type         string
+	SortOrder    int32
+	DefaultValue string
 }
 
 type Medium struct {

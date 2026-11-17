@@ -41,8 +41,10 @@ type fakeStore struct {
 	createdMedia    []db.CreateMediaParams
 	updatedMediaAlt []db.UpdateMediaAltParams
 	deletedMedia    []string
-	contentBlocks   []db.ContentBlock
+	contentBlocks   []db.ListContentBlocksRow
 	upsertedContent []db.UpsertContentBlockParams
+	updatedContent  []db.UpdateContentBlockValueParams
+	resetContent    []string
 	deletedContent  []string
 	siteImages      []db.SiteImage
 	updatedImgURL   []db.UpdateSiteImageURLParams
@@ -208,23 +210,47 @@ func (f *fakeStore) DeleteMedia(_ context.Context, id pgtype.UUID) error {
 	return nil
 }
 
-func (f *fakeStore) ListContentBlocks(_ context.Context) ([]db.ContentBlock, error) {
+func (f *fakeStore) ListContentBlocks(_ context.Context) ([]db.ListContentBlocksRow, error) {
 	return f.contentBlocks, nil
 }
 
-func (f *fakeStore) GetContentBlock(_ context.Context, key string) (db.ContentBlock, error) {
+func (f *fakeStore) GetContentBlock(_ context.Context, key string) (db.GetContentBlockRow, error) {
 	for _, b := range f.contentBlocks {
 		if b.Key == key {
-			return b, nil
+			return db.GetContentBlockRow{
+				ID:           b.ID,
+				Key:          b.Key,
+				Label:        b.Label,
+				GroupName:    b.GroupName,
+				Value:        b.Value,
+				Type:         b.Type,
+				SortOrder:    b.SortOrder,
+				DefaultValue: b.DefaultValue,
+				UpdatedAt:    b.UpdatedAt,
+			}, nil
 		}
 	}
-	return db.ContentBlock{}, pgx.ErrNoRows
+	return db.GetContentBlockRow{}, pgx.ErrNoRows
 }
 
 func (f *fakeStore) UpsertContentBlock(_ context.Context, arg db.UpsertContentBlockParams) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.upsertedContent = append(f.upsertedContent, arg)
+	return nil
+}
+
+func (f *fakeStore) UpdateContentBlockValue(_ context.Context, arg db.UpdateContentBlockValueParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.updatedContent = append(f.updatedContent, arg)
+	return nil
+}
+
+func (f *fakeStore) ResetContentBlockToDefault(_ context.Context, key string) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.resetContent = append(f.resetContent, key)
 	return nil
 }
 

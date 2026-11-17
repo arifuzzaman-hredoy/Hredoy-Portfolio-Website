@@ -1617,12 +1617,13 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
 type HomeContentProps = {
   content?: Record<string, string>;
+  defaults?: Record<string, string>;
   projects?: Project[];
   images?: Record<string, string>;
 };
 
-export default function HomeContent({ content, projects, images }: HomeContentProps) {
-  let html = applyCMSContent(BODY_HTML, content ?? {}, projects ?? []);
+export default function HomeContent({ content, defaults, projects, images }: HomeContentProps) {
+  let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? []);
   html = applySiteImages(html, images ?? {});
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

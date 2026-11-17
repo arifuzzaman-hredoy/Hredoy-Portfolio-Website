@@ -11,10 +11,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/cmsgen"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/config"
 	postgresdb "github.com/arifuzzaman-hredoy/portfolio/internal/db"
 	portfoliohttp "github.com/arifuzzaman-hredoy/portfolio/internal/http"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/logging"
+	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/golang-migrate/migrate/v4"
 	migratepgx "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -38,6 +40,13 @@ func Run(ctx context.Context, cfg *config.Config) error {
 		return fmt.Errorf("connect db: %w", err)
 	}
 	defer pool.Close()
+
+	// Keep content_blocks aligned with the code-owned manifest. A failure here
+	// only degrades the admin Content page (the public page falls back to the
+	// template defaults), so it must not take the whole app down.
+	if err := cmsgen.Sync(ctx, db.New(pool)); err != nil {
+		logger.Warn("content manifest sync failed", "error", err)
+	}
 
 	router := portfoliohttp.NewRouter(cfg, logger, pool)
 	server := &http.Server{

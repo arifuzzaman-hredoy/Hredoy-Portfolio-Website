@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { getSiteImages } from "@/lib/cms";
+import { getContent, getSiteImages } from "@/lib/cms";
 import "./globals.css";
 
 const SITE_URL = "https://oxytumzone.com";
@@ -7,6 +7,7 @@ const SITE_NAME = "Hredoy's Portfolio";
 const SITE_TITLE = "Hredoy's Portfolio — Junior DevOps Engineer";
 const SITE_DESCRIPTION =
   "Arifuzzaman Hredoy — Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code.";
+const SITE_KEYWORDS = ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"];
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -65,16 +66,23 @@ const NAVBAR_REVEAL_BOOT = `(function () {
 })();`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const images = await getSiteImages();
+  const [images, content] = await Promise.all([getSiteImages(), getContent()]);
   const ogImage = images["og-image"] || DEFAULT_OG_IMAGE;
   const favicon = images["favicon"] || DEFAULT_FAVICON;
   const appleIcon = images["apple-touch-icon"] || DEFAULT_APPLE_ICON;
 
+  const title = content.values["seo.title"]?.trim() || SITE_TITLE;
+  const description = content.values["seo.description"]?.trim() || SITE_DESCRIPTION;
+  const keywords = (content.values["seo.keywords"] ?? SITE_KEYWORDS.join(", "))
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+
   return {
     metadataBase: new URL(SITE_URL),
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    keywords: ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"],
+    title,
+    description,
+    keywords,
     authors: [{ name: "Arifuzzaman Hredoy", url: SITE_URL }],
     creator: "Arifuzzaman Hredoy",
     alternates: { canonical: "/" },

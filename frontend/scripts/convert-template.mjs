@@ -1,3 +1,21 @@
+// ⚠️ REGENERATION WARNING — READ BEFORE RUNNING THIS SCRIPT
+//
+// This script rebuilds src/components/public/HomeContent.tsx from the original
+// Orisa template HTML. The output is a plain markup dump: it does NOT know about
+// the CMS wiring in src/lib/cms-render.ts.
+//
+// If you regenerate HomeContent.tsx:
+//   1. Every rule in cms-render.ts matches literal markup (class names, text,
+//      attribute values). Any markup the generator changes will silently break
+//      that rule — the CMS value will no longer be applied and the page will
+//      fall back to the hardcoded text.
+//   2. The responsive hero badge markup (sec-1-home-7__proof / __tags) and the
+//      brand-logo dark-mode rules live in the generator's REPLACEMENTS list;
+//      regenerating from a fresh template will drop them.
+//
+// Prefer editing HomeContent.tsx and the generator together. After any
+// regeneration, diff the output and re-check every cms-render.ts rule.
+
 import fs from "node:fs";
 
 const SRC = process.argv[2];

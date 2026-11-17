@@ -33,10 +33,13 @@ type projectJSON struct {
 }
 
 type contentBlockJSON struct {
-	Key   string `json:"key"`
-	Label string `json:"label"`
-	Group string `json:"group"`
-	Value string `json:"value"`
+	Key       string `json:"key"`
+	Label     string `json:"label"`
+	Group     string `json:"group"`
+	Value     string `json:"value"`
+	Type      string `json:"type"`
+	SortOrder int32  `json:"sort_order"`
+	Default   string `json:"default"`
 }
 
 type mediaJSON struct {
@@ -83,12 +86,15 @@ func toProjectJSONs(rows []db.Project) []projectJSON {
 	return views
 }
 
-func toContentBlockJSON(row db.ContentBlock) contentBlockJSON {
+func toContentBlockJSON(key, label, group, value, blockType string, sortOrder int32, defaultValue string) contentBlockJSON {
 	return contentBlockJSON{
-		Key:   row.Key,
-		Label: row.Label,
-		Group: row.GroupName,
-		Value: row.Value,
+		Key:       key,
+		Label:     label,
+		Group:     group,
+		Value:     value,
+		Type:      blockType,
+		SortOrder: sortOrder,
+		Default:   defaultValue,
 	}
 }
 
@@ -176,14 +182,19 @@ func (d HandlerDeps) apiContent(w http.ResponseWriter, r *http.Request) {
 	}
 	blocks := make([]contentBlockJSON, 0, len(rows))
 	values := make(map[string]string, len(rows))
+	defaults := make(map[string]string, len(rows))
 	for _, row := range rows {
-		blocks = append(blocks, toContentBlockJSON(row))
+		blocks = append(blocks, toContentBlockJSON(
+			row.Key, row.Label, row.GroupName, row.Value, row.Type, row.SortOrder, row.DefaultValue,
+		))
 		values[row.Key] = row.Value
+		defaults[row.Key] = row.DefaultValue
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"count":  len(blocks),
-		"blocks": blocks,
-		"values": values,
+		"count":    len(blocks),
+		"blocks":   blocks,
+		"values":   values,
+		"defaults": defaults,
 	})
 }
 
@@ -210,7 +221,9 @@ func (d HandlerDeps) apiContentKey(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load content"})
 		return
 	}
-	writeJSON(w, http.StatusOK, toContentBlockJSON(row))
+	writeJSON(w, http.StatusOK, toContentBlockJSON(
+		row.Key, row.Label, row.GroupName, row.Value, row.Type, row.SortOrder, row.DefaultValue,
+	))
 }
 
 func (d HandlerDeps) apiMedia(w http.ResponseWriter, r *http.Request) {
