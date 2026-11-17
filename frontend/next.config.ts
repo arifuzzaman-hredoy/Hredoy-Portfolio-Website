@@ -19,9 +19,17 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Cache static assets aggressively to speed up repeat visits. Assets use
-  // fixed URLs (no content hashing), so max-age is capped at 1 day with
-  // stale-while-revalidate to pick up updates in the background.
+  // Cache policy for /assets/*. These URLs are not content-hashed, so a long
+  // max-age keeps serving the previous design after a deploy until every browser
+  // and every Cloudflare edge node expires its own copy.
+  //
+  //   css, js and the unversioned images/fonts -> revalidate every time
+  //   versioned artwork (imgs/hero-tools/*-v<N>.svg) -> immutable
+  //
+  // Revalidation is cheap: the origin answers 304 when the file is unchanged, so
+  // a repeat visit costs one conditional request instead of a full download.
+  // Next.js applies these in order and the last match wins, so the catch-all
+  // comes first and the two specific rules below it.
   async headers() {
     return [
       {
@@ -29,7 +37,38 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=86400, stale-while-revalidate=604800",
+            value: "public, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        // imgs/hero-tools holds the five tech marks, each published with a -v<N>
+        // suffix (docker-v3.svg), so the URL changes whenever the artwork does.
+        // Only add files here with that suffix, otherwise a content change would
+        // be pinned for a year.
+        source: "/assets/imgs/hero-tools/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/assets/css/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/assets/js/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
           },
         ],
       },
