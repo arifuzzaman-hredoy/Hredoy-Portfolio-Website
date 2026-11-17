@@ -1,0 +1,40 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Dashboard</h1>
+  <p class="muted">Overview of your portfolio inbox and site content.</p>
+</header>
+
+<section class="stats">
+  <div class="card stat">
+    <span class="stat-value">{{.unread}}</span>
+    <span class="stat-label">Unread messages</span>
+  </div>
+  <div class="card stat">
+    <span class="stat-value">{{.total}}</span>
+    <span class="stat-label">Total messages</span>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Recent messages</h2>
+    <a class="link" href="/super-admin/messages">View all →</a>
+  </div>
+  {{if .recent}}
+  <ul class="message-list">
+    {{range .recent}}
+    <li class="message-item {{if not .IsRead}}unread{{end}}">
+      <div class="message-meta">
+        <a href="/super-admin/messages/{{.ID}}"><strong>{{.Name}}</strong></a>
+        <span class="muted">&lt;{{.Email}}&gt;</span>
+        <span class="time">{{.ReceivedAt.Format "02 Jan 2006, 15:04"}}</span>
+      </div>
+      <p class="message-body">{{.Message}}</p>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="empty">No messages yet.</p>
+  {{end}}
+</section>
+{{end}}

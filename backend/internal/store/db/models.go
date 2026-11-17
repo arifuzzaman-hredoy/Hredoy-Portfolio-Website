@@ -18,6 +18,42 @@ type ContactMessage struct {
 	ReadAt     pgtype.Timestamptz
 }
 
+type ContentBlock struct {
+	ID        pgtype.UUID
+	Key       string
+	Label     string
+	GroupName string
+	Value     string
+	UpdatedAt pgtype.Timestamptz
+}
+
+type Medium struct {
+	ID         pgtype.UUID
+	Filename   string
+	StoredName string
+	Path       string
+	Mime       string
+	Size       int64
+	Alt        string
+	CreatedAt  pgtype.Timestamptz
+}
+
+type Project struct {
+	ID          pgtype.UUID
+	Title       string
+	Slug        string
+	Summary     string
+	Description string
+	Tech        string
+	RepoUrl     string
+	LiveUrl     string
+	ImagePath   string
+	SortOrder   int32
+	Published   bool
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
 type SiteSetting struct {
 	ID        int32
 	Key       string

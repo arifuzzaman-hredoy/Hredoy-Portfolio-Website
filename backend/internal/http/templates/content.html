@@ -1,0 +1,50 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Content</h1>
+  <p class="muted">Editable text blocks that power the public page.</p>
+</header>
+{{if .success}}<p class="alert success">Saved.</p>{{end}}
+{{if .error}}<p class="alert">Could not save. Check the key and try again.</p>{{end}}
+
+<section class="card stack">
+  <h2 class="card-title">Add content block</h2>
+  <form method="post" action="/super-admin/content/create" class="create-grid">
+    <label class="field"><span>Key</span><input type="text" name="key" placeholder="hero.headline.4" required></label>
+    <label class="field"><span>Label</span><input type="text" name="label" placeholder="Hero headline line 4"></label>
+    <label class="field"><span>Group</span><input type="text" name="group" placeholder="Hero"></label>
+    <label class="field"><span>Value</span><input type="text" name="value"></label>
+    <button class="btn" type="submit">Add block</button>
+  </form>
+</section>
+
+{{range .groups}}
+<section class="card">
+  <div class="card-head">
+    <h2>{{.Name}}</h2>
+    <span class="muted">{{len .Blocks}} blocks</span>
+  </div>
+  <div class="settings-list">
+    {{range .Blocks}}
+    <div class="setting-row">
+      <form method="post" action="/super-admin/content/update" class="setting-form">
+        <input type="hidden" name="key" value="{{.Key}}">
+        <label class="field">
+          <span class="key">{{.Label}}{{if ne .Label .Key}} <span class="muted">· {{.Key}}</span>{{end}}</span>
+          {{if gt (len .Value) 80}}
+          <textarea name="value" rows="4">{{.Value}}</textarea>
+          {{else}}
+          <input type="text" name="value" value="{{.Value}}">
+          {{end}}
+        </label>
+        <button class="btn-sm" type="submit">Save</button>
+      </form>
+      <form method="post" action="/super-admin/content/delete" onsubmit="return confirm('Delete this content block?')">
+        <input type="hidden" name="key" value="{{.Key}}">
+        <button class="btn-sm danger" type="submit">Delete</button>
+      </form>
+    </div>
+    {{end}}
+  </div>
+</section>
+{{end}}
+{{end}}
