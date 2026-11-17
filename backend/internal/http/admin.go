@@ -16,6 +16,7 @@ type messageView struct {
 	ID         string
 	Name       string
 	Email      string
+	Subject    string
 	Message    string
 	IsRead     bool
 	ReceivedAt time.Time
@@ -27,6 +28,7 @@ func toMessageView(row db.ContactMessage) messageView {
 		ID:         uuidToString(row.ID),
 		Name:       row.Name,
 		Email:      row.Email,
+		Subject:    row.Subject,
 		Message:    row.Message,
 		IsRead:     row.IsRead,
 		ReceivedAt: row.ReceivedAt.Time,

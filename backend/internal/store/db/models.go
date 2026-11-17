@@ -16,6 +16,7 @@ type ContactMessage struct {
 	IsRead     bool
 	ReceivedAt pgtype.Timestamptz
 	ReadAt     pgtype.Timestamptz
+	Subject    string
 }
 
 type ContentBlock struct {

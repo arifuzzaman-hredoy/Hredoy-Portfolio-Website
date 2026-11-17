@@ -29,6 +29,7 @@
         <span class="muted">&lt;{{.Email}}&gt;</span>
         <span class="time">{{.ReceivedAt.Format "02 Jan 2006, 15:04"}}</span>
       </div>
+      {{if .Subject}}<strong class="msg-subject">{{.Subject}}</strong>{{end}}
       <p class="message-body">{{.Message}}</p>
     </li>
     {{end}}

@@ -11,6 +11,7 @@
     <a href="mailto:{{.message.Email}}">{{.message.Email}}</a>
     <span class="time">{{.message.ReceivedAt.Format "02 Jan 2006, 15:04"}}</span>
     {{if .message.IsRead}}<span class="tag read">Read</span>{{else}}<span class="tag">New</span>{{end}}
+    {{if .message.Subject}}<strong class="detail-label">Subject</strong><span>{{.message.Subject}}</span>{{end}}
   </div>
   <p class="message-body">{{.message.Message}}</p>
   <div class="actions">

@@ -15,8 +15,8 @@
 ## Hard Rules
 - **Honest Content Only**: Never add fake metrics, clients, awards, or unconfirmed projects.
 - **Workflow**: Plan -> User explicit approval -> Small phase execution -> Short report -> STOP.
-- **Branching & PRs**: One branch per phase, small atomic commits, all tests/CI green before merging.
-- **Protection**: Never touch `.git` or `docs/` without explicit task instructions. Never delete files outside exact task scope. No secrets in repo. Never push to `main` directly.
+- **Branching & PRs**: Work on `main` only — no feature branches, no pull requests. Commit and push directly to `main`. Small atomic commits, and only push once the build, lint and Go tests pass.
+- **Protection**: Never touch `.git` or `docs/` without explicit task instructions. Never delete files outside exact task scope. No secrets in repo.
 
 ## Repository Layout
 - `frontend/`: Next.js application (React + TypeScript). `app/` (routes/layouts), `src/components/public/` (`HomeContent.tsx`, `ScriptLoader.tsx`), `public/assets/` (css, js, fonts, imgs), `scripts/` (`convert-template.mjs` generator + verification tools), `package.json`.

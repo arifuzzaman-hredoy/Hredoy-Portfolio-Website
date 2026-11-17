@@ -1,15 +1,13 @@
 -- name: CreateContactMessage :exec
-INSERT INTO contact_messages (id, name, email, message)
-VALUES (gen_random_uuid(), $1, $2, $3);
+INSERT INTO contact_messages (id, name, email, subject, message)
+VALUES (gen_random_uuid(), $1, $2, $3, $4);
 
 -- name: ListContactMessages :many
-SELECT id, name, email, message, is_read, received_at, read_at
-FROM contact_messages
+SELECT * FROM contact_messages
 ORDER BY received_at DESC;
 
 -- name: GetContactMessage :one
-SELECT id, name, email, message, is_read, received_at, read_at
-FROM contact_messages
+SELECT * FROM contact_messages
 WHERE id = $1;
 
 -- name: MarkContactMessageRead :exec

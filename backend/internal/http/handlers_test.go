@@ -337,10 +337,12 @@ func TestContactValidation(t *testing.T) {
 		form  urlForm
 		field string
 	}{
-		{"short name", urlForm{"name": "A", "email": "a@b.com", "message": "valid message here"}, "name"},
-		{"bad email", urlForm{"name": "Jane Doe", "email": "not-an-email", "message": "valid message here"}, "email"},
-		{"empty email", urlForm{"name": "Jane Doe", "email": "", "message": "valid message here"}, "email"},
-		{"short message", urlForm{"name": "Jane Doe", "email": "a@b.com", "message": "short"}, "message"},
+		{"short name", urlForm{"name": "A", "email": "a@b.com", "subject": "Project inquiry", "message": "valid message here"}, "name"},
+		{"bad email", urlForm{"name": "Jane Doe", "email": "not-an-email", "subject": "Project inquiry", "message": "valid message here"}, "email"},
+		{"empty email", urlForm{"name": "Jane Doe", "email": "", "subject": "Project inquiry", "message": "valid message here"}, "email"},
+		{"short message", urlForm{"name": "Jane Doe", "email": "a@b.com", "subject": "Project inquiry", "message": "short"}, "message"},
+		{"empty subject", urlForm{"name": "Jane Doe", "email": "a@b.com", "subject": "", "message": "valid message here"}, "subject"},
+		{"long subject", urlForm{"name": "Jane Doe", "email": "a@b.com", "subject": strings.Repeat("x", 201), "message": "valid message here"}, "subject"},
 	}
 
 	for _, tc := range cases {
@@ -380,7 +382,7 @@ func TestContactSuccessJSON(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
-	payload := contactRequest{Name: "Jane Doe", Email: "jane@example.com", Message: "This is a perfectly valid message."}
+	payload := contactRequest{Name: "Jane Doe", Email: "jane@example.com", Subject: "Project inquiry", Message: "This is a perfectly valid message."}
 	body, _ := json.Marshal(payload)
 	req := httptest.NewRequest(http.MethodPost, "/contact", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
@@ -403,7 +405,7 @@ func TestContactSuccessForm(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
-	form := urlForm{"name": "Jane Doe", "email": "jane@example.com", "message": "This is a perfectly valid message."}
+	form := urlForm{"name": "Jane Doe", "email": "jane@example.com", "subject": "Project inquiry", "message": "This is a perfectly valid message."}
 	req := httptest.NewRequest(http.MethodPost, "/contact", form.body())
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
@@ -422,7 +424,7 @@ func TestContactStoreError(t *testing.T) {
 	store := &fakeStore{createErr: io.ErrClosedPipe}
 	deps := testDeps(store)
 
-	form := urlForm{"name": "Jane Doe", "email": "jane@example.com", "message": "This is a perfectly valid message."}
+	form := urlForm{"name": "Jane Doe", "email": "jane@example.com", "subject": "Project inquiry", "message": "This is a perfectly valid message."}
 	req := httptest.NewRequest(http.MethodPost, "/contact", form.body())
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()

@@ -23,18 +23,24 @@ func (q *Queries) CountUnreadContactMessages(ctx context.Context) (int64, error)
 }
 
 const createContactMessage = `-- name: CreateContactMessage :exec
-INSERT INTO contact_messages (id, name, email, message)
-VALUES (gen_random_uuid(), $1, $2, $3)
+INSERT INTO contact_messages (id, name, email, subject, message)
+VALUES (gen_random_uuid(), $1, $2, $3, $4)
 `
 
 type CreateContactMessageParams struct {
 	Name    string
 	Email   string
+	Subject string
 	Message string
 }
 
 func (q *Queries) CreateContactMessage(ctx context.Context, arg CreateContactMessageParams) error {
-	_, err := q.db.Exec(ctx, createContactMessage, arg.Name, arg.Email, arg.Message)
+	_, err := q.db.Exec(ctx, createContactMessage,
+		arg.Name,
+		arg.Email,
+		arg.Subject,
+		arg.Message,
+	)
 	return err
 }
 
@@ -48,8 +54,7 @@ func (q *Queries) DeleteContactMessage(ctx context.Context, id pgtype.UUID) erro
 }
 
 const getContactMessage = `-- name: GetContactMessage :one
-SELECT id, name, email, message, is_read, received_at, read_at
-FROM contact_messages
+SELECT id, name, email, message, is_read, received_at, read_at, subject FROM contact_messages
 WHERE id = $1
 `
 
@@ -64,13 +69,13 @@ func (q *Queries) GetContactMessage(ctx context.Context, id pgtype.UUID) (Contac
 		&i.IsRead,
 		&i.ReceivedAt,
 		&i.ReadAt,
+		&i.Subject,
 	)
 	return i, err
 }
 
 const listContactMessages = `-- name: ListContactMessages :many
-SELECT id, name, email, message, is_read, received_at, read_at
-FROM contact_messages
+SELECT id, name, email, message, is_read, received_at, read_at, subject FROM contact_messages
 ORDER BY received_at DESC
 `
 
@@ -91,6 +96,7 @@ func (q *Queries) ListContactMessages(ctx context.Context) ([]ContactMessage, er
 			&i.IsRead,
 			&i.ReceivedAt,
 			&i.ReadAt,
+			&i.Subject,
 		); err != nil {
 			return nil, err
 		}

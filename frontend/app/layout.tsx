@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { getContent, getSiteImages } from "@/lib/cms";
+import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
 import "./globals.css";
 
 const SITE_URL = "https://oxytumzone.com";
@@ -9,33 +9,35 @@ const SITE_DESCRIPTION =
   "Arifuzzaman Hredoy — Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code.";
 const SITE_KEYWORDS = ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Person",
-      "@id": `${SITE_URL}/#person`,
-      name: "Arifuzzaman Hredoy",
-      url: SITE_URL,
-      jobTitle: "Junior DevOps Engineer",
-      description: SITE_DESCRIPTION,
-      email: "mailto:arifuzzamanhredoy@gmail.com",
-      sameAs: [
-        "https://github.com/arifuzzaman-hredoy",
-        "https://www.linkedin.com/in/arifuzzaman-hredoy/",
-      ],
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${SITE_URL}/#website`,
-      url: SITE_URL,
-      name: SITE_NAME,
-      description: SITE_DESCRIPTION,
-      inLanguage: "en",
-      publisher: { "@id": `${SITE_URL}/#person` },
-    },
-  ],
-};
+// The person behind the site comes from site_settings, so the owner edits it in
+// one place. name, jobTitle, email and sameAs are the only fields the JSON-LD
+// block needs; the description stays on the SEO content block.
+function buildStructuredData(identity: Record<string, string>) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${SITE_URL}/#person`,
+        name: identity.owner_name,
+        url: SITE_URL,
+        jobTitle: identity.role,
+        description: SITE_DESCRIPTION,
+        email: `mailto:${identity.email}`,
+        sameAs: [identity.github, identity.linkedin],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: SITE_NAME,
+        description: SITE_DESCRIPTION,
+        inLanguage: "en",
+        publisher: { "@id": `${SITE_URL}/#person` },
+      },
+    ],
+  };
+}
 
 const DEFAULT_OG_IMAGE = "https://res.cloudinary.com/dvatduo79/image/upload/og/og-home.png";
 const DEFAULT_FAVICON = "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png";
@@ -66,7 +68,11 @@ const NAVBAR_REVEAL_BOOT = `(function () {
 })();`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [images, content] = await Promise.all([getSiteImages(), getContent()]);
+  const [images, content, identity] = await Promise.all([
+    getSiteImages(),
+    getContent(),
+    getSiteSettings(),
+  ]);
   const ogImage = images["og-image"] || DEFAULT_OG_IMAGE;
   const favicon = images["favicon"] || DEFAULT_FAVICON;
   const appleIcon = images["apple-touch-icon"] || DEFAULT_APPLE_ICON;
@@ -83,8 +89,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     keywords,
-    authors: [{ name: "Arifuzzaman Hredoy", url: SITE_URL }],
-    creator: "Arifuzzaman Hredoy",
+    authors: [{ name: identity.owner_name, url: SITE_URL }],
+    creator: identity.owner_name,
     alternates: { canonical: "/" },
     openGraph: {
       title: SITE_TITLE,
@@ -116,7 +122,9 @@ export const viewport: Viewport = {
   themeColor: "#0f766e",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const identity = await getSiteSettings();
+
   return (
     <html lang="en" data-bs-theme="dark" suppressHydrationWarning>
       <head>
@@ -136,7 +144,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+            __html: JSON.stringify(buildStructuredData(identity)).replace(/</g, "\\u003c"),
           }}
         />
       </head>

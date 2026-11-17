@@ -322,9 +322,14 @@ const component = `"use client";
 // original markup exactly (identical design + animations).
 // Regenerate with: node scripts/convert-template.mjs
 //
-// Phase 2: CMS-managed values (content blocks + projects) are injected at
-// render time by applyCMSContent; the static markup below is the fallback.
-// Phase 3: CMS-managed image URLs are injected by applySiteImages.
+// Phase 2: CMS-managed values (content blocks + projects + owner identity) are
+// injected at render time by applyCMSContent; the static markup below is the
+// fallback. Phase 3: CMS-managed image URLs and alt text are injected by
+// applySiteImages.
+//
+// Regenerating this file drops the extra props below (defaults, imageAlts,
+// identity) because the generator has no way to know about them. Re-add them
+// after regenerating, or the CMS silently stops applying.
 
 import { applyCMSContent, applySiteImages, type Project } from "@/lib/cms-render";
 
@@ -332,13 +337,23 @@ const BODY_HTML = \`${escaped}\`;
 
 type HomeContentProps = {
   content?: Record<string, string>;
+  defaults?: Record<string, string>;
   projects?: Project[];
   images?: Record<string, string>;
+  imageAlts?: Record<string, string>;
+  identity?: Record<string, string>;
 };
 
-export default function HomeContent({ content, projects, images }: HomeContentProps) {
-  let html = applyCMSContent(BODY_HTML, content ?? {}, projects ?? []);
-  html = applySiteImages(html, images ?? {});
+export default function HomeContent({
+  content,
+  defaults,
+  projects,
+  images,
+  imageAlts,
+  identity,
+}: HomeContentProps) {
+  let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
+  html = applySiteImages(html, images ?? {}, imageAlts ?? {});
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 `;

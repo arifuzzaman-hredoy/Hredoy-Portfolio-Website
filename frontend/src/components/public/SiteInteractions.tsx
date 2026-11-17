@@ -2,8 +2,6 @@
 
 import { useEffect } from "react";
 
-const CONTACT_EMAIL = "arifuzzamanhredoy@gmail.com";
-
 const ROUTES: Array<{ pattern: RegExp; target: string }> = [
   { pattern: /^index(?:-.*)?(?:-dark)?\.html$/, target: "#" },
   { pattern: /^about(?:-.*)?\.html$/, target: ".sec-2-home-7" },
@@ -43,7 +41,9 @@ function scrollToTarget(target: string) {
   }
 }
 
-export default function SiteInteractions() {
+// Unhandled ".html" links are legacy template URLs; they fall back to the
+// owner's email, which comes from site_settings via the server component.
+export default function SiteInteractions({ contactEmail }: { contactEmail: string }) {
   useEffect(() => {
     function handleClick(event: MouseEvent) {
       if (event.defaultPrevented) return;
@@ -68,12 +68,12 @@ export default function SiteInteractions() {
         return;
       }
 
-      window.location.href = `mailto:${CONTACT_EMAIL}`;
+      window.location.href = `mailto:${contactEmail}`;
     }
 
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
-  }, []);
+  }, [contactEmail]);
 
   return null;
 }

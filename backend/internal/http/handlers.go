@@ -102,6 +102,7 @@ func (d HandlerDeps) readyz(w http.ResponseWriter, r *http.Request) {
 type contactRequest struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
+	Subject string `json:"subject"`
 	Message string `json:"message"`
 	Website string `json:"website"` // honeypot anti-spam field
 }
@@ -134,6 +135,7 @@ func (d HandlerDeps) contact(w http.ResponseWriter, r *http.Request) {
 		}
 		req.Name = strings.TrimSpace(r.FormValue("name"))
 		req.Email = strings.TrimSpace(r.FormValue("email"))
+		req.Subject = strings.TrimSpace(r.FormValue("subject"))
 		req.Message = strings.TrimSpace(r.FormValue("message"))
 		req.Website = strings.TrimSpace(r.FormValue("website"))
 	}
@@ -146,6 +148,7 @@ func (d HandlerDeps) contact(w http.ResponseWriter, r *http.Request) {
 
 	req.Name = strings.TrimSpace(req.Name)
 	req.Email = strings.TrimSpace(req.Email)
+	req.Subject = strings.TrimSpace(req.Subject)
 	req.Message = strings.TrimSpace(req.Message)
 
 	if field, msg := validateContact(req); field != "" {
@@ -159,6 +162,7 @@ func (d HandlerDeps) contact(w http.ResponseWriter, r *http.Request) {
 	err := d.Queries.CreateContactMessage(ctx, db.CreateContactMessageParams{
 		Name:    req.Name,
 		Email:   req.Email,
+		Subject: req.Subject,
 		Message: req.Message,
 	})
 	if err != nil {
@@ -185,6 +189,10 @@ func validateContact(req contactRequest) (field, message string) {
 	msgLen := utf8.RuneCountInString(req.Message)
 	if msgLen < 10 || msgLen > 5000 {
 		return "message", "message must be between 10 and 5000 characters"
+	}
+	subjectLen := utf8.RuneCountInString(req.Subject)
+	if subjectLen < 2 || subjectLen > 200 {
+		return "subject", "subject must be between 2 and 200 characters"
 	}
 	return "", ""
 }
@@ -232,21 +240,58 @@ func (d HandlerDeps) sitemap(w http.ResponseWriter, _ *http.Request) {
 `, d.SiteURL)
 }
 
-func (d HandlerDeps) llms(w http.ResponseWriter, _ *http.Request) {
+func (d HandlerDeps) llms(w http.ResponseWriter, r *http.Request) {
+	identity := d.identity(r.Context())
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	_, _ = fmt.Fprintf(w, `# %s
 
-> Personal portfolio of Arifuzzaman Hredoy, a Junior DevOps Engineer based in Rangpur, Bangladesh.
+> Personal portfolio of %s, a %s based in %s.
 
 ## Highlights
 - Focused on Linux, Docker, Kubernetes, AWS, Terraform, and CI/CD.
 - Skills: Linux systems administration, containerization, cloud architecture, infrastructure as code, automation, and version control.
 
+## Bio
+%s
+
 ## Links
-- GitHub: https://github.com/arifuzzaman-hredoy
-- LinkedIn: https://www.linkedin.com/in/arifuzzaman-hredoy/
-- Email: arifuzzamanhredoy@gmail.com
-`, strings.TrimSpace(d.SiteURL))
+- GitHub: %s
+- LinkedIn: %s
+- Email: %s
+`, identity["owner_name"], identity["owner_name"], identity["role"], identity["location"], identity["bio"], identity["github"], identity["linkedin"], identity["email"])
+}
+
+// identity returns the owner profile from site_settings, falling back to the
+// built-in defaults when a row is missing so the SEO endpoints keep working.
+func (d HandlerDeps) identity(ctx context.Context) map[string]string {
+	values := map[string]string{
+		"owner_name": "Arifuzzaman Hredoy",
+		"role":       "Junior DevOps Engineer",
+		"email":      "arifuzzamanhredoy@gmail.com",
+		"github":     "https://github.com/arifuzzaman-hredoy",
+		"linkedin":   "https://www.linkedin.com/in/arifuzzaman-hredoy/",
+		"location":   "Rangpur, Bangladesh",
+		"bio":        "Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code.",
+	}
+	if d.Queries == nil {
+		return values
+	}
+	rows, err := d.Queries.GetSiteSettings(ctx)
+	if err != nil {
+		d.Logger.Warn("could not load site settings for llms.txt; using defaults", "error", err)
+		return values
+	}
+	for _, row := range rows {
+		value := strings.TrimSpace(row.Value)
+		if value == "" {
+			continue
+		}
+		if _, known := values[row.Key]; known {
+			values[row.Key] = value
+		}
+	}
+	return values
 }
 
 // ---------------------------------------------------------------------------

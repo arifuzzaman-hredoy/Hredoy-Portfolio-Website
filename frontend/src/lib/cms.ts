@@ -39,6 +39,18 @@ export type SiteImagesPayload = {
   urls: Record<string, string>;
 };
 
+// Owner identity as stored in site_settings. The fallbacks mirror the values the
+// template shipped with, so a missing row never changes the rendered page.
+export const SITE_SETTINGS_DEFAULTS: Record<string, string> = {
+  owner_name: "Arifuzzaman Hredoy",
+  role: "Junior DevOps Engineer",
+  email: "arifuzzamanhredoy@gmail.com",
+  github: "https://github.com/arifuzzaman-hredoy",
+  linkedin: "https://www.linkedin.com/in/arifuzzaman-hredoy/",
+  location: "Rangpur, Bangladesh",
+  bio: "Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code. I build reliable, automated, production-ready systems.",
+};
+
 const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
@@ -84,4 +96,25 @@ export async function getSiteImages(): Promise<Record<string, string>> {
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   return data?.urls ?? {};
+}
+
+// Alt text for every CMS-managed image slot. Kept separate from
+// getSiteImages so the existing URL call sites stay untouched.
+export async function getSiteImageAlts(): Promise<Record<string, string>> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
+  const alts: Record<string, string> = {};
+  for (const image of data?.images ?? []) alts[image.key] = image.alt;
+  return alts;
+}
+
+// Owner identity used by the metadata, the JSON-LD block and the contact links.
+export async function getSiteSettings(): Promise<Record<string, string>> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const data = await getJSON<Record<string, string>>("/api/v1/site-settings");
+  return { ...SITE_SETTINGS_DEFAULTS, ...(data ?? {}) };
 }

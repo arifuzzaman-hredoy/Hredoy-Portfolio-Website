@@ -13,7 +13,7 @@
       {{range .messages}}
       <tr class="{{if not .IsRead}}unread{{end}}">
         <td class="from-col"><a href="/super-admin/messages/{{.ID}}"><strong>{{.Name}}</strong></a><br><span class="muted">{{.Email}}</span></td>
-        <td class="msg-col">{{.Message}}</td>
+        <td class="msg-col">{{if .Subject}}<strong class="msg-subject">{{.Subject}}</strong>{{end}}<div class="msg-preview">{{.Message}}</div></td>
         <td class="time">{{.ReceivedAt.Format "02 Jan 2006, 15:04"}}</td>
         <td>{{if .IsRead}}<span class="tag read">Read</span>{{else}}<span class="tag">New</span>{{end}}</td>
         <td class="actions">

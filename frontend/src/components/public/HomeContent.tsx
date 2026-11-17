@@ -1620,10 +1620,19 @@ type HomeContentProps = {
   defaults?: Record<string, string>;
   projects?: Project[];
   images?: Record<string, string>;
+  imageAlts?: Record<string, string>;
+  identity?: Record<string, string>;
 };
 
-export default function HomeContent({ content, defaults, projects, images }: HomeContentProps) {
-  let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? []);
-  html = applySiteImages(html, images ?? {});
+export default function HomeContent({
+  content,
+  defaults,
+  projects,
+  images,
+  imageAlts,
+  identity,
+}: HomeContentProps) {
+  let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
+  html = applySiteImages(html, images ?? {}, imageAlts ?? {});
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

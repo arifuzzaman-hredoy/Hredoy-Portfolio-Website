@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   }
 
   const body = new URLSearchParams();
-  for (const key of ["name", "email", "message"]) {
+  for (const key of ["name", "email", "subject", "message"]) {
     body.set(key, String(form.get(key) ?? "").trim());
   }
 

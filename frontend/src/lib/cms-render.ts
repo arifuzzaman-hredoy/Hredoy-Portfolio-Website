@@ -487,8 +487,83 @@ function applyRule(html: string, rule: Rule, values: ContentMap, defaults: Conte
   }
 }
 
+// Owner details exactly as they appear in the template markup. These mirror the
+// seed in database/migrations/002_seed_site_settings.up.sql, so a setting the
+// owner has not touched is a no-op and the render stays byte-identical.
+const IDENTITY_DEFAULTS = {
+  owner_name: "Arifuzzaman Hredoy",
+  role: "Junior DevOps Engineer",
+  email: "arifuzzamanhredoy@gmail.com",
+  github: "https://github.com/arifuzzaman-hredoy",
+  linkedin: "https://www.linkedin.com/in/arifuzzaman-hredoy/",
+  location: "Rangpur, Bangladesh",
+  bio: "Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code. I build reliable, automated, production-ready systems.",
+};
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// "https://www.linkedin.com/in/user/" -> "linkedin.com/in/user"
+function bareHost(value: string): string {
+  return value.replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/+$/, "");
+}
+
 /**
- * Apply CMS content values and project overrides to the template HTML.
+ * Rewrite a profile URL wherever it appears. Inside href="..." the match is
+ * preceded by the opening quote, so the full URL is used there; in visible text
+ * the scheme-free form reads better. The match stops at the profile itself, so
+ * repository links that carry a "/<repo>" suffix are never rewritten.
+ */
+function replaceProfileLink(html: string, defaultUrl: string, value: string): string {
+  const host = escapeRegExp(bareHost(defaultUrl));
+  const pattern = new RegExp(
+    `(?:https?:\\/\\/)?(?:www\\.)?${host}(?:\\/(?![\\w-])|(?![\\/\\w-]))`,
+    "g",
+  );
+
+  return html.replace(pattern, (_match, offset: number) => {
+    const inAttribute = html[offset - 1] === '"';
+    return escapeHTML(inAttribute ? value : bareHost(value));
+  });
+}
+
+/**
+ * Replace the hardcoded owner details with the values from site_settings. Only
+ * applied when a value differs from the built-in default, so the render stays
+ * byte-identical until the owner edits a setting.
+ */
+export function applyIdentity(html: string, identity: Record<string, string>): string {
+  let out = html;
+
+  const put = (key: keyof typeof IDENTITY_DEFAULTS, value: string | undefined) => {
+    const next = value?.trim();
+    if (!next || next === IDENTITY_DEFAULTS[key]) return;
+    out = out.split(IDENTITY_DEFAULTS[key]).join(escapeHTML(next));
+  };
+
+  put("owner_name", identity.owner_name);
+  put("role", identity.role);
+  put("location", identity.location);
+  put("bio", identity.bio);
+  put("email", identity.email);
+
+  const github = identity.github?.trim();
+  if (github && github !== IDENTITY_DEFAULTS.github) {
+    out = replaceProfileLink(out, IDENTITY_DEFAULTS.github, github);
+  }
+
+  const linkedin = identity.linkedin?.trim();
+  if (linkedin && linkedin !== IDENTITY_DEFAULTS.linkedin) {
+    out = replaceProfileLink(out, IDENTITY_DEFAULTS.linkedin, linkedin);
+  }
+
+  return out;
+}
+
+/**
+ * Apply CMS content values, owner identity and project overrides to the
+ * template HTML.
  *
  * Values that are missing or equal to the manifest default leave the markup
  * untouched, so the static render is always the fallback.
@@ -498,8 +573,9 @@ export function applyCMSContent(
   content: ContentMap,
   defaults: ContentMap = {},
   projects: Project[] = [],
+  identity: Record<string, string> = {},
 ): string {
-  let out = html;
+  let out = applyIdentity(html, identity);
   for (const rule of RULES) {
     out = applyRule(out, rule, content, defaults);
   }
@@ -511,35 +587,90 @@ export function applyCMSContent(
 // Projects
 // ---------------------------------------------------------------------------
 
-/**
- * Replace an <img> src URL in template HTML using a unique anchor substring.
- * `anchor` is the substring that appears in the original tag; `replacement`
- * is what remains after removing the src attribute. The function injects
- * src="…" right after the anchor prefix (i.e. right after replacement).
- */
-function replaceImageSrc(html: string, anchor: string, replacement: string, newUrl: string): string {
-  const index = html.indexOf(anchor);
-  if (index === -1) return html;
-  const end = index + anchor.length;
-  const before = html.slice(0, index);
-  const after = html.slice(end);
-  const injected = replacement ? `${replacement} src="${newUrl}"` : `src="${newUrl}"`;
-  return before + injected + after;
+// Default URL of every CMS-managed image slot, exactly as it appears in the
+// template markup. Keys match the site_images table so the admin screen and the
+// renderer always agree on which slot is which. Slots that render no <img>
+// (favicon, og-image, apple-touch-icon) are metadata and are not listed here.
+export const SITE_IMAGE_DEFAULTS: Record<string, string> = {
+  "brand-logo": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png",
+  "hero-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp",
+  "star-asterisk": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg",
+  "avatar-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg",
+  "avatar-docker": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg",
+  "avatar-aws": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg",
+  "avatar-github-actions": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg",
+  "avatar-terraform": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg",
+  "about-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-linux.svg",
+  "about-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cloud.svg",
+  "about-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cicd.svg",
+  "slider-1-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg",
+  "slider-2-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg",
+  "slider-3-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg",
+  "slider-4-monitoring": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-4-monitoring.svg",
+  "slider-5-security": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg",
+  "mission-learning-path": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg",
+  "skills-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg",
+  "process-1-fundamentals": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg",
+  "process-2-practice": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg",
+  "process-3-projects": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg",
+  "process-4-improvement": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg",
+  "cta-connect": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/cta-connect.svg",
+  "who-i-am-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/who-i-am-portrait.jpg",
+  "sec7-rotating": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg",
+  "sec4-pin-icon": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg",
+  "marquee-star": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg",
+  "sec7-plus": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg",
+  "sec7-btn-arrow": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-btn-arrow.svg",
+  "sec7-eyebrow-arrow": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-eyebrow-arrow.svg",
+};
+
+// setImageAttr replaces or appends one attribute on an <img> tag. The
+// replacement is a function so a value containing "$" is inserted literally.
+function setImageAttr(tag: string, name: string, value: string): string {
+  const pattern = new RegExp("\\s" + name + '="[^"]*"');
+  if (pattern.test(tag)) return tag.replace(pattern, () => " " + name + '="' + value + '"');
+  return tag.replace(/\s*\/?>$/, (closing) => " " + name + '="' + value + '"' + closing);
 }
 
 /**
- * Apply CMS image URL overrides to template HTML. Only replaces an <img> src
- * when the CMS returns a URL that differs from the built-in default.
+ * Apply CMS image URLs and alt text to template HTML. Each <img> is matched to
+ * a site_images slot by the src it already has, so the admin screen and the
+ * renderer cannot drift apart. A slot is only rewritten when the CMS value
+ * differs from the template default, which keeps the render byte-identical
+ * until an admin edits something.
+ *
+ * An empty alt never overrides the markup: decorative images are better served
+ * by the template's own alt than by a blank CMS field.
  */
-export function applySiteImages(html: string, images: Record<string, string>): string {
-  let out = html;
-  for (const [key, swap] of Object.entries(IMAGE_SRC_SWAPS)) {
+export function applySiteImages(
+  html: string,
+  images: Record<string, string>,
+  alts: Record<string, string> = {},
+): string {
+  const keyBySrc = new Map<string, string>();
+  for (const [key, src] of Object.entries(SITE_IMAGE_DEFAULTS)) keyBySrc.set(src, key);
+
+  return html.replace(/<img\b[^>]*>/g, (tag) => {
+    const src = tag.match(/\ssrc="([^"]*)"/)?.[1];
+    if (!src) return tag;
+    const key = keyBySrc.get(src);
+    if (!key) return tag;
+
+    let out = tag;
+
     const url = images[key]?.trim();
-    if (!url) continue;
-    if (url === SITE_IMAGE_DEFAULTS[key]) continue;
-    out = replaceImageSrc(out, swap.anchor, swap.replacement, escapeHTML(url));
-  }
-  return out;
+    if (url && url !== SITE_IMAGE_DEFAULTS[key]) {
+      out = setImageAttr(out, "src", escapeHTML(url));
+    }
+
+    const alt = alts[key]?.trim();
+    if (alt) {
+      const current = out.match(/\salt="([^"]*)"/)?.[1];
+      if (current !== escapeHTML(alt)) out = setImageAttr(out, "alt", escapeHTML(alt));
+    }
+
+    return out;
+  });
 }
 
 function renderFeaturedCard(project: Project): string {
@@ -600,150 +731,3 @@ export function applyProjects(html: string, projects: Project[]): string {
 
   return out;
 }
-
-// ---------------------------------------------------------------------------
-// Site images
-// ---------------------------------------------------------------------------
-
-// Default image URLs used until the CMS row is populated. These mirror the
-// paths currently hardcoded in HomeContent.tsx / layout.tsx.
-export const SITE_IMAGE_DEFAULTS: Record<string, string> = {
-  "brand-logo": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/logo/logo-white.png",
-  "hero-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp",
-  "star-asterisk": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg",
-  "avatar-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/hero-tools/linux.svg",
-  "avatar-docker": "/assets/imgs/hero-tools/docker-v3.svg",
-  "avatar-aws": "/assets/imgs/hero-tools/aws-v3.svg",
-  "avatar-github-actions": "/assets/imgs/hero-tools/github-actions-v3.svg",
-  "avatar-terraform": "/assets/imgs/hero-tools/terraform-v3.svg",
-  "about-img-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-linux.svg",
-  "about-img-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cloud.svg",
-  "about-img-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cicd.svg",
-  "slider-1-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg",
-  "slider-2-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg",
-  "slider-3-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg",
-  "slider-4-monitoring": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-4-monitoring.svg",
-  "slider-5-security": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg",
-  "mission-learning-path": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg",
-  "skills-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg",
-  "process-1-fundamentals": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg",
-  "process-2-practice": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg",
-  "process-3-projects": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg",
-  "process-4-improvement": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg",
-  "cta-connect": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/cta-connect.svg",
-  "cta-star": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg",
-  "whoami-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/who-i-am-portrait.jpg",
-  "og-image": "https://res.cloudinary.com/dvatduo79/image/upload/og/og-home.png",
-  "favicon": "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png",
-  "apple-touch-icon": "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png",
-  "mission-pin-icon": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg",
-};
-
-// Map of CMS site_images key -> the unique surrounding substring used to swap
-// an <img>'s src attribute value in the template HTML.
-const IMAGE_SRC_SWAPS: Record<string, { anchor: string; replacement: string }> = {
-  "brand-logo": {
-    anchor: 'class="brand-logo" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/logo/logo-white.png"',
-    replacement: 'class="brand-logo"',
-  },
-  "hero-portrait": {
-    anchor: 'class="sec-1-home-7__img" width="1024" height="1053" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp"',
-    replacement: 'class="sec-1-home-7__img" width="1024" height="1053"',
-  },
-  "star-asterisk": {
-    anchor: 'class="at-scroll-rotate" data-rotate-duration="18" data-rotate-sensitivity="0.18" data-rotate-boost="12" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg"',
-    replacement: 'class="at-scroll-rotate" data-rotate-duration="18" data-rotate-sensitivity="0.18" data-rotate-boost="12"',
-  },
-  "avatar-linux": {
-    anchor: 'width="36" height="36" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/hero-tools/linux.svg" alt="Linux"',
-    replacement: 'width="36" height="36" alt="Linux"',
-  },
-  "avatar-docker": {
-    anchor: 'width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker"',
-    replacement: 'width="36" height="36" alt="Docker"',
-  },
-  "avatar-aws": {
-    anchor: 'width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS"',
-    replacement: 'width="36" height="36" alt="AWS"',
-  },
-  "avatar-github-actions": {
-    anchor: 'width="36" height="36" src="/assets/imgs/hero-tools/github-actions-v3.svg" alt="GitHub Actions"',
-    replacement: 'width="36" height="36" alt="GitHub Actions"',
-  },
-  "avatar-terraform": {
-    anchor: 'width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform"',
-    replacement: 'width="36" height="36" alt="Terraform"',
-  },
-  "about-img-linux": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-linux.svg" alt="Linux terminal showing server commands" width="1000" height="1080"',
-    replacement: 'alt="Linux terminal showing server commands" width="1000" height="1080"',
-  },
-  "about-img-cloud": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cloud.svg" alt="Cloud with server stack illustration" width="1000" height="1080"',
-    replacement: 'alt="Cloud with server stack illustration" width="1000" height="1080"',
-  },
-  "about-img-cicd": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cicd.svg" alt="CI/CD pipeline stages illustration" width="1000" height="1080"',
-    replacement: 'alt="CI/CD pipeline stages illustration" width="1000" height="1080"',
-  },
-  "slider-1-linux": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg" alt="Linux server session"',
-    replacement: 'alt="Linux server session"',
-  },
-  "slider-2-cloud": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg" alt="Cloud infrastructure"',
-    replacement: 'alt="Cloud infrastructure"',
-  },
-  "slider-3-cicd": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg" alt="CI/CD pipeline"',
-    replacement: 'alt="CI/CD pipeline"',
-  },
-  "slider-4-monitoring": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-4-monitoring.svg" alt="Monitoring dashboard chart"',
-    replacement: 'alt="Monitoring dashboard chart"',
-  },
-  "slider-5-security": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg" alt="Security shield"',
-    replacement: 'alt="Security shield"',
-  },
-  "mission-learning-path": {
-    anchor: 'class="sec-4-home-7__img fix anim-zoomin" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg"',
-    replacement: 'class="sec-4-home-7__img fix anim-zoomin"',
-  },
-  "skills-linux": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg" alt="Linux" class="w-100 h-100 object-fit-cover"',
-    replacement: 'alt="Linux" class="w-100 h-100 object-fit-cover"',
-  },
-  "process-1-fundamentals": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg" alt="Learn Fundamentals"',
-    replacement: 'alt="Learn Fundamentals"',
-  },
-  "process-2-practice": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg" alt="Hands-on Practice"',
-    replacement: 'alt="Hands-on Practice"',
-  },
-  "process-3-projects": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg" alt="Project Development"',
-    replacement: 'alt="Project Development"',
-  },
-  "process-4-improvement": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg" alt="Continuous Improvement"',
-    replacement: 'alt="Continuous Improvement"',
-  },
-  "cta-connect": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/cta-connect.svg" alt="Network of DevOps tools connected around Hredoy"',
-    replacement: 'alt="Network of DevOps tools connected around Hredoy"',
-  },
-  "cta-star": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg"',
-    replacement: "",
-  },
-  "whoami-portrait": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/who-i-am-portrait.jpg"',
-    replacement: "",
-  },
-  "mission-pin-icon": {
-    anchor: 'src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg"',
-    replacement: "",
-  },
-};
