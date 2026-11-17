@@ -40,6 +40,30 @@ const DEFAULT_OG_IMAGE = "https://res.cloudinary.com/dvatduo79/image/upload/og/o
 const DEFAULT_FAVICON = "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png";
 const DEFAULT_APPLE_ICON = "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png";
 
+// Runs before first paint: flags that JS is available (so the navbar can start
+// hidden) and reveals the navbar once the page has finished loading.
+const NAVBAR_REVEAL_BOOT = `(function () {
+  var d = document;
+  d.documentElement.classList.add("has-js");
+  var started = false;
+  var reveal = function () {
+    if (started) return;
+    var header = d.querySelector(".header-7");
+    if (!header) return;
+    started = true;
+    header.classList.add("nav-ready");
+    window.setTimeout(function () {
+      header.classList.add("nav-settled");
+    }, 1300);
+  };
+  if (d.readyState === "complete") {
+    reveal();
+  } else {
+    window.addEventListener("load", reveal, { once: true });
+  }
+  window.setTimeout(reveal, 3500);
+})();`;
+
 export async function generateMetadata(): Promise<Metadata> {
   const images = await getSiteImages();
   const ogImage = images["og-image"] || DEFAULT_OG_IMAGE;
@@ -88,6 +112,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-bs-theme="dark" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: NAVBAR_REVEAL_BOOT }} />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
