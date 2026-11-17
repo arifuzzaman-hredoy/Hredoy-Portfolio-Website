@@ -69,6 +69,7 @@ type HandlerDeps struct {
 	AdminEnabled  bool
 	UploadDir     string
 	Cloudinary    *cloudinary.Client
+	Revalidator   *Revalidator
 }
 
 func (d HandlerDeps) home(w http.ResponseWriter, _ *http.Request) {

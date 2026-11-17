@@ -22,6 +22,8 @@ type Config struct {
 	CloudinaryAPIKey    string
 	CloudinaryAPISecret string
 	CloudinaryFolder    string
+	RevalidateURL       string
+	RevalidateToken     string
 }
 
 func Load() (*Config, error) {
@@ -41,6 +43,8 @@ func Load() (*Config, error) {
 		CloudinaryAPIKey:    env("CLOUDINARY_API_KEY", ""),
 		CloudinaryAPISecret: env("CLOUDINARY_API_SECRET", ""),
 		CloudinaryFolder:    env("CLOUDINARY_FOLDER", "portfolio"),
+		RevalidateURL:       strings.TrimRight(env("REVALIDATE_URL", "http://frontend:3000/api/revalidate"), "/"),
+		RevalidateToken:     env("REVALIDATE_TOKEN", ""),
 	}
 
 	cfg.AppEnv = strings.ToLower(cfg.AppEnv)

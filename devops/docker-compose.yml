@@ -45,6 +45,8 @@ services:
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
       CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-portfolio}
+      REVALIDATE_URL: ${REVALIDATE_URL:-http://frontend:3000/api/revalidate}
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,6 +75,7 @@ services:
     environment:
       NODE_ENV: production
       PORTFOLIO_BACKEND_URL: http://app:8080
+      REVALIDATE_TOKEN: ${REVALIDATE_TOKEN:-}
     depends_on:
       - app
     restart: unless-stopped

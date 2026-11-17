@@ -36,10 +36,15 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		AdminEnabled:  cfg.AdminUsername != "" && cfg.AdminPassword != "",
 		UploadDir:     cfg.UploadDir,
 		Cloudinary:    cloudinary.New(cfg.CloudinaryCloud, cfg.CloudinaryAPIKey, cfg.CloudinaryAPISecret, cfg.CloudinaryFolder),
+		Revalidator:   newRevalidator(cfg.RevalidateURL, cfg.RevalidateToken, logger),
 	}
 
 	if !deps.Cloudinary.Enabled() {
 		logger.Warn("cloudinary not configured; media uploads will use local disk fallback")
+	}
+
+	if !deps.Revalidator.enabled() {
+		logger.Warn("revalidation is not configured; admin saves will only reach the public site after the ISR window")
 	}
 
 	if deps.UploadDir != "" {
@@ -83,6 +88,7 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 	r.Group(func(r chi.Router) {
 		r.Use(deps.requireAdmin)
 		r.Use(deps.csrf)
+		r.Use(deps.revalidatePublicContent)
 		r.Get("/super-admin", deps.adminDashboard)
 		r.Get("/super-admin/messages", deps.adminMessages)
 		r.Get("/super-admin/messages/{id}", deps.adminMessageDetail)

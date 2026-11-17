@@ -3,9 +3,13 @@
 // (for example during a static `next build` without the API running).
 
 import type { Project } from "./cms-render";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 export type { Project };
+
+// Every CMS read is tagged with this, so a single admin save can expire all of
+// them at once via POST /api/revalidate. Keep in sync with the revalidate route.
+export const CMS_CACHE_TAG = "cms-content";
 
 export type ContentBlock = {
   key: string;
@@ -54,6 +58,7 @@ async function getJSON<T>(path: string, revalidate = 30): Promise<T | null> {
 
 export async function getContent(): Promise<ContentPayload> {
   "use cache";
+  cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ContentPayload>("/api/v1/content");
   if (!data) return { count: 0, blocks: [], values: {}, defaults: {} };
@@ -67,6 +72,7 @@ export async function getContent(): Promise<ContentPayload> {
 
 export async function getProjects(): Promise<Project[]> {
   "use cache";
+  cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
   return data?.projects ?? [];
@@ -74,6 +80,7 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getSiteImages(): Promise<Record<string, string>> {
   "use cache";
+  cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   return data?.urls ?? {};
