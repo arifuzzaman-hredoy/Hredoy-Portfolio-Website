@@ -28,6 +28,7 @@ type siteImageView struct {
 
 type siteImageGroupView struct {
 	Name   string
+	Index  int
 	Images []siteImageView
 }
 
@@ -47,7 +48,20 @@ func toSiteImageViews(rows []db.SiteImage) []siteImageView {
 	return views
 }
 
-var preferredImageGroups = []string{"Branding", "Hero", "Avatars", "SEO"}
+var preferredImageGroups = []string{
+	"Branding",
+	"Hero",
+	"Avatars",
+	"Who I Am",
+	"About",
+	"Mission",
+	"Process",
+	"Skills",
+	"Slider",
+	"Decorations",
+	"Call to action",
+	"SEO",
+}
 
 func groupSiteImages(rows []db.SiteImage) []siteImageGroupView {
 	rank := make(map[string]int, len(preferredImageGroups))
@@ -89,8 +103,8 @@ func groupSiteImages(rows []db.SiteImage) []siteImageGroupView {
 	})
 
 	groups := make([]siteImageGroupView, 0, len(order))
-	for _, name := range order {
-		groups = append(groups, siteImageGroupView{Name: name, Images: byGroup[name]})
+	for i, name := range order {
+		groups = append(groups, siteImageGroupView{Name: name, Index: i, Images: byGroup[name]})
 	}
 	return groups
 }
@@ -117,6 +131,7 @@ func (d HandlerDeps) adminSiteImages(w http.ResponseWriter, r *http.Request) {
 		"active":        "site-images",
 		"unread":        unread,
 		"groups":        groupSiteImages(rows),
+		"total":         len(rows),
 		"success":       r.URL.Query().Get("saved") == "1",
 		"error":         r.URL.Query().Get("error"),
 	})
