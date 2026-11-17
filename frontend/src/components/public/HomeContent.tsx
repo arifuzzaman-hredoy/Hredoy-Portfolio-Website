@@ -20,7 +20,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                     <div class="at-search-top d-flex justify-content-between align-items-center">
                         <div class="at-header-logo at-search-logo">
                             <a href="/">
-                                <img data-width="30" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                                <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
                                 <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                             </a>
                         </div>
@@ -84,7 +84,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                     <div class="col-xl-2 col-6">
                         <div class="at-header-logo">
                             <a href="/">
-                                <img data-width="30" class="invert-0" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy" />
+                                <img data-width="30" class="invert-0" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy" />
                                 <p class="h6 fw-700 fz-24 text-white mb-0">Hredoy</p>
                             </a>
                         </div>
@@ -218,7 +218,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
             <div class="at-offcanvas-top d-flex align-items-center justify-content-between">
                 <div class="at-offcanvas-logo">
                     <a href="/">
-                        <img data-width="30" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                        <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
                         <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                     </a>
                 </div>
@@ -301,7 +301,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
             <div class="at-offcanvas-2-left">
                 <div class="at-header-logo d-flex justify-content-between align-items-center mb-50">
                     <a href="/">
-                        <img data-width="30" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                        <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
                         <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                     </a>
                     <span class="hamburger-close-btn">
@@ -366,7 +366,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
                     <div class="sec-1-home-7__img-wrap">
                         <div class="anim-zoomin">
-                            <img class="sec-1-home-7__img" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp" alt="Arifuzzaman Hredoy" loading="eager" fetchpriority="high" />
+                            <img class="sec-1-home-7__img" width="1024" height="1053" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp" alt="Arifuzzaman Hredoy" loading="eager" fetchpriority="high" />
                         </div>
 
                         <!-- Floating glass tech chips (decorative; hidden from AT) -->
@@ -430,19 +430,19 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     <div class="sec-1-home-7__proof d-flex align-items-center flex-wrap gap-3">
                                         <div class="sec-1-home-7__avatars">
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.1">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg" alt="Linux" />
+                                                <img width="103" height="103" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg" alt="Linux" />
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.2">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg" alt="Docker" />
+                                                <img width="103" height="103" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg" alt="Docker" />
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.3">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg" alt="AWS" />
+                                                <img width="103" height="103" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg" alt="AWS" />
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.4">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg" alt="GitHub Actions" />
+                                                <img width="103" height="103" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg" alt="GitHub Actions" />
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.5">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg" alt="Terraform" />
+                                                <img width="103" height="103" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg" alt="Terraform" />
                                             </span>
                                         </div>
                                         <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">

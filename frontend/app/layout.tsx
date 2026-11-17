@@ -77,6 +77,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-bs-theme="dark" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/assets/css/vendors/bootstrap.min.css" />
         <link rel="stylesheet" href="/assets/css/vendors/carouselTicker.css" />
         <link rel="stylesheet" href="/assets/css/vendors/swiper-bundle.min.css" />
