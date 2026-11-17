@@ -46,6 +46,11 @@ type Store interface {
 	GetContentBlock(ctx context.Context, key string) (db.ContentBlock, error)
 	UpsertContentBlock(ctx context.Context, arg db.UpsertContentBlockParams) error
 	DeleteContentBlock(ctx context.Context, key string) error
+	ListSiteImages(ctx context.Context) ([]db.SiteImage, error)
+	GetSiteImage(ctx context.Context, key string) (db.SiteImage, error)
+	UpdateSiteImageURL(ctx context.Context, arg db.UpdateSiteImageURLParams) error
+	UpdateSiteImageAlt(ctx context.Context, arg db.UpdateSiteImageAltParams) error
+	DeleteSiteImage(ctx context.Context, key string) error
 }
 
 type HandlerDeps struct {
