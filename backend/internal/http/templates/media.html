@@ -1,17 +1,17 @@
 {{define "content"}}
 <header class="page-head">
   <h1>Media</h1>
-  <p class="muted">Upload images and other assets. Files are served from <code>/uploads/…</code>.</p>
+  <p class="muted">Upload images and videos. Files are stored on Cloudinary and served from its CDN.</p>
 </header>
 {{if .success}}<p class="alert success">Saved.</p>{{end}}
-{{if .error}}<p class="alert">Upload failed (allowed: png, jpg, jpeg, gif, webp, svg · max 6&nbsp;MiB).</p>{{end}}
+{{if .error}}<p class="alert">Upload failed (allowed: png, jpg, jpeg, gif, webp, svg, mp4, webm · max 25&nbsp;MiB).</p>{{end}}
 
 <section class="card stack">
   <h2 class="card-title">Upload new file</h2>
   <form method="post" action="/super-admin/media/upload" enctype="multipart/form-data" class="create-grid">
     <label class="field">
       <span>File</span>
-      <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" required>
+      <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,video/mp4,video/webm" required>
     </label>
     <label class="field">
       <span>Alt text</span>
@@ -30,7 +30,11 @@
   <div class="media-grid">
     {{range .media}}
     <figure class="media-card">
+      {{if or (eq .Mime "video/mp4") (eq .Mime "video/webm")}}
+      <video src="{{.Path}}" controls preload="metadata"></video>
+      {{else}}
       <img src="{{.Path}}" alt="{{.Alt}}" loading="lazy">
+      {{end}}
       <figcaption>
         <div class="media-name" title="{{.Filename}}">{{.Filename}}</div>
         <div class="media-meta muted">{{.Mime}} · {{.Path}}</div>

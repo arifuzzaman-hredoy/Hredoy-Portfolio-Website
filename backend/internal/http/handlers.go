@@ -12,6 +12,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -60,6 +61,7 @@ type HandlerDeps struct {
 	AdminPassword string
 	AdminEnabled  bool
 	UploadDir     string
+	Cloudinary    *cloudinary.Client
 }
 
 func (d HandlerDeps) home(w http.ResponseWriter, _ *http.Request) {

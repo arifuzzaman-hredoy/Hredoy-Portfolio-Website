@@ -272,7 +272,7 @@ func (d HandlerDeps) adminProjectDelete(w http.ResponseWriter, r *http.Request) 
 // Media
 // ---------------------------------------------------------------------------
 
-const maxUploadBytes = 6 << 20 // 6 MiB, leaves room for multipart overhead
+const maxUploadBytes = 25 << 20 // 25 MiB, leaves room for multipart overhead
 
 var allowedUploadExt = map[string]string{
 	".png":  "image/png",
@@ -281,6 +281,8 @@ var allowedUploadExt = map[string]string{
 	".gif":  "image/gif",
 	".webp": "image/webp",
 	".svg":  "image/svg+xml",
+	".mp4":  "video/mp4",
+	".webm": "video/webm",
 }
 
 func (d HandlerDeps) adminMedia(w http.ResponseWriter, r *http.Request) {
@@ -335,6 +337,35 @@ func (d HandlerDeps) adminMediaUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	alt := strings.TrimSpace(r.FormValue("alt"))
+
+	// Prefer Cloudinary when configured; fall back to local disk otherwise.
+	if d.Cloudinary != nil && d.Cloudinary.Enabled() {
+		result, upErr := d.Cloudinary.Upload(data, filepath.Base(header.Filename), mime)
+		if upErr != nil {
+			d.Logger.Error("cloudinary upload failed", "error", upErr)
+			http.Redirect(w, r, "/super-admin/media?error=cloudinary", http.StatusSeeOther)
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+		defer cancel()
+		if _, err := d.Queries.CreateMedia(ctx, db.CreateMediaParams{
+			Filename:   filepath.Base(header.Filename),
+			StoredName: result.PublicID,
+			Path:       result.SecureURL,
+			Mime:       mime,
+			Size:       result.Bytes,
+			Alt:        alt,
+		}); err != nil {
+			d.Logger.Error("store media record failed", "error", err)
+			http.Redirect(w, r, "/super-admin/media?error=failed", http.StatusSeeOther)
+			return
+		}
+		http.Redirect(w, r, "/super-admin/media?saved=1", http.StatusSeeOther)
+		return
+	}
+
+	// Local disk fallback (used when Cloudinary is not configured).
 	stored := randomHex(16) + ext
 	dir := d.UploadDir
 	if dir == "" {
@@ -354,7 +385,6 @@ func (d HandlerDeps) adminMediaUpload(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
-	alt := strings.TrimSpace(r.FormValue("alt"))
 	if _, err := d.Queries.CreateMedia(ctx, db.CreateMediaParams{
 		Filename:   filepath.Base(header.Filename),
 		StoredName: stored,
@@ -407,13 +437,19 @@ func (d HandlerDeps) adminMediaDelete(w http.ResponseWriter, r *http.Request) {
 
 	row, err := d.Queries.GetMedia(ctx, id)
 	if err == nil {
-		stored := row.StoredName
-		if stored != "" {
+		// Cloudinary-hosted media: stored_name holds the public_id and path is
+		// an https URL. Delete from Cloudinary (best-effort).
+		if d.Cloudinary != nil && d.Cloudinary.Enabled() && strings.HasPrefix(row.Path, "http") {
+			if delErr := d.Cloudinary.Delete(row.StoredName); delErr != nil {
+				d.Logger.Error("cloudinary delete failed", "error", delErr)
+			}
+		} else if row.StoredName != "" {
+			// Local-disk media: remove the file from the upload directory.
 			dir := d.UploadDir
 			if dir == "" {
 				dir = "./uploads"
 			}
-			if err := os.Remove(filepath.Join(dir, stored)); err != nil && !os.IsNotExist(err) {
+			if err := os.Remove(filepath.Join(dir, row.StoredName)); err != nil && !os.IsNotExist(err) {
 				d.Logger.Error("remove upload file failed", "error", err)
 			}
 		}

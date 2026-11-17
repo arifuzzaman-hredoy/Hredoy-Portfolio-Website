@@ -9,30 +9,38 @@ import (
 )
 
 type Config struct {
-	AppEnv        string
-	AppPort       string
-	LogLevel      string
-	DatabaseURL   string
-	MigrationURL  string
-	SiteURL       string
-	AdminUsername string
-	AdminPassword string
-	UploadDir     string
+	AppEnv              string
+	AppPort             string
+	LogLevel            string
+	DatabaseURL         string
+	MigrationURL        string
+	SiteURL             string
+	AdminUsername       string
+	AdminPassword       string
+	UploadDir           string
+	CloudinaryCloud     string
+	CloudinaryAPIKey    string
+	CloudinaryAPISecret string
+	CloudinaryFolder    string
 }
 
 func Load() (*Config, error) {
 	loadDotEnv()
 
 	cfg := &Config{
-		AppEnv:        env("APP_ENV", "development"),
-		AppPort:       env("APP_PORT", "8080"),
-		LogLevel:      env("LOG_LEVEL", "info"),
-		DatabaseURL:   env("DATABASE_URL", "postgres://portfolio:portfolio@postgres:5432/portfolio?sslmode=disable"),
-		MigrationURL:  env("MIGRATION_PATH", "file://../database/migrations"),
-		SiteURL:       strings.TrimRight(env("SITE_URL", "https://oxytumzone.com"), "/"),
-		AdminUsername: env("ADMIN_USERNAME", "admin"),
-		AdminPassword: env("ADMIN_PASSWORD", ""),
-		UploadDir:     env("UPLOAD_DIR", "./uploads"),
+		AppEnv:              env("APP_ENV", "development"),
+		AppPort:             env("APP_PORT", "8080"),
+		LogLevel:            env("LOG_LEVEL", "info"),
+		DatabaseURL:         env("DATABASE_URL", "postgres://portfolio:portfolio@postgres:5432/portfolio?sslmode=disable"),
+		MigrationURL:        env("MIGRATION_PATH", "file://../database/migrations"),
+		SiteURL:             strings.TrimRight(env("SITE_URL", "https://oxytumzone.com"), "/"),
+		AdminUsername:       env("ADMIN_USERNAME", "admin"),
+		AdminPassword:       env("ADMIN_PASSWORD", ""),
+		UploadDir:           env("UPLOAD_DIR", "./uploads"),
+		CloudinaryCloud:     env("CLOUDINARY_CLOUD_NAME", ""),
+		CloudinaryAPIKey:    env("CLOUDINARY_API_KEY", ""),
+		CloudinaryAPISecret: env("CLOUDINARY_API_SECRET", ""),
+		CloudinaryFolder:    env("CLOUDINARY_FOLDER", "portfolio"),
 	}
 
 	cfg.AppEnv = strings.ToLower(cfg.AppEnv)

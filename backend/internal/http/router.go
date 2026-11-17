@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/config"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/go-chi/chi/v5"
@@ -34,6 +35,11 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		AdminPassword: cfg.AdminPassword,
 		AdminEnabled:  cfg.AdminUsername != "" && cfg.AdminPassword != "",
 		UploadDir:     cfg.UploadDir,
+		Cloudinary:    cloudinary.New(cfg.CloudinaryCloud, cfg.CloudinaryAPIKey, cfg.CloudinaryAPISecret, cfg.CloudinaryFolder),
+	}
+
+	if !deps.Cloudinary.Enabled() {
+		logger.Warn("cloudinary not configured; media uploads will use local disk fallback")
 	}
 
 	if deps.UploadDir != "" {
