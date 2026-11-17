@@ -9,6 +9,7 @@
 <section class="card stack">
   <h2 class="card-title">Add project</h2>
   <form method="post" action="/super-admin/projects/create" class="create-grid">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
     <label class="field">
       <span>Title</span>
       <input type="text" name="title" required>
@@ -62,6 +63,7 @@
         {{if .Published}}<span class="tag" style="margin-left:8px;">Published</span>{{else}}<span class="tag read" style="margin-left:8px;">Hidden</span>{{end}}
       </div>
       <form method="post" action="/super-admin/projects/delete" onsubmit="return confirm('Delete this project?')">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <input type="hidden" name="id" value="{{.ID}}">
         <button class="btn-sm danger" type="submit">Delete</button>
       </form>
@@ -69,6 +71,7 @@
     <details class="edit-details">
       <summary>Edit</summary>
       <form method="post" action="/super-admin/projects/update" class="stack" style="padding:14px 0;">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <input type="hidden" name="id" value="{{.ID}}">
         <div class="create-grid">
           <label class="field"><span>Title</span><input type="text" name="title" value="{{.Title}}" required></label>

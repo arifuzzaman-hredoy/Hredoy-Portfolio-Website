@@ -32,7 +32,15 @@ func pageTemplate(page string) (*template.Template, error) {
 	return tpl, nil
 }
 
-func renderPage(w http.ResponseWriter, page string, data map[string]any) {
+// renderPage renders a page with the shared layout. The CSRF token issued by the
+// csrf middleware is injected as "csrf" so templates can emit a hidden field.
+func renderPage(w http.ResponseWriter, r *http.Request, page string, data map[string]any) {
+	if data == nil {
+		data = map[string]any{}
+	}
+	if token := csrfTokenFromContext(r.Context()); token != "" {
+		data["csrf"] = token
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tpl, err := pageTemplate(page)
 	if err != nil {

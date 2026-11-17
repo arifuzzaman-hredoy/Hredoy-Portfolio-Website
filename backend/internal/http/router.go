@@ -74,14 +74,15 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 	r.Get("/llms.txt", deps.llms)
 
 	// Admin (public auth endpoints)
-	r.Get("/super-admin/login", deps.adminLogin)
-	r.Post("/super-admin/login", deps.adminLoginPost)
-	r.Post("/super-admin/logout", deps.adminLogout)
+	r.With(deps.csrf).Get("/super-admin/login", deps.adminLogin)
+	r.With(deps.csrf).Post("/super-admin/login", deps.adminLoginPost)
+	r.With(deps.csrf).Post("/super-admin/logout", deps.adminLogout)
 	r.Handle("/super-admin/static/*", adminStatic())
 
 	// Admin (protected)
 	r.Group(func(r chi.Router) {
 		r.Use(deps.requireAdmin)
+		r.Use(deps.csrf)
 		r.Get("/super-admin", deps.adminDashboard)
 		r.Get("/super-admin/messages", deps.adminMessages)
 		r.Get("/super-admin/messages/{id}", deps.adminMessageDetail)

@@ -9,6 +9,7 @@
 <section class="card stack">
   <h2 class="card-title">Add content block</h2>
   <form method="post" action="/super-admin/content/create" class="create-grid">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
     <label class="field"><span>Key</span><input type="text" name="key" placeholder="hero.headline.4" required></label>
     <label class="field"><span>Label</span><input type="text" name="label" placeholder="Hero headline line 4"></label>
     <label class="field"><span>Group</span><input type="text" name="group" placeholder="Hero"></label>
@@ -27,6 +28,7 @@
     {{range .Blocks}}
     <div class="setting-row">
       <form method="post" action="/super-admin/content/update" class="setting-form">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <input type="hidden" name="key" value="{{.Key}}">
         <label class="field">
           <span class="key">{{.Label}}{{if ne .Label .Key}} <span class="muted">· {{.Key}}</span>{{end}}</span>
@@ -39,6 +41,7 @@
         <button class="btn-sm" type="submit">Save</button>
       </form>
       <form method="post" action="/super-admin/content/delete" onsubmit="return confirm('Delete this content block?')">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <input type="hidden" name="key" value="{{.Key}}">
         <button class="btn-sm danger" type="submit">Delete</button>
       </form>

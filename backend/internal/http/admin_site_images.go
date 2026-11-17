@@ -125,7 +125,7 @@ func (d HandlerDeps) adminSiteImages(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "site_images", map[string]any{
+	renderPage(w, r, "site_images", map[string]any{
 		"title":         "Site Images",
 		"authenticated": true,
 		"active":        "site-images",

@@ -37,6 +37,7 @@
         <div class="media-title" title="{{.Label}}">{{.Label}}</div>
         <div class="media-key" title="{{.Key}}">{{.Key}}</div>
         <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="media-form">
+          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
           <input type="hidden" name="key" value="{{.Key}}">
           <label class="file-btn">
             <span>Replace image</span>
@@ -47,6 +48,7 @@
         <details class="alt-box">
           <summary>Alt text{{if .Alt}}<span class="alt-state">{{.Alt}}</span>{{end}}</summary>
           <form method="post" action="/super-admin/site-images/alt" class="media-form">
+            <input type="hidden" name="csrf_token" value="{{$.csrf}}">
             <input type="hidden" name="key" value="{{.Key}}">
             <input type="text" name="alt" value="{{.Alt}}" placeholder="Describe this image">
             <button class="btn-sm" type="submit">Save</button>

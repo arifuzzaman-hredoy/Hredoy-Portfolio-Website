@@ -9,6 +9,7 @@
 <section class="card stack">
   <h2 class="card-title">Add new setting</h2>
   <form method="post" action="/super-admin/settings/create" class="create-grid">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
     <label class="field">
       <span>Key</span>
       <input type="text" name="key" placeholder="e.g. twitter" required>
@@ -31,6 +32,7 @@
     {{range .settings}}
     <div class="setting-row">
       <form method="post" action="/super-admin/settings/update" class="setting-form">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <label class="field">
           <span class="key">{{.Key}}</span>
           {{if gt (len .Value) 60}}
@@ -43,6 +45,7 @@
         <button class="btn-sm" type="submit">Save</button>
       </form>
       <form method="post" action="/super-admin/settings/delete" onsubmit="return confirm('Delete this setting?')">
+        <input type="hidden" name="csrf_token" value="{{$.csrf}}">
         <input type="hidden" name="key" value="{{.Key}}">
         <button class="btn-sm danger" type="submit">Delete</button>
       </form>

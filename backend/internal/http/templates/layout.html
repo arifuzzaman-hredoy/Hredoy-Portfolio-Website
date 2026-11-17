@@ -25,6 +25,7 @@
       <a href="/super-admin/settings" class="{{if eq .active "settings"}}active{{end}}">Site Settings</a>
     </nav>
     <form class="logout" method="post" action="/super-admin/logout">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
       <button type="submit">Log out</button>
     </form>
   </aside>

@@ -90,7 +90,7 @@ func TestRenderAdminPages(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.page, func(t *testing.T) {
 			rr := httptest.NewRecorder()
-			renderPage(rr, tc.page, tc.data)
+			renderPage(rr, httptest.NewRequest(http.MethodGet, "/super-admin/"+tc.page, nil), tc.page, tc.data)
 			if rr.Code != http.StatusOK {
 				t.Fatalf("status = %d, want %d (body=%s)", rr.Code, http.StatusOK, rr.Body.String())
 			}
@@ -103,7 +103,7 @@ func TestRenderAdminPages(t *testing.T) {
 
 func TestRenderPageWritesHTML(t *testing.T) {
 	rr := httptest.NewRecorder()
-	renderPage(rr, "login", map[string]any{
+	renderPage(rr, httptest.NewRequest(http.MethodGet, "/super-admin/login", nil), "login", map[string]any{
 		"title":         "Sign in",
 		"authenticated": false,
 		"error":         "",

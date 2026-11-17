@@ -157,7 +157,7 @@ func (d HandlerDeps) adminProjects(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "projects", map[string]any{
+	renderPage(w, r, "projects", map[string]any{
 		"title":         "Projects",
 		"authenticated": true,
 		"active":        "projects",
@@ -297,7 +297,7 @@ func (d HandlerDeps) adminMedia(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "media", map[string]any{
+	renderPage(w, r, "media", map[string]any{
 		"title":         "Media",
 		"authenticated": true,
 		"active":        "media",
@@ -476,7 +476,7 @@ func (d HandlerDeps) adminContent(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "content", map[string]any{
+	renderPage(w, r, "content", map[string]any{
 		"title":         "Content",
 		"authenticated": true,
 		"active":        "content",

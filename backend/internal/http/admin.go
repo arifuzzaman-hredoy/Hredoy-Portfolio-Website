@@ -68,7 +68,7 @@ func (d HandlerDeps) adminLogin(w http.ResponseWriter, r *http.Request) {
 	case "rate":
 		message = "Too many login attempts. Please wait a minute and try again."
 	}
-	renderPage(w, "login", map[string]any{
+	renderPage(w, r, "login", map[string]any{
 		"title":         "Sign in",
 		"authenticated": false,
 		"error":         message,
@@ -128,6 +128,15 @@ func (d HandlerDeps) adminLogout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		MaxAge:   -1,
 	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     csrfCookieName,
+		Value:    "",
+		Path:     "/super-admin",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   d.cookieSecure(),
+		MaxAge:   -1,
+	})
 	http.Redirect(w, r, "/super-admin/login", http.StatusSeeOther)
 }
 
@@ -153,7 +162,7 @@ func (d HandlerDeps) adminDashboard(w http.ResponseWriter, r *http.Request) {
 		recent = recent[:5]
 	}
 
-	renderPage(w, "dashboard", map[string]any{
+	renderPage(w, r, "dashboard", map[string]any{
 		"title":         "Dashboard",
 		"authenticated": true,
 		"active":        "dashboard",
@@ -175,7 +184,7 @@ func (d HandlerDeps) adminMessages(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "messages", map[string]any{
+	renderPage(w, r, "messages", map[string]any{
 		"title":         "Messages",
 		"authenticated": true,
 		"active":        "messages",
@@ -200,7 +209,7 @@ func (d HandlerDeps) adminMessageDetail(w http.ResponseWriter, r *http.Request) 
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "message", map[string]any{
+	renderPage(w, r, "message", map[string]any{
 		"title":         "Message",
 		"authenticated": true,
 		"active":        "messages",
@@ -260,7 +269,7 @@ func (d HandlerDeps) adminSettings(w http.ResponseWriter, r *http.Request) {
 	}
 	unread, _ := d.Queries.CountUnreadContactMessages(ctx)
 
-	renderPage(w, "settings", map[string]any{
+	renderPage(w, r, "settings", map[string]any{
 		"title":         "Site Settings",
 		"authenticated": true,
 		"active":        "settings",

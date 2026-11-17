@@ -9,6 +9,7 @@
 <section class="card stack">
   <h2 class="card-title">Upload new file</h2>
   <form method="post" action="/super-admin/media/upload" enctype="multipart/form-data" class="create-grid">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
     <label class="field">
       <span>File</span>
       <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,video/mp4,video/webm" required>
@@ -39,6 +40,7 @@
         <div class="media-name" title="{{.Filename}}">{{.Filename}}</div>
         <div class="media-meta muted">{{.Mime}} · {{.Path}}</div>
         <form method="post" action="/super-admin/media/alt" class="setting-form">
+          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
           <input type="hidden" name="id" value="{{.ID}}">
           <label class="field">
             <span class="key">Alt</span>
@@ -47,6 +49,7 @@
           <button class="btn-sm" type="submit">Save</button>
         </form>
         <form method="post" action="/super-admin/media/delete" onsubmit="return confirm('Delete this file?')">
+          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
           <input type="hidden" name="id" value="{{.ID}}">
           <button class="btn-sm danger" type="submit">Delete</button>
         </form>
