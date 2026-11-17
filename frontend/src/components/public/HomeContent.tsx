@@ -430,19 +430,29 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     <div class="sec-1-home-7__proof d-flex align-items-center flex-wrap gap-3">
                                         <div class="sec-1-home-7__avatars">
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.1">
-                                                <img width="103" height="103" src="/assets/imgs/hero-tools/docker-v2.svg" alt="Docker" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__badge" tabindex="0" title="Docker">
+                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker" loading="eager" decoding="async" />
+                                                </span>
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.2">
-                                                <img width="103" height="103" src="/assets/imgs/hero-tools/kubernetes-v2.svg" alt="Kubernetes" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__badge" tabindex="0" title="Kubernetes">
+                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/kubernetes-v3.svg" alt="Kubernetes" loading="eager" decoding="async" />
+                                                </span>
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.3">
-                                                <img width="103" height="103" src="/assets/imgs/hero-tools/aws-v2.svg" alt="AWS" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__badge" tabindex="0" title="AWS">
+                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS" loading="eager" decoding="async" />
+                                                </span>
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.4">
-                                                <img width="103" height="103" src="/assets/imgs/hero-tools/terraform-v2.svg" alt="Terraform" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__badge" tabindex="0" title="Terraform">
+                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform" loading="eager" decoding="async" />
+                                                </span>
                                             </span>
                                             <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.5">
-                                                <img width="103" height="103" src="/assets/imgs/hero-tools/grafana-v2.svg" alt="Grafana" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__badge" tabindex="0" title="Grafana">
+                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/grafana-v3.svg" alt="Grafana" loading="eager" decoding="async" />
+                                                </span>
                                             </span>
                                         </div>
                                         <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">

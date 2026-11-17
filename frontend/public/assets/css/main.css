@@ -13703,34 +13703,69 @@ input.footer-15__form-input:focus {
 }
 .sec-1-home-7__avatars {
   display: inline-flex;
+  gap: 8px;
   align-items: center;
 }
+/* The badge row and the caption stack at every width: the text column is only
+   436-467px wide, so a 232px badge row plus the 220px caption can never sit
+   side by side. Bootstrap's .align-items-center / .gap-3 are !important, so the
+   overrides below have to be too. */
+.sec-1-home-7__proof {
+  flex-direction: column;
+  align-items: flex-start !important;
+  gap: 11px !important;
+}
 .sec-1-home-7__avatar {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  overflow: hidden;
-  display: inline-block;
+  display: inline-flex;
   flex-shrink: 0;
 }
-.sec-1-home-7__avatar:not(:first-child) {
-  margin-left: -25px;
+/* The badge is an inner element on purpose: GSAP's at_fade_anim writes inline
+   transform/translate/rotate/scale on the wrapper, so the hover lift has to
+   live on an element GSAP never touches. */
+.sec-1-home-7__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transition: transform 200ms ease, box-shadow 200ms ease;
 }
-.sec-1-home-7__avatar img {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+.sec-1-home-7__badge:hover,
+.sec-1-home-7__badge:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
 }
-@media (max-width: 574.98px) {
-  .sec-1-home-7__avatar {
-    width: 52px;
-    height: 52px;
-    border-width: 3px;
+.sec-1-home-7__badge img {
+  display: block;
+  width: 36px;
+  height: 36px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  .sec-1-home-7__avatars {
+    gap: 8px;
   }
-  .sec-1-home-7__avatar:not(:first-child) {
-    margin-left: -20px;
+  .sec-1-home-7__badge {
+    width: 36px;
+    height: 36px;
+  }
+  .sec-1-home-7__badge img {
+    width: 32px;
+    height: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sec-1-home-7__badge {
+    transition: none;
+  }
+  .sec-1-home-7__badge:hover,
+  .sec-1-home-7__badge:focus-visible {
+    transform: none;
   }
 }
 .sec-1-home-7__proof-text {
@@ -13782,10 +13817,6 @@ input.footer-15__form-input:focus {
   .sec-1-home-7__tag {
     font-size: clamp(12px, 1vw, 14px);
     padding: clamp(7px, 0.8vh, 10px) clamp(9px, 1vw, 14px);
-  }
-  .sec-1-home-7__avatar {
-    width: clamp(44px, 6.4vh, 65px);
-    height: clamp(44px, 6.4vh, 65px);
   }
 }
 
