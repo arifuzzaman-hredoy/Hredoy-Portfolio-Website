@@ -18,6 +18,23 @@ const nextConfig: NextConfig = {
       { source: "/uploads/:path*", destination: `${BACKEND_URL}/uploads/:path*` },
     ];
   },
+
+  // Cache static assets aggressively to speed up repeat visits. Assets use
+  // fixed URLs (no content hashing), so max-age is capped at 1 day with
+  // stale-while-revalidate to pick up updates in the background.
+  async headers() {
+    return [
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
