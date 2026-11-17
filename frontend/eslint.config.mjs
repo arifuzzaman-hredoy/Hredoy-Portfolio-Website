@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored, minified Orisa template assets: not authored or maintained here.
+    "public/assets/js/**",
   ]),
 ]);
 
