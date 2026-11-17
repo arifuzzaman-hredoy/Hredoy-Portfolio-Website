@@ -14768,6 +14768,24 @@ input.footer-15__form-input:focus {
   flex: 1 1 auto;
   text-align: left;
   min-width: 0;
+  /* The title is editable in the admin, so it must never split a word. The
+     size tracks the viewport instead of the text length: it stays at the
+     template's 24px from ~1091px up (where it already fits today) and steps
+     down across the tablet band so the longest realistic word still fits the
+     column rather than forcing a mid-word break. */
+  font-size: clamp(20px, 2.2vw, 24px);
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+/* Below the tablet boundary the column is wide enough for 24px again, but a
+   single word can still be wider than it, so allow breaking there only, as a
+   last resort, to keep the page free of horizontal overflow. */
+@media (max-width: 767px) {
+  .sec-5-home-7__acc-title {
+    font-size: 24px;
+    overflow-wrap: anywhere;
+  }
 }
 .sec-5-home-7__acc-toggle {
   flex-shrink: 0;
