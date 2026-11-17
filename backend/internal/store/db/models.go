@@ -54,6 +54,17 @@ type Project struct {
 	UpdatedAt   pgtype.Timestamptz
 }
 
+type SiteImage struct {
+	ID        pgtype.UUID
+	Key       string
+	Label     string
+	GroupName string
+	Url       string
+	PublicID  string
+	Alt       string
+	UpdatedAt pgtype.Timestamptz
+}
+
 type SiteSetting struct {
 	ID        int32
 	Key       string

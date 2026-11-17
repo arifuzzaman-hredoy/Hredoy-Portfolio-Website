@@ -61,6 +61,7 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 	r.Get("/api/v1/content", deps.apiContent)
 	r.Get("/api/v1/content/{key}", deps.apiContentKey)
 	r.Get("/api/v1/media", deps.apiMedia)
+	r.Get("/api/v1/site-images", deps.apiSiteImages)
 
 	// Uploaded media served by the Go backend
 	if deps.UploadDir != "" {
@@ -107,6 +108,10 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		r.Post("/super-admin/content/update", deps.adminContentUpdate)
 		r.Post("/super-admin/content/create", deps.adminContentCreate)
 		r.Post("/super-admin/content/delete", deps.adminContentDelete)
+
+		r.Get("/super-admin/site-images", deps.adminSiteImages)
+		r.Post("/super-admin/site-images/replace", deps.adminSiteImageReplace)
+		r.Post("/super-admin/site-images/alt", deps.adminSiteImageAlt)
 	})
 
 	return r

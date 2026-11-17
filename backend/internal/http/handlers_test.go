@@ -44,6 +44,10 @@ type fakeStore struct {
 	contentBlocks   []db.ContentBlock
 	upsertedContent []db.UpsertContentBlockParams
 	deletedContent  []string
+	siteImages      []db.SiteImage
+	updatedImgURL   []db.UpdateSiteImageURLParams
+	updatedImgAlt   []db.UpdateSiteImageAltParams
+	deletedImgKeys  []string
 }
 
 func (f *fakeStore) CreateContactMessage(_ context.Context, arg db.CreateContactMessageParams) error {
@@ -228,6 +232,47 @@ func (f *fakeStore) DeleteContentBlock(_ context.Context, key string) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.deletedContent = append(f.deletedContent, key)
+	return nil
+}
+
+func (f *fakeStore) ListSiteImages(_ context.Context) ([]db.SiteImage, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.listErr != nil {
+		return nil, f.listErr
+	}
+	return f.siteImages, nil
+}
+
+func (f *fakeStore) GetSiteImage(_ context.Context, key string) (db.SiteImage, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	for _, img := range f.siteImages {
+		if img.Key == key {
+			return img, nil
+		}
+	}
+	return db.SiteImage{}, nil
+}
+
+func (f *fakeStore) UpdateSiteImageURL(_ context.Context, arg db.UpdateSiteImageURLParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.updatedImgURL = append(f.updatedImgURL, arg)
+	return nil
+}
+
+func (f *fakeStore) UpdateSiteImageAlt(_ context.Context, arg db.UpdateSiteImageAltParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.updatedImgAlt = append(f.updatedImgAlt, arg)
+	return nil
+}
+
+func (f *fakeStore) DeleteSiteImage(_ context.Context, key string) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.deletedImgKeys = append(f.deletedImgKeys, key)
 	return nil
 }
 

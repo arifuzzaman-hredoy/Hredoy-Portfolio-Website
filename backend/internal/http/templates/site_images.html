@@ -1,0 +1,51 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Site Images</h1>
+  <p class="muted">Replace the images used across the public site. Uploads go directly to Cloudinary.</p>
+</header>
+{{if .success}}<p class="alert success">Saved.</p>{{end}}
+{{if .error}}<p class="alert">Operation failed (allowed: png, jpg, jpeg, gif, webp, svg, mp4, webm · max 25&nbsp;MiB).</p>{{end}}
+
+{{range .groups}}
+<section class="card">
+  <div class="card-head">
+    <h2>{{.Name}}</h2>
+    <span class="muted">{{len .Images}} images</span>
+  </div>
+  <div class="media-grid">
+    {{range .Images}}
+    <figure class="media-card">
+      {{if .URL}}
+      <img src="{{.URL}}" alt="{{.Alt}}" loading="lazy">
+      {{else}}
+      <div class="media-empty">No image</div>
+      {{end}}
+      <figcaption>
+        <div class="media-name" title="{{.Key}}">{{.Label}}</div>
+        <div class="media-meta muted">{{.Key}}</div>
+        <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="setting-form">
+          <input type="hidden" name="key" value="{{.Key}}">
+          <label class="field">
+            <span class="key">Replace image</span>
+            <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" required>
+          </label>
+          <button class="btn-sm" type="submit">Replace</button>
+        </form>
+        <form method="post" action="/super-admin/site-images/alt" class="setting-form">
+          <input type="hidden" name="key" value="{{.Key}}">
+          <label class="field">
+            <span class="key">Alt text</span>
+            <input type="text" name="alt" value="{{.Alt}}">
+          </label>
+          <button class="btn-sm" type="submit">Save</button>
+        </form>
+        {{if .URL}}
+        <div class="media-meta muted" style="word-break:break-all">{{.URL}}</div>
+        {{end}}
+      </figcaption>
+    </figure>
+    {{end}}
+  </div>
+</section>
+{{end}}
+{{end}}

@@ -49,6 +49,14 @@ type mediaJSON struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type siteImageJSON struct {
+	Key   string `json:"key"`
+	Label string `json:"label"`
+	Group string `json:"group"`
+	URL   string `json:"url"`
+	Alt   string `json:"alt"`
+}
+
 func toProjectJSON(row db.Project) projectJSON {
 	return projectJSON{
 		ID:          uuidToString(row.ID),
@@ -93,6 +101,16 @@ func toMediaJSON(row db.Medium) mediaJSON {
 		Size:      row.Size,
 		Alt:       row.Alt,
 		CreatedAt: row.CreatedAt.Time,
+	}
+}
+
+func toSiteImageJSON(row db.SiteImage) siteImageJSON {
+	return siteImageJSON{
+		Key:   row.Key,
+		Label: row.Label,
+		Group: row.GroupName,
+		URL:   row.Url,
+		Alt:   row.Alt,
 	}
 }
 
@@ -216,5 +234,32 @@ func (d HandlerDeps) apiMedia(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"count": len(items),
 		"media": items,
+	})
+}
+
+func (d HandlerDeps) apiSiteImages(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := d.Queries.ListSiteImages(ctx)
+	if err != nil {
+		d.Logger.Error("list site images failed", "error", err)
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to load site images"})
+		return
+	}
+	items := make([]siteImageJSON, 0, len(rows))
+	values := make(map[string]string, len(rows))
+	for _, row := range rows {
+		items = append(items, toSiteImageJSON(row))
+		values[row.Key] = row.Url
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"count":  len(items),
+		"images": items,
+		"urls":   values,
 	})
 }
