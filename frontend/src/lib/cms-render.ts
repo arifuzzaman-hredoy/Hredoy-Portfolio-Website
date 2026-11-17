@@ -124,6 +124,44 @@ function cdnUrl(value: string): string {
   return value;
 }
 
+// Default (seeded) URLs for each site image slot. When the CMS returns a
+// different URL for a slot, every occurrence of the default in the template
+// markup is replaced. This keeps the static markup as the source of truth and
+// makes the default render byte-for-byte identical when nothing changed.
+const SITE_IMAGE_DEFAULTS: Record<string, string> = {
+  "brand-logo":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png",
+  "hero-portrait":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp",
+  "avatar-linux":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg",
+  "avatar-docker":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg",
+  "avatar-aws":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg",
+  "avatar-github-actions":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg",
+  "avatar-terraform":
+    "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg",
+};
+
+// applySiteImages replaces hardcoded image URLs in the template markup with
+// CMS-managed values. Only slots whose URL differs from the default are
+// touched, so an unchanged CMS produces identical output.
+export function applySiteImages(
+  html: string,
+  urls: Record<string, string>,
+): string {
+  let out = html;
+  for (const [key, defaultUrl] of Object.entries(SITE_IMAGE_DEFAULTS)) {
+    const cdn = urls[key];
+    if (cdn && cdn !== defaultUrl) {
+      out = out.split(defaultUrl).join(cdn);
+    }
+  }
+  return out;
+}
+
 // Builds a whitespace-tolerant regex for a plain-text value as it appears in
 // the (HTML-escaped) template markup.
 function flexRegex(text: string): RegExp {
