@@ -32,11 +32,13 @@ const REPLACEMENTS = [
   ['data-scramble-text="27.1127&deg; S, 109.3497&deg; W">27.1127&deg; S, 109.3497&deg; W', ''],
 
   // ---- Hero tag chips ----
+  // One tag per technology that has no logo badge of its own, so nothing in the
+  // hero row is shown twice. Keep this list in sync with div.sec-1-home-7__tags.
   ['<span>MVP Launch</span>', '<span>Linux</span>'],
-  ['<span>Product Design</span>', '<span>Docker</span>'],
-  ['<span>Scalable Tech</span>', '<span>Kubernetes</span>'],
-  ['<span>Growth Strategy</span>', '<span>CI/CD</span>'],
-  ['<span>UI/UX Excellence</span>', '<span>AWS</span>'],
+  ['<span>Product Design</span>', '<span>CI/CD</span>'],
+  ['<span>Scalable Tech</span>', '<span>Git</span>'],
+  ['<span>Growth Strategy</span>', '<span>Nginx</span>'],
+  ['<span>UI/UX Excellence</span>', '<span>GitHub Actions</span>'],
 
   // ---- Hero brackets ----
   ['<li class="at_fade_anim" data-start="100%" data-delay="0.2">[ GROW ]</li>', '<li class="at_fade_anim" data-start="100%" data-delay="0.2">[ AUTOMATE ]</li>'],

@@ -426,72 +426,74 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         </a>
                                     </div>
 
-                                    <!-- Social proof: avatar stack + copy -->
-                                    <div class="sec-1-home-7__proof d-flex align-items-center flex-wrap gap-3">
-                                        <div class="sec-1-home-7__avatars">
-                                            <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.1">
-                                                <span class="sec-1-home-7__badge" tabindex="0" title="Docker">
-                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker" loading="eager" decoding="async" />
+                                    <!-- Social proof: caption, then the tech logo badges, then the tag row -->
+                                    <div class="sec-1-home-7__meta">
+                                        <div class="sec-1-home-7__proof">
+                                            <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">
+                                                Building reliable infrastructure with <br class="d-none d-xl-inline" />modern DevOps practices
+                                            </p>
+                                            <div class="sec-1-home-7__avatars">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.1">
+                                                    <span class="sec-1-home-7__badge" tabindex="0" title="Docker">
+                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker" loading="eager" decoding="async" />
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.2">
-                                                <span class="sec-1-home-7__badge" tabindex="0" title="Kubernetes">
-                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/kubernetes-v3.svg" alt="Kubernetes" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.2">
+                                                    <span class="sec-1-home-7__badge" tabindex="0" title="Kubernetes">
+                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/kubernetes-v3.svg" alt="Kubernetes" loading="eager" decoding="async" />
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.3">
-                                                <span class="sec-1-home-7__badge" tabindex="0" title="AWS">
-                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.3">
+                                                    <span class="sec-1-home-7__badge" tabindex="0" title="AWS">
+                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS" loading="eager" decoding="async" />
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.4">
-                                                <span class="sec-1-home-7__badge" tabindex="0" title="Terraform">
-                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.4">
+                                                    <span class="sec-1-home-7__badge" tabindex="0" title="Terraform">
+                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform" loading="eager" decoding="async" />
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.5">
-                                                <span class="sec-1-home-7__badge" tabindex="0" title="Grafana">
-                                                    <img width="36" height="36" src="/assets/imgs/hero-tools/grafana-v3.svg" alt="Grafana" loading="eager" decoding="async" />
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.5">
+                                                    <span class="sec-1-home-7__badge" tabindex="0" title="Grafana">
+                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/grafana-v3.svg" alt="Grafana" loading="eager" decoding="async" />
+                                                    </span>
                                                 </span>
-                                            </span>
+                                            </div>
                                         </div>
-                                        <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">
-                                            Building reliable infrastructure with <br class="d-none d-xl-inline" />modern DevOps practices
-                                        </p>
-                                    </div>
 
-                                    <!-- Tech skill badges -->
-                                    <div class="sec-1-home-7__tags">
-                                        <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.1">
-                                            <span>Linux</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
-                                                <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
-                                            </svg>
-                                        </a>
-                                        <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.2">
-                                            <span>Docker</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
-                                                <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
-                                            </svg>
-                                        </a>
-                                        <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.3">
-                                            <span>Kubernetes</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
-                                                <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
-                                            </svg>
-                                        </a>
-                                        <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.4">
-                                            <span>CI/CD</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
-                                                <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
-                                            </svg>
-                                        </a>
-                                        <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.5">
-                                            <span>AWS</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
-                                                <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
-                                            </svg>
-                                        </a>
+                                        <!-- Tech skill badges -->
+                                        <div class="sec-1-home-7__tags">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.1">
+                                                <span>Linux</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                                                    <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
+                                                </svg>
+                                            </a>
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.2">
+                                                <span>CI/CD</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                                                    <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
+                                                </svg>
+                                            </a>
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.3">
+                                                <span>Git</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                                                    <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
+                                                </svg>
+                                            </a>
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.4">
+                                                <span>Nginx</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                                                    <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
+                                                </svg>
+                                            </a>
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.5">
+                                                <span>GitHub Actions</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
+                                                    <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
+                                                </svg>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

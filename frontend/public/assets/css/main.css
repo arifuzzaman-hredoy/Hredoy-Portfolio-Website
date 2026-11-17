@@ -13469,12 +13469,13 @@ input.footer-15__form-input:focus {
   -o-object-position: center top;
      object-position: center top;
 }
+/* One line of tag pills at every desktop width. The row wraps again below
+   768px, where the proof block is hidden and a single line would not fit. */
 .sec-1-home-7__tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: clamp(8px, 0.8vw, 12px);
-  margin-top: clamp(20px, 3vh, 32px);
+  gap: clamp(4px, 0.5vw, 6px);
   max-width: 100%;
 }
 .sec-1-home-7__tag {
@@ -13486,10 +13487,10 @@ input.footer-15__form-input:focus {
   min-width: 0;
   white-space: nowrap;
   font-weight: 500;
-  font-size: clamp(12px, 1vw, 14px);
+  font-size: clamp(12px, 0.9vw, 13px);
   letter-spacing: -0.02em;
   color: #fff;
-  padding: clamp(7px, 0.8vw, 10px) clamp(11px, 1vw, 16px);
+  padding: clamp(6px, 0.7vw, 8px) clamp(9px, 0.75vw, 11px);
   border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.08);
@@ -13516,6 +13517,14 @@ input.footer-15__form-input:focus {
   .sec-1-home-7__tag {
     font-size: clamp(11px, 3.2vw, 14px);
     padding: clamp(6px, 1.8vw, 10px) clamp(9px, 2vw, 14px);
+  }
+}
+@media (max-width: 767px) {
+  /* Below 768px the proof block is hidden and the hero is a narrow single
+     column, so the tag row goes back to wrapping and keeps its old top gap. */
+  .sec-1-home-7__tags {
+    flex-wrap: wrap;
+    margin-top: clamp(20px, 3vh, 32px);
   }
 }
 .sec-1-home-7__right {
@@ -13706,14 +13715,23 @@ input.footer-15__form-input:focus {
   gap: 8px;
   align-items: center;
 }
-/* The badge row and the caption stack at every width: the text column is only
-   436-467px wide, so a 232px badge row plus the 220px caption can never sit
-   side by side. Bootstrap's .align-items-center / .gap-3 are !important, so the
-   overrides below have to be too. */
-.sec-1-home-7__proof {
+/* Hero meta block: caption, logo badges, then the tag row, all flush left with
+   the hero copy. Two nested column flex containers own the spacing as real gap
+   (12px inside the proof, 16px between the proof and the tags) so no element
+   needs a margin to sit in the right place. */
+.sec-1-home-7__meta {
+  display: flex;
   flex-direction: column;
-  align-items: flex-start !important;
-  gap: 11px !important;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 100%;
+}
+.sec-1-home-7__proof {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 100%;
 }
 .sec-1-home-7__avatar {
   display: inline-flex;
@@ -13809,14 +13827,6 @@ input.footer-15__form-input:focus {
   }
   .sec-1-home-7__img-wrap {
     margin-top: clamp(36px, 7vh, 80px);
-  }
-  .sec-1-home-7__tags {
-    margin-top: clamp(14px, 2.2vh, 24px);
-    gap: clamp(6px, 0.6vw, 10px);
-  }
-  .sec-1-home-7__tag {
-    font-size: clamp(12px, 1vw, 14px);
-    padding: clamp(7px, 0.8vh, 10px) clamp(9px, 1vw, 14px);
   }
 }
 
@@ -13916,9 +13926,15 @@ input.footer-15__form-input:focus {
     width: 50px;
     height: 50px;
   }
+  /* The tablet layout stacks the hero and centres its content, so the caption
+     and the badges centre as well; the 12px/16px gaps still come from the two
+     flex containers, not from margins. */
+  .sec-1-home-7__meta {
+    align-items: center;
+  }
   .sec-1-home-7__proof {
     justify-content: center;
-    margin-bottom: 20px;
+    align-items: center;
   }
   .sec-1-home-7__tags {
     justify-content: center;
