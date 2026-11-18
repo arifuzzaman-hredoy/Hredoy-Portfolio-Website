@@ -637,6 +637,29 @@ function setImageAttr(tag: string, name: string, value: string): string {
   return tag.replace(/\s*\/?>$/, (closing) => " " + name + '="' + value + '"' + closing);
 }
 
+const CLOUDINARY_UPLOAD = "/image/upload/";
+
+/**
+ * Ask Cloudinary for WebP instead of the stored JPEG. Only <img> sources are
+ * rewritten, so favicons and og:image keep their PNG. Logos, SVGs and images
+ * that are already WebP are left alone: they are small, or re-encoding them
+ * costs visible quality.
+ */
+function optimizeCloudinaryImg(tag: string): string {
+  const src = tag.match(/\ssrc="([^"]*)"/)?.[1];
+  if (!src) return tag;
+  if (!/^https?:\/\/res\.cloudinary\.com\//i.test(src)) return tag;
+
+  const at = src.indexOf(CLOUDINARY_UPLOAD);
+  if (at < 0) return tag;
+  const rest = src.slice(at + CLOUDINARY_UPLOAD.length);
+  if (rest.includes(",")) return tag;
+  if (!/\.jpe?g$/i.test(rest)) return tag;
+
+  const optimized = src.slice(0, at + CLOUDINARY_UPLOAD.length) + "f_webp,q_auto:best/" + rest;
+  return tag.replace(/\ssrc="[^"]*"/, () => ' src="' + optimized + '"');
+}
+
 /**
  * Apply CMS image URLs and alt text to template HTML. Each <img> is matched to
  * a site_images slot by the src it already has, so the admin screen and the
@@ -657,9 +680,9 @@ export function applySiteImages(
 
   return html.replace(/<img\b[^>]*>/g, (tag) => {
     const src = tag.match(/\ssrc="([^"]*)"/)?.[1];
-    if (!src) return tag;
+    if (!src) return optimizeCloudinaryImg(tag);
     const key = keyBySrc.get(src);
-    if (!key) return tag;
+    if (!key) return optimizeCloudinaryImg(tag);
 
     let out = tag;
 
@@ -674,7 +697,7 @@ export function applySiteImages(
       if (current !== escapeHTML(alt)) out = setImageAttr(out, "alt", escapeHTML(alt));
     }
 
-    return out;
+    return optimizeCloudinaryImg(out);
   });
 }
 
