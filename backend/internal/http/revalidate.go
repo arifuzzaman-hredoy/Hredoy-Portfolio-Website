@@ -19,6 +19,11 @@ const revalidateTokenHeader = "X-Revalidate-Token"
 // frontend must never delay an admin save.
 const revalidateTimeout = 2 * time.Second
 
+// cloudflarePurgeTimeout bounds one Cloudflare purge call. Purging is a
+// side-effect of a save that already succeeded, so it gets a little more room
+// than revalidation but still cannot hang a background goroutine.
+const cloudflarePurgeTimeout = 10 * time.Second
+
 // Revalidator asks the Next.js frontend to drop its cached CMS data after an
 // admin save. Every call is best-effort: failures are logged and swallowed so
 // that saving content can never fail because of a cache refresh.
@@ -107,6 +112,28 @@ func revalidatesPublicContent(r *http.Request) bool {
 	return false
 }
 
+// refreshPublicCache drops every cache layer that can serve the public page:
+// the Next.js render cache and the Cloudflare edge copy. Both calls run in the
+// background and are best-effort, so a slow or broken dependency can never fail
+// an admin save.
+func (d HandlerDeps) refreshPublicCache() {
+	if d.Revalidator != nil {
+		d.Revalidator.trigger()
+	}
+	if d.Cloudflare == nil || !d.Cloudflare.Enabled() {
+		return
+	}
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), cloudflarePurgeTimeout)
+		defer cancel()
+		if err := d.Cloudflare.Purge(ctx); err != nil {
+			d.Logger.Error("cloudflare purge failed", "error", err)
+			return
+		}
+		d.Logger.Debug("cloudflare edge cache purged")
+	}()
+}
+
 // revalidatePublicContent refreshes the Next.js cache after a successful admin
 // save in one of the public content sections.
 func (d HandlerDeps) revalidatePublicContent(next http.Handler) http.Handler {
@@ -118,7 +145,7 @@ func (d HandlerDeps) revalidatePublicContent(next http.Handler) http.Handler {
 			return
 		}
 		if revalidatesPublicContent(r) {
-			d.Revalidator.trigger()
+			d.refreshPublicCache()
 		}
 	})
 }

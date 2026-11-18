@@ -83,6 +83,14 @@ type HandlerDeps struct {
 	Cloudinary    *cloudinary.Client
 	Revalidator   *Revalidator
 	Mailer        *notify.Mailer
+	Cloudflare    EdgePurger
+}
+
+// EdgePurger drops the cached copy of the public page at the CDN edge. It is an
+// interface so the revalidation middleware can be tested without a network.
+type EdgePurger interface {
+	Enabled() bool
+	Purge(ctx context.Context) error
 }
 
 func (d HandlerDeps) home(w http.ResponseWriter, _ *http.Request) {

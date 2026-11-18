@@ -65,5 +65,5 @@
 
 ## Deployment Gotchas
 - **Cloudflare caches `/assets/*`.** `main.css` and the fonts revalidate, but `assets/css/vendors/*.css` is served from a long-lived edge copy. After changing anything under `frontend/public/assets/`, purge the Cloudflare cache (Caching → Configuration → Purge Everything) or the old bytes keep being served to some PoPs even though the origin is correct.
-- **HTML is not cached at the edge** (`cf-cache-status: DYNAMIC`), so the first request after a cold start always pays the Paris → Mumbai origin round trip.
+- **HTML is cached at the edge.** With a Cloudflare cache rule for `/` (Cache Eligibility: Eligible, Edge TTL: override origin, Browser TTL: respect origin) the HTML no longer hits the origin, so the first request after a cold start drops from ~1.2 s to well under 0.1 s. That makes an edge purge mandatory after every admin save, which is why `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ZONE_ID` are set: the revalidation middleware purges the URL right after it revalidates Next.js.
 - **Contact email is optional.** With `SMTP_HOST`, `SMTP_FROM` and `CONTACT_NOTIFY_TO` set, every contact message is also emailed to the owner; otherwise messages only land in the database and the admin inbox.

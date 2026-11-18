@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudflare"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/config"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/notify"
@@ -46,10 +47,15 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 			From:     cfg.SMTPFrom,
 			To:       cfg.ContactNotifyTo,
 		}),
+		Cloudflare: cloudflare.New(cfg.CloudflareAPIToken, cfg.CloudflareZoneID, cfg.SiteURL),
 	}
 
 	if !deps.Mailer.Enabled() {
 		logger.Warn("contact email notifications are disabled; set SMTP_HOST, SMTP_FROM and CONTACT_NOTIFY_TO to enable them")
+	}
+
+	if deps.Cloudflare == nil || !deps.Cloudflare.Enabled() {
+		logger.Warn("cloudflare purge is disabled; set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID to refresh the edge cache after an admin save")
 	}
 
 	if !deps.Cloudinary.Enabled() {

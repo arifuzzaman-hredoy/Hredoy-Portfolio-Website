@@ -53,6 +53,8 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ZONE_ID: ${CLOUDFLARE_ZONE_ID:-}
     depends_on:
       postgres:
         condition: service_healthy

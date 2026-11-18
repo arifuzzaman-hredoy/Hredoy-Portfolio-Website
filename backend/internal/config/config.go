@@ -30,6 +30,8 @@ type Config struct {
 	SMTPPassword        string
 	SMTPFrom            string
 	ContactNotifyTo     string
+	CloudflareAPIToken  string
+	CloudflareZoneID    string
 }
 
 func Load() (*Config, error) {
@@ -57,6 +59,8 @@ func Load() (*Config, error) {
 		SMTPPassword:        env("SMTP_PASSWORD", ""),
 		SMTPFrom:            env("SMTP_FROM", ""),
 		ContactNotifyTo:     env("CONTACT_NOTIFY_TO", ""),
+		CloudflareAPIToken:  env("CLOUDFLARE_API_TOKEN", ""),
+		CloudflareZoneID:    env("CLOUDFLARE_ZONE_ID", ""),
 	}
 
 	cfg.AppEnv = strings.ToLower(cfg.AppEnv)
