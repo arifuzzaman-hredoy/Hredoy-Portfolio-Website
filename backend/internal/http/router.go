@@ -8,6 +8,7 @@ import (
 
 	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/config"
+	"github.com/arifuzzaman-hredoy/portfolio/internal/notify"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -37,6 +38,18 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		UploadDir:     cfg.UploadDir,
 		Cloudinary:    cloudinary.New(cfg.CloudinaryCloud, cfg.CloudinaryAPIKey, cfg.CloudinaryAPISecret, cfg.CloudinaryFolder),
 		Revalidator:   newRevalidator(cfg.RevalidateURL, cfg.RevalidateToken, logger),
+		Mailer: notify.New(notify.Config{
+			Host:     cfg.SMTPHost,
+			Port:     cfg.SMTPPort,
+			Username: cfg.SMTPUsername,
+			Password: cfg.SMTPPassword,
+			From:     cfg.SMTPFrom,
+			To:       cfg.ContactNotifyTo,
+		}),
+	}
+
+	if !deps.Mailer.Enabled() {
+		logger.Warn("contact email notifications are disabled; set SMTP_HOST, SMTP_FROM and CONTACT_NOTIFY_TO to enable them")
 	}
 
 	if !deps.Cloudinary.Enabled() {

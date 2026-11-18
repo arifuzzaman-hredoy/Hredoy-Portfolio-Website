@@ -13,6 +13,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
+	"github.com/arifuzzaman-hredoy/portfolio/internal/notify"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/store/db"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -81,6 +82,7 @@ type HandlerDeps struct {
 	UploadDir     string
 	Cloudinary    *cloudinary.Client
 	Revalidator   *Revalidator
+	Mailer        *notify.Mailer
 }
 
 func (d HandlerDeps) home(w http.ResponseWriter, _ *http.Request) {
@@ -183,7 +185,32 @@ func (d HandlerDeps) contact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	d.Logger.Info("contact message stored", "email", req.Email)
+	d.notifyContact(req)
 	writeJSON(w, http.StatusCreated, map[string]bool{"ok": true})
+}
+
+// notifyContact emails a stored contact message. It runs in the background so
+// SMTP latency never delays the visitor's response, and a failure is only
+// logged: the message is already safe in the database and the admin inbox.
+func (d HandlerDeps) notifyContact(req contactRequest) {
+	if d.Mailer == nil || !d.Mailer.Enabled() {
+		return
+	}
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		err := d.Mailer.Contact(ctx, notify.ContactMessage{
+			Name:    req.Name,
+			Email:   req.Email,
+			Subject: req.Subject,
+			Message: req.Message,
+		})
+		if err != nil {
+			d.Logger.Error("contact notification email failed", "error", err, "email", req.Email)
+			return
+		}
+		d.Logger.Info("contact notification email sent", "email", req.Email)
+	}()
 }
 
 func validateContact(req contactRequest) (field, message string) {

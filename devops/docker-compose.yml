@@ -47,6 +47,12 @@ services:
       CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-portfolio}
       REVALIDATE_URL: ${REVALIDATE_URL:-http://frontend:3000/api/revalidate}
       REVALIDATE_TOKEN: ${REVALIDATE_TOKEN:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-}
     depends_on:
       postgres:
         condition: service_healthy

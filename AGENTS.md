@@ -59,5 +59,11 @@
 
 ## Roadmap Status
 - **Phase 1 (Baseline)**: Complete.
-- **Phase 2 (Foundation & Structure Refactor)**: Refactored layout (`refactor/project-structure`).
-- **Phase 3 (Public Template Shell)**: Next phase (requires user explicit approval to start).
+- **Phase 2 (Foundation & Structure Refactor)**: Complete.
+- **Phase 3 (Public Template Shell)**: Complete — the Next.js frontend renders the template from the Go backend, with a full admin at `/super-admin`.
+- **Content slices**: B1 (typed, manifest-driven CMS content), the revalidation slice (on-demand cache purge after an admin save), B2 (owner identity + image alts from `site_settings`/`site_images`), B3 (repeatable lists from `content_items`), B4 (performance: subset icon fonts, minified `main.css`, WebP image delivery) — all shipped.
+
+## Deployment Gotchas
+- **Cloudflare caches `/assets/*`.** `main.css` and the fonts revalidate, but `assets/css/vendors/*.css` is served from a long-lived edge copy. After changing anything under `frontend/public/assets/`, purge the Cloudflare cache (Caching → Configuration → Purge Everything) or the old bytes keep being served to some PoPs even though the origin is correct.
+- **HTML is not cached at the edge** (`cf-cache-status: DYNAMIC`), so the first request after a cold start always pays the Paris → Mumbai origin round trip.
+- **Contact email is optional.** With `SMTP_HOST`, `SMTP_FROM` and `CONTACT_NOTIFY_TO` set, every contact message is also emailed to the owner; otherwise messages only land in the database and the admin inbox.

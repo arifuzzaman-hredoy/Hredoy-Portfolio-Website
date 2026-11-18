@@ -24,6 +24,12 @@ type Config struct {
 	CloudinaryFolder    string
 	RevalidateURL       string
 	RevalidateToken     string
+	SMTPHost            string
+	SMTPPort            string
+	SMTPUsername        string
+	SMTPPassword        string
+	SMTPFrom            string
+	ContactNotifyTo     string
 }
 
 func Load() (*Config, error) {
@@ -45,6 +51,12 @@ func Load() (*Config, error) {
 		CloudinaryFolder:    env("CLOUDINARY_FOLDER", "portfolio"),
 		RevalidateURL:       strings.TrimRight(env("REVALIDATE_URL", "http://frontend:3000/api/revalidate"), "/"),
 		RevalidateToken:     env("REVALIDATE_TOKEN", ""),
+		SMTPHost:            env("SMTP_HOST", ""),
+		SMTPPort:            env("SMTP_PORT", "587"),
+		SMTPUsername:        env("SMTP_USERNAME", ""),
+		SMTPPassword:        env("SMTP_PASSWORD", ""),
+		SMTPFrom:            env("SMTP_FROM", ""),
+		ContactNotifyTo:     env("CONTACT_NOTIFY_TO", ""),
 	}
 
 	cfg.AppEnv = strings.ToLower(cfg.AppEnv)
