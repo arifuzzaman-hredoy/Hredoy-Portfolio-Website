@@ -17,6 +17,7 @@ const (
 	csrfFormField  = "csrf_token"
 	csrfHeaderName = "X-CSRF-Token"
 	csrfCookieTTL  = 12 * time.Hour
+	csrfCookiePath = "/"
 )
 
 type csrfTokenKey struct{}
@@ -73,7 +74,7 @@ func (d HandlerDeps) csrf(next http.Handler) http.Handler {
 			http.SetCookie(w, &http.Cookie{
 				Name:     csrfCookieName,
 				Value:    token,
-				Path:     "/super-admin",
+				Path:     csrfCookiePath,
 				HttpOnly: true,
 				SameSite: http.SameSiteLaxMode,
 				Secure:   d.cookieSecure(),
@@ -85,6 +86,10 @@ func (d HandlerDeps) csrf(next http.Handler) http.Handler {
 			d.Logger.Warn("rejected request with invalid csrf token", "path", r.URL.Path, "method", r.Method)
 			http.Error(w, "invalid CSRF token", http.StatusForbidden)
 			return
+		}
+
+		if isSafeMethod(r.Method) {
+			w.Header().Set(csrfHeaderName, token)
 		}
 
 		ctx := context.WithValue(r.Context(), csrfTokenKey{}, token)

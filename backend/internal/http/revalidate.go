@@ -90,6 +90,8 @@ func (r *Revalidator) call() {
 // public site renders. Revalidation is scoped to these so that unrelated admin
 // actions (login, message read/unread) do not churn the cache.
 var publicContentPrefixes = []string{
+	"/api/admin/certificates",
+	"/super-admin/certificates",
 	"/super-admin/content",
 	"/super-admin/lists",
 	"/super-admin/site-images",
@@ -101,7 +103,8 @@ var publicContentPrefixes = []string{
 // revalidatesPublicContent reports whether a request is an admin save that can
 // change the public page.
 func revalidatesPublicContent(r *http.Request) bool {
-	if r.Method != http.MethodPost {
+	switch r.Method {
+	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodTrace:
 		return false
 	}
 	for _, prefix := range publicContentPrefixes {

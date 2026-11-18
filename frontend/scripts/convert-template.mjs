@@ -326,11 +326,14 @@ const component = `"use client";
 // injected at render time by applyCMSContent; the static markup below is the
 // fallback. Phase 3: CMS-managed image URLs and alt text are injected by
 // applySiteImages, and the repeatable homepage lists (nav dropdowns, hero pills,
-// skills, process, marquee, CTA, footer) by applyContentItems.
+// skills, process, marquee, CTA, footer) by applyContentItems. The Certificates
+// section is inserted between Featured Projects and Contact by
+// insertCertificatesSection.
 //
 // Regenerating this file drops the extra props below (defaults, imageAlts,
-// identity, lists) because the generator has no way to know about them. Re-add
-// them after regenerating, or the CMS silently stops applying.
+// identity, lists, certificatesHTML) because the generator has no way to know
+// about them. Re-add them after regenerating, or the CMS silently stops
+// applying.
 
 import {
   applyCMSContent,
@@ -339,6 +342,7 @@ import {
   type ContentGroups,
   type Project,
 } from "@/lib/cms-render";
+import { insertCertificatesSection } from "@/lib/certificates-render";
 
 const BODY_HTML = \`${escaped}\`;
 
@@ -350,6 +354,7 @@ type HomeContentProps = {
   images?: Record<string, string>;
   imageAlts?: Record<string, string>;
   identity?: Record<string, string>;
+  certificatesHTML?: string;
 };
 
 export default function HomeContent({
@@ -360,10 +365,12 @@ export default function HomeContent({
   images,
   imageAlts,
   identity,
+  certificatesHTML,
 }: HomeContentProps) {
   let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
   html = applyContentItems(html, lists ?? {});
   html = applySiteImages(html, images ?? {}, imageAlts ?? {});
+  html = insertCertificatesSection(html, certificatesHTML ?? "");
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 `;

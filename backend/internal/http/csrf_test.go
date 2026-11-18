@@ -29,7 +29,17 @@ func TestAdminTemplatesCarryCSRFFieldInEveryForm(t *testing.T) {
 			t.Fatalf("read %s: %v", entry.Name(), err)
 		}
 		body := string(raw)
-		forms := strings.Count(body, "<form")
+		forms := 0
+		for _, chunk := range strings.Split(body, "<form")[1:] {
+			tag := chunk
+			if index := strings.Index(tag, ">"); index >= 0 {
+				tag = tag[:index]
+			}
+			if strings.Contains(strings.ToLower(tag), `method="get"`) {
+				continue
+			}
+			forms++
+		}
 		fields := strings.Count(body, `name="csrf_token"`)
 		if forms != fields {
 			t.Fatalf("%s has %d forms but %d csrf_token fields", entry.Name(), forms, fields)
@@ -92,8 +102,14 @@ func TestCSRFIssuesCookieOnSafeRequest(t *testing.T) {
 	if cookie.SameSite != http.SameSiteLaxMode {
 		t.Fatalf("csrf cookie SameSite = %v, want Lax", cookie.SameSite)
 	}
-	if cookie.Path != "/super-admin" {
-		t.Fatalf("csrf cookie path = %q, want /super-admin", cookie.Path)
+	if cookie.Path != csrfCookiePath {
+		t.Fatalf("csrf cookie path = %q, want %q", cookie.Path, csrfCookiePath)
+	}
+	if cookie.Path != "/" {
+		t.Fatalf("csrf cookie must cover the whole origin so /api/admin receives it, got %q", cookie.Path)
+	}
+	if got := rr.Header().Get(csrfHeaderName); got != token {
+		t.Fatalf("%s header = %q, want the issued token so script clients can echo it", csrfHeaderName, got)
 	}
 }
 

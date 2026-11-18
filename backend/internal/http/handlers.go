@@ -65,6 +65,20 @@ type Store interface {
 	SetContentItemPublished(ctx context.Context, arg db.SetContentItemPublishedParams) error
 	DeleteContentItem(ctx context.Context, id pgtype.UUID) error
 	NextContentItemSortOrder(ctx context.Context, parentKey string) (int32, error)
+	ListPublishedCertificates(ctx context.Context, arg db.ListPublishedCertificatesParams) ([]db.Certificate, error)
+	CountPublishedCertificates(ctx context.Context, arg db.CountPublishedCertificatesParams) (int64, error)
+	ListFeaturedCertificates(ctx context.Context, lim int32) ([]db.Certificate, error)
+	ListPublishedCertificateCategories(ctx context.Context) ([]string, error)
+	ListAllCertificates(ctx context.Context, arg db.ListAllCertificatesParams) ([]db.Certificate, error)
+	CountAllCertificates(ctx context.Context, arg db.CountAllCertificatesParams) (int64, error)
+	CountCertificates(ctx context.Context) (int64, error)
+	CountFeaturedCertificates(ctx context.Context) (int64, error)
+	NextCertificateSortOrder(ctx context.Context) (int32, error)
+	GetCertificate(ctx context.Context, id pgtype.UUID) (db.Certificate, error)
+	GetPublishedCertificate(ctx context.Context, id pgtype.UUID) (db.Certificate, error)
+	CreateCertificate(ctx context.Context, arg db.CreateCertificateParams) (db.Certificate, error)
+	UpdateCertificate(ctx context.Context, arg db.UpdateCertificateParams) (db.Certificate, error)
+	DeleteCertificate(ctx context.Context, id pgtype.UUID) error
 }
 
 type HandlerDeps struct {

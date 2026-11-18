@@ -68,6 +68,11 @@ type fakeStore struct {
 	reorderedItems  []db.UpdateContentItemOrderParams
 	toggledItems    []db.SetContentItemPublishedParams
 	deletedItems    []string
+
+	certs        []db.Certificate
+	createdCerts []db.CreateCertificateParams
+	updatedCerts []db.UpdateCertificateParams
+	deletedCerts []string
 }
 
 func (f *fakeStore) CreateContactMessage(_ context.Context, arg db.CreateContactMessageParams) error {

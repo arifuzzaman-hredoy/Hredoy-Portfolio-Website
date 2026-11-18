@@ -1,0 +1,216 @@
+{{define "content"}}
+<div class="certificates-page">
+<header class="page-head page-head--split">
+  <div>
+    <p class="eyebrow">Content library</p>
+    <h1>Certificates</h1>
+    <p class="muted">Every credential you have earned. Hidden certificates stay saved but never appear on the public site.</p>
+  </div>
+  <div class="page-stat">
+    <span class="page-stat__value">{{.total}}</span>
+    <span class="page-stat__label">certificates</span>
+  </div>
+</header>
+
+{{if .success}}<p class="alert success">Saved.</p>{{end}}
+{{if .saved_deleted}}<p class="alert success">Certificate deleted.</p>{{end}}
+{{if .error}}<p class="alert">{{.error}}</p>{{end}}
+
+<section class="card">
+  <div class="card-head">
+    <h2>Add certificate</h2>
+    <span class="badge">{{.featured_total}} featured</span>
+  </div>
+  <form method="post" action="/super-admin/certificates/create" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+    <div class="create-grid">
+      <label class="field"><span>Certificate title *</span><input type="text" name="title" required maxlength="200"></label>
+      <label class="field"><span>Issuing organization *</span><input type="text" name="issuer" required maxlength="200"></label>
+      <label class="field"><span>Course name</span><input type="text" name="course_name" maxlength="200"></label>
+      <label class="field"><span>Issue date *</span><input type="date" name="issue_date" required></label>
+      <label class="field"><span>Expiry date</span><input type="date" name="expiry_date"></label>
+      <label class="field"><span>Category</span><input type="text" name="category" maxlength="60" placeholder="Cloud, DevOps, Security"></label>
+    </div>
+    <div class="create-grid">
+      <label class="field"><span>Credential ID</span><input type="text" name="credential_id" maxlength="120"></label>
+      <label class="field"><span>Verification URL</span><input type="url" name="credential_url" placeholder="https://verify.example.com/..."></label>
+      <label class="field"><span>Skills (comma separated)</span><input type="text" name="skills" placeholder="Kubernetes, Linux"></label>
+      <label class="field"><span>Display order</span><input type="number" name="sort_order" min="0" max="1000000" placeholder="auto"></label>
+    </div>
+    <label class="field"><span>Description</span><textarea name="description" rows="3" maxlength="2000"></textarea></label>
+    <div class="create-grid">
+      <label class="field"><span>Certificate image (JPG, PNG, WEBP · max 5 MiB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
+      <label class="field"><span>Certificate PDF (max 10 MiB)</span><input type="file" name="pdf" accept="application/pdf"></label>
+    </div>
+    <div class="actions">
+      <label class="field field--inline"><span>Featured</span><input type="checkbox" name="featured"></label>
+      <label class="field field--inline"><span>Published</span><input type="checkbox" name="published" checked></label>
+      <button class="btn" type="submit">Add certificate</button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Certificates</h2>
+    <span class="badge">{{.all_total}} total</span>
+  </div>
+
+  <form method="get" action="/super-admin/certificates" class="cert-filters">
+    <label class="field"><span>Search</span><input type="search" name="q" value="{{.filters.q}}" placeholder="Title or issuer"></label>
+    <label class="field"><span>Category</span>
+      <select name="category">
+        <option value="">All categories</option>
+        {{$selected := .filters.category}}
+        {{range .categories}}<option value="{{.}}"{{if eq . $selected}} selected{{end}}>{{.}}</option>{{end}}
+      </select>
+    </label>
+    <label class="field"><span>Status</span>
+      <select name="published">
+        <option value="">Any status</option>
+        <option value="true"{{if eq .filters.published "true"}} selected{{end}}>Published</option>
+        <option value="false"{{if eq .filters.published "false"}} selected{{end}}>Hidden</option>
+      </select>
+    </label>
+    <label class="field"><span>Featured</span>
+      <select name="featured">
+        <option value="">Any</option>
+        <option value="true"{{if eq .filters.featured "true"}} selected{{end}}>Featured</option>
+        <option value="false"{{if eq .filters.featured "false"}} selected{{end}}>Not featured</option>
+      </select>
+    </label>
+    <label class="field"><span>Sort</span>
+      <select name="sort">
+        <option value="order"{{if eq .filters.sort "order"}} selected{{end}}>Display order</option>
+        <option value="newest"{{if eq .filters.sort "newest"}} selected{{end}}>Newest first</option>
+        <option value="oldest"{{if eq .filters.sort "oldest"}} selected{{end}}>Oldest first</option>
+        <option value="title"{{if eq .filters.sort "title"}} selected{{end}}>Title A–Z</option>
+      </select>
+    </label>
+    <button class="btn-sm" type="submit">Filter</button>
+    <a class="btn-sm" href="/super-admin/certificates">Reset</a>
+  </form>
+
+  {{if .rows}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Certificate</th>
+          <th>Issuer</th>
+          <th>Issued</th>
+          <th>Expires</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Featured</th>
+          <th>Order</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .rows}}
+        <tr>
+          <td>
+            <div class="cert-cell">
+              {{if .ImageThumb}}<img class="cert-thumb" src="{{.ImageThumb}}" alt="" loading="lazy">{{else}}<span class="cert-thumb is-empty">PDF</span>{{end}}
+              <div>
+                <a class="cert-title" href="/super-admin/certificates/{{.ID}}">{{.Title}}</a>
+                {{if .CourseName}}<div class="cert-sub">{{.CourseName}}</div>{{end}}
+                {{if .PDFPath}}<a class="cert-sub" href="{{.PDFPath}}" target="_blank" rel="noopener">Open PDF</a>{{end}}
+              </div>
+            </div>
+          </td>
+          <td>{{.Issuer}}</td>
+          <td>{{.IssueDate}}</td>
+          <td>{{if .ExpiryDate}}{{.ExpiryDate}}{{else}}<span class="muted">No expiry</span>{{end}}{{if .Expired}} <span class="tag read">Expired</span>{{end}}</td>
+          <td>{{if .Category}}{{.Category}}{{else}}<span class="muted">—</span>{{end}}</td>
+          <td>{{if .Published}}<span class="tag">Published</span>{{else}}<span class="tag read">Hidden</span>{{end}}</td>
+          <td>{{if .Featured}}<span class="tag">Featured</span>{{else}}<span class="muted">—</span>{{end}}</td>
+          <td>{{.SortOrder}}</td>
+          <td>
+            <div class="actions">
+              <a class="btn-sm" href="/super-admin/certificates/{{.ID}}">View</a>
+              <a class="btn-sm" href="#edit-{{.ID}}">Edit</a>
+              <form method="post" action="/super-admin/certificates/toggle">
+                <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+                <input type="hidden" name="id" value="{{.ID}}">
+                <input type="hidden" name="field" value="publish">
+                <button class="btn-sm" type="submit">{{if .Published}}Hide{{else}}Publish{{end}}</button>
+              </form>
+              <form method="post" action="/super-admin/certificates/toggle">
+                <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+                <input type="hidden" name="id" value="{{.ID}}">
+                <input type="hidden" name="field" value="featured">
+                <button class="btn-sm" type="submit">{{if .Featured}}Unfeature{{else}}Feature{{end}}</button>
+              </form>
+              <form method="post" action="/super-admin/certificates/delete" onsubmit="return confirm('Delete this certificate? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+                <input type="hidden" name="id" value="{{.ID}}">
+                <button class="btn-sm danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  {{if gt .total_pages 1}}
+  <nav class="cert-pager" aria-label="Certificate pages">
+    {{if .has_prev}}<a class="btn-sm" href="{{.prev_url}}">Previous</a>{{else}}<span class="btn-sm is-disabled">Previous</span>{{end}}
+    <span class="muted">Page {{.page}} of {{.total_pages}}</span>
+    {{if .has_next}}<a class="btn-sm" href="{{.next_url}}">Next</a>{{else}}<span class="btn-sm is-disabled">Next</span>{{end}}
+  </nav>
+  {{end}}
+  {{else}}
+  <p class="empty">No certificates match these filters.</p>
+  {{end}}
+</section>
+
+{{if .rows}}
+<section class="card">
+  <div class="card-head">
+    <h2>Edit a certificate</h2>
+    <span class="muted">Open a row to update its details or replace its files.</span>
+  </div>
+  {{range .rows}}
+  <details class="edit-details" id="edit-{{.ID}}">
+    <summary>{{.Title}}</summary>
+    <form method="post" action="/super-admin/certificates/update" enctype="multipart/form-data" class="stack" style="padding:14px 0;">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="id" value="{{.ID}}">
+      <div class="create-grid">
+        <label class="field"><span>Certificate title *</span><input type="text" name="title" value="{{.Title}}" required maxlength="200"></label>
+        <label class="field"><span>Issuing organization *</span><input type="text" name="issuer" value="{{.Issuer}}" required maxlength="200"></label>
+        <label class="field"><span>Course name</span><input type="text" name="course_name" value="{{.CourseName}}" maxlength="200"></label>
+        <label class="field"><span>Issue date *</span><input type="date" name="issue_date" value="{{.IssueDate}}" required></label>
+        <label class="field"><span>Expiry date</span><input type="date" name="expiry_date" value="{{.ExpiryDate}}"></label>
+        <label class="field"><span>Category</span><input type="text" name="category" value="{{.Category}}" maxlength="60"></label>
+      </div>
+      <div class="create-grid">
+        <label class="field"><span>Credential ID</span><input type="text" name="credential_id" value="{{.CredentialID}}" maxlength="120"></label>
+        <label class="field"><span>Verification URL</span><input type="url" name="credential_url" value="{{.CredentialURL}}"></label>
+        <label class="field"><span>Skills (comma separated)</span><input type="text" name="skills" value="{{.Skills}}"></label>
+        <label class="field"><span>Display order</span><input type="number" name="sort_order" value="{{.SortOrder}}" min="0" max="1000000"></label>
+      </div>
+      <label class="field"><span>Description</span><textarea name="description" rows="3" maxlength="2000">{{.Description}}</textarea></label>
+      <div class="create-grid">
+        <label class="field"><span>Replace image (JPG, PNG, WEBP · max 5 MiB)</span><input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
+        <label class="field"><span>Replace PDF (max 10 MiB)</span><input type="file" name="pdf" accept="application/pdf"></label>
+      </div>
+      <div class="actions">
+        <label class="field field--inline"><span>Featured</span><input type="checkbox" name="featured"{{if .Featured}} checked{{end}}></label>
+        <label class="field field--inline"><span>Published</span><input type="checkbox" name="published"{{if .Published}} checked{{end}}></label>
+        {{if .ImagePath}}<label class="field field--inline"><span>Remove image</span><input type="checkbox" name="remove_image"></label>{{end}}
+        {{if .PDFPath}}<label class="field field--inline"><span>Remove PDF</span><input type="checkbox" name="remove_pdf"></label>{{end}}
+        <button class="btn-sm" type="submit">Save changes</button>
+        <a class="btn-sm" href="/super-admin/certificates/{{.ID}}">View</a>
+      </div>
+    </form>
+  </details>
+  {{end}}
+</section>
+{{end}}
+</div>
+{{end}}

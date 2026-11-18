@@ -63,8 +63,11 @@ func (c *Client) Upload(data []byte, filename, mimeType string) (*UploadResult, 
 	}
 
 	resourceType := "image"
-	if strings.HasPrefix(mimeType, "video/") {
+	switch {
+	case strings.HasPrefix(mimeType, "video/"):
 		resourceType = "video"
+	case mimeType == "application/pdf":
+		resourceType = "raw"
 	}
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
@@ -137,8 +140,11 @@ func (c *Client) Delete(publicID string) error {
 	}
 
 	resourceType := "image"
-	if strings.Contains(publicID, "/video/") || strings.HasSuffix(publicID, ".mp4") || strings.HasSuffix(publicID, ".webm") {
+	switch {
+	case strings.Contains(publicID, "/video/") || strings.HasSuffix(publicID, ".mp4") || strings.HasSuffix(publicID, ".webm"):
 		resourceType = "video"
+	case strings.HasSuffix(strings.ToLower(publicID), ".pdf"):
+		resourceType = "raw"
 	}
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)

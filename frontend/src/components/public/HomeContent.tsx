@@ -9,6 +9,7 @@
 // render time by applyCMSContent; the static markup below is the fallback.
 
 import { applyCMSContent, applyContentItems, applySiteImages, type ContentGroups, type Project } from "@/lib/cms-render";
+import { insertCertificatesSection } from "@/lib/certificates-render";
 
 const BODY_HTML = `    <!-- prettier-ignore -->
     <!--search-form-start -->
@@ -1623,6 +1624,7 @@ type HomeContentProps = {
   images?: Record<string, string>;
   imageAlts?: Record<string, string>;
   identity?: Record<string, string>;
+  certificatesHTML?: string;
 };
 
 export default function HomeContent({
@@ -1633,9 +1635,11 @@ export default function HomeContent({
   images,
   imageAlts,
   identity,
+  certificatesHTML,
 }: HomeContentProps) {
   let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
   html = applyContentItems(html, lists ?? {});
   html = applySiteImages(html, images ?? {}, imageAlts ?? {});
+  html = insertCertificatesSection(html, certificatesHTML ?? "");
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

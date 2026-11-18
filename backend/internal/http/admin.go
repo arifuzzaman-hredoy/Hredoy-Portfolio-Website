@@ -56,6 +56,19 @@ func (d HandlerDeps) requireAdmin(next http.Handler) http.Handler {
 	})
 }
 
+// requireAdminAPI is the JSON variant of requireAdmin: the admin API answers
+// 401 instead of redirecting so a fetch client can react to the lost session.
+func (d HandlerDeps) requireAdminAPI(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie(adminCookieName)
+		if err != nil || d.Sessions == nil || !d.Sessions.valid(cookie.Value) {
+			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "authentication required"})
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (d HandlerDeps) adminLogin(w http.ResponseWriter, r *http.Request) {
 	if d.authenticated(r) {
 		http.Redirect(w, r, "/super-admin", http.StatusSeeOther)

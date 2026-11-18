@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/arifuzzaman-hredoy/portfolio/internal/certificates"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudflare"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/cloudinary"
 	"github.com/arifuzzaman-hredoy/portfolio/internal/config"
@@ -88,6 +89,15 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 	r.Get("/api/v1/media", deps.apiMedia)
 	r.Get("/api/v1/site-images", deps.apiSiteImages)
 
+	certificateService := certificates.New(deps.Queries)
+	certificateHandlers := certificates.NewHandler(certificateService, logger)
+
+	// Public certificates API
+	r.Get("/api/v1/certificates", certificateHandlers.List)
+	r.Get("/api/v1/certificates/featured", certificateHandlers.Featured)
+	r.Get("/api/v1/certificates/categories", certificateHandlers.Categories)
+	r.Get("/api/v1/certificates/{id}", certificateHandlers.Get)
+
 	// Uploaded media served by the Go backend
 	if deps.UploadDir != "" {
 		r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(deps.UploadDir))))
@@ -147,6 +157,25 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		r.Post("/super-admin/site-images/replace", deps.adminSiteImageReplace)
 		r.Post("/super-admin/site-images/alt", deps.adminSiteImageAlt)
 		r.Post("/super-admin/site-images/reset", deps.adminSiteImageReset)
+
+		r.Get("/super-admin/certificates", deps.adminCertificates)
+		r.Get("/super-admin/certificates/{id}", deps.adminCertificateDetail)
+		r.Post("/super-admin/certificates/create", deps.adminCertificateCreate)
+		r.Post("/super-admin/certificates/update", deps.adminCertificateUpdate)
+		r.Post("/super-admin/certificates/delete", deps.adminCertificateDelete)
+		r.Post("/super-admin/certificates/toggle", deps.adminCertificateToggle)
+	})
+
+	// Admin certificates API (JSON, same session and csrf rules as the admin pages)
+	r.Group(func(r chi.Router) {
+		r.Use(deps.requireAdminAPI)
+		r.Use(deps.csrf)
+		r.Use(deps.revalidatePublicContent)
+		r.Get("/api/admin/certificates", certificateHandlers.AdminList)
+		r.Post("/api/admin/certificates", certificateHandlers.AdminCreate)
+		r.Get("/api/admin/certificates/{id}", certificateHandlers.AdminGet)
+		r.Put("/api/admin/certificates/{id}", certificateHandlers.AdminUpdate)
+		r.Delete("/api/admin/certificates/{id}", certificateHandlers.AdminDelete)
 	})
 
 	return r

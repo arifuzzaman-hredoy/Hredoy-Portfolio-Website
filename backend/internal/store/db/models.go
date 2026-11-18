@@ -8,6 +8,29 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Certificate struct {
+	ID            pgtype.UUID
+	Title         string
+	Issuer        string
+	CourseName    string
+	CredentialID  string
+	CredentialUrl string
+	ImagePath     string
+	PdfPath       string
+	ImagePublicID string
+	PdfPublicID   string
+	Description   string
+	IssueDate     pgtype.Date
+	ExpiryDate    pgtype.Date
+	Category      string
+	Skills        string
+	Featured      bool
+	Published     bool
+	SortOrder     int32
+	CreatedAt     pgtype.Timestamptz
+	UpdatedAt     pgtype.Timestamptz
+}
+
 type ContactMessage struct {
 	ID         pgtype.UUID
 	Name       string

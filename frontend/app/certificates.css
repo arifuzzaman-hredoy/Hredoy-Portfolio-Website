@@ -1,0 +1,459 @@
+/* Public Certificates section. Additive only: every selector is scoped to
+   .certificates-cms so template sections keep their original styles. */
+
+.certificates-cms .cert-toolbar {
+  border-bottom: 1px solid var(--at-neutral-100);
+  padding-bottom: 24px;
+}
+
+.certificates-cms .cert-toolbar__field {
+  display: flex;
+  align-items: center;
+  min-width: 190px;
+}
+
+.certificates-cms .cert-toolbar__input,
+.certificates-cms .cert-toolbar__select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--at-neutral-900);
+  background: var(--at-neutral-0);
+  border: 1px solid var(--at-neutral-200);
+  border-radius: 100px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.certificates-cms .cert-toolbar__input::placeholder {
+  color: var(--at-neutral-500);
+}
+
+.certificates-cms .cert-toolbar__input:focus,
+.certificates-cms .cert-toolbar__select:focus {
+  border-color: var(--at-theme-primary);
+  box-shadow: 0 0 0 3px rgba(var(--at-theme-primary-rgb, 15, 118, 110), 0.14);
+}
+
+.certificates-cms .cert-status {
+  font-size: 14px;
+  color: var(--at-neutral-500);
+}
+
+.certificates-cms .cert-status__retry,
+.certificates-cms .cert-empty__clear {
+  margin-left: 8px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--at-theme-primary);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.certificates-cms .cert-grid {
+  position: relative;
+}
+
+.certificates-cms .cert-grid[aria-busy="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.certificates-cms .blog-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.certificates-cms .cert-card__open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.certificates-cms .blog-card__thumb .cert-card__open {
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.certificates-cms .blog-card__thumb .blog-card__img22 {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.certificates-cms .blog-card__thumb .cert-card__open:hover .blog-card__img22 {
+  transform: scale(1.03);
+}
+
+.certificates-cms .cert-card__noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--at-neutral-500);
+  background: var(--at-neutral-50);
+  border: 1px dashed var(--at-neutral-200);
+  border-radius: 12px;
+}
+
+.certificates-cms .cert-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certificates-cms .cert-card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--at-theme-primary);
+  background: rgba(var(--at-theme-primary-rgb, 15, 118, 110), 0.1);
+  border-radius: 100px;
+}
+
+.certificates-cms .cert-card__badge--expired {
+  color: var(--at-neutral-500);
+  background: var(--at-neutral-50);
+}
+
+.certificates-cms .cert-card__date {
+  font-size: 14px;
+  color: var(--at-neutral-500);
+}
+
+.certificates-cms .cert-card__verify {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--at-theme-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.certificates-cms .cert-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.certificates-cms .cert-card__skill {
+  padding: 3px 9px;
+  font-size: 12px;
+  color: var(--at-neutral-700);
+  background: var(--at-neutral-50);
+  border-radius: 100px;
+}
+
+.certificates-cms .cert-empty {
+  grid-column: 1 / -1;
+  padding: 48px 16px;
+  font-size: 15px;
+  color: var(--at-neutral-500);
+  text-align: center;
+}
+
+.certificates-cms .cert-pagination__button {
+  min-width: 42px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--at-neutral-900);
+  background: var(--at-neutral-0);
+  border: 1px solid var(--at-neutral-200);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.certificates-cms .cert-pagination__button:hover:not(:disabled) {
+  color: var(--at-theme-primary);
+  border-color: var(--at-theme-primary);
+}
+
+.certificates-cms .cert-pagination__button.is-current {
+  color: var(--at-common-white);
+  background: var(--at-theme-primary);
+  border-color: var(--at-theme-primary);
+}
+
+.certificates-cms .cert-pagination__button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.certificates-cms .cert-pagination__gap {
+  padding: 8px 4px;
+  color: var(--at-neutral-500);
+}
+
+/* Viewer modal */
+.cert-modal {
+  width: min(1080px, 94vw);
+  max-width: min(1080px, 94vw);
+  max-height: 92vh;
+  padding: 0;
+  color: var(--at-neutral-900);
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+.cert-modal::backdrop {
+  background: rgba(15, 15, 15, 0.72);
+}
+
+.cert-modal__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 92vh;
+  padding: 28px;
+  overflow: auto;
+  background: var(--at-neutral-0);
+  border: 1px solid var(--at-neutral-100);
+  border-radius: 20px;
+}
+
+.cert-modal:fullscreen .cert-modal__panel,
+.cert-modal__panel:fullscreen {
+  max-height: none;
+  height: 100%;
+  border-radius: 0;
+}
+
+.cert-modal__head {
+  position: relative;
+  padding-right: 48px;
+}
+
+.cert-modal__eyebrow {
+  margin-bottom: 6px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--at-neutral-500);
+}
+
+.cert-modal__title {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.2;
+}
+
+.cert-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--at-neutral-900);
+  background: var(--at-neutral-50);
+  border: 1px solid var(--at-neutral-100);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cert-modal__close:hover {
+  color: var(--at-theme-primary);
+}
+
+.cert-modal__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.cert-modal__media {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cert-modal__image {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--at-neutral-100);
+  border-radius: 12px;
+}
+
+.cert-modal__pdf {
+  width: 100%;
+  min-height: 460px;
+  border: 1px solid var(--at-neutral-100);
+  border-radius: 12px;
+  background: var(--at-neutral-50);
+}
+
+.cert-modal.has-pdf .cert-modal__pdf {
+  min-height: 68vh;
+}
+
+.cert-modal__media-empty {
+  padding: 32px 20px;
+  font-size: 14px;
+  color: var(--at-neutral-500);
+  background: var(--at-neutral-50);
+  border: 1px dashed var(--at-neutral-200);
+  border-radius: 12px;
+}
+
+.cert-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cert-modal__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cert-modal__fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.cert-modal__fact dt {
+  font-weight: 600;
+  color: var(--at-neutral-500);
+}
+
+.cert-modal__fact dd {
+  margin: 0;
+  text-align: right;
+}
+
+.cert-modal__description {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--at-neutral-700);
+}
+
+.cert-modal__skill {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--at-neutral-700);
+  background: var(--at-neutral-50);
+  border-radius: 100px;
+}
+
+.cert-modal__actions {
+  margin-top: auto;
+}
+
+.cert-modal__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--at-common-white);
+  text-decoration: none;
+  background: var(--at-theme-primary);
+  border: 1px solid var(--at-theme-primary);
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.cert-modal__button:hover {
+  color: var(--at-common-white);
+  opacity: 0.9;
+}
+
+.cert-modal__button--ghost {
+  color: var(--at-neutral-900);
+  background: transparent;
+  border-color: var(--at-neutral-200);
+}
+
+.cert-modal__button--ghost:hover {
+  color: var(--at-theme-primary);
+  border-color: var(--at-theme-primary);
+}
+
+.cert-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--at-neutral-100);
+}
+
+.cert-modal__nav {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--at-neutral-900);
+  background: transparent;
+  border: 1px solid var(--at-neutral-200);
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.cert-modal__nav:hover:not(:disabled) {
+  color: var(--at-theme-primary);
+  border-color: var(--at-theme-primary);
+}
+
+.cert-modal__nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.cert-modal__count {
+  font-size: 13px;
+  color: var(--at-neutral-500);
+}
+
+@media (max-width: 991px) {
+  .cert-modal__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cert-modal__pdf {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 575px) {
+  .cert-modal__panel {
+    padding: 20px 16px;
+  }
+
+  .certificates-cms .cert-toolbar__field {
+    min-width: 100%;
+  }
+}

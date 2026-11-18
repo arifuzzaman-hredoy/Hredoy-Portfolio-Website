@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
 import "./globals.css";
+import "./certificates.css";
 
 const SITE_URL = "https://oxytumzone.com";
 const SITE_NAME = "Hredoy's Portfolio";

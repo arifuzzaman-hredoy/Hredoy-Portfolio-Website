@@ -1,0 +1,63 @@
+{{define "content"}}
+{{$c := .certificate}}
+<header class="page-head page-head--split">
+  <div>
+    <p class="eyebrow"><a href="/super-admin/certificates">← All certificates</a></p>
+    <h1>{{$c.Title}}</h1>
+    <p class="muted">{{$c.Issuer}}{{if $c.CourseName}} · {{$c.CourseName}}{{end}}</p>
+  </div>
+  <div class="page-stat">
+    <span class="page-stat__value">{{$c.SortOrder}}</span>
+    <span class="page-stat__label">display order</span>
+  </div>
+</header>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Details</h2>
+    <div class="actions">
+      {{if $c.Published}}<span class="tag">Published</span>{{else}}<span class="tag read">Hidden</span>{{end}}
+      {{if $c.Featured}}<span class="tag">Featured</span>{{end}}
+      {{if $c.Expired}}<span class="tag read">Expired</span>{{end}}
+    </div>
+  </div>
+  <div class="cert-detail-grid">
+    <div class="cert-detail"><span class="detail-label">Issued</span><span>{{$c.IssueDate}}</span></div>
+    <div class="cert-detail"><span class="detail-label">Expires</span><span>{{if $c.ExpiryDate}}{{$c.ExpiryDate}}{{else}}No expiry{{end}}</span></div>
+    <div class="cert-detail"><span class="detail-label">Category</span><span>{{if $c.Category}}{{$c.Category}}{{else}}—{{end}}</span></div>
+    <div class="cert-detail"><span class="detail-label">Credential ID</span><span>{{if $c.CredentialID}}{{$c.CredentialID}}{{else}}—{{end}}</span></div>
+    <div class="cert-detail"><span class="detail-label">Skills</span><span>{{if $c.Skills}}{{$c.Skills}}{{else}}—{{end}}</span></div>
+    <div class="cert-detail"><span class="detail-label">Added</span><span>{{$c.CreatedAt}}</span></div>
+  </div>
+  {{if $c.Description}}<p class="cert-description">{{$c.Description}}</p>{{end}}
+  <div class="actions">
+    {{if $c.CredentialURL}}<a class="btn-sm" href="{{$c.CredentialURL}}" target="_blank" rel="noopener">Verify credential</a>{{end}}
+    {{if $c.PDFPath}}<a class="btn-sm" href="{{$c.PDFPath}}" target="_blank" rel="noopener">Open PDF</a>{{end}}
+    <a class="btn-sm" href="/super-admin/certificates#edit-{{$c.ID}}">Edit</a>
+    <form method="post" action="/super-admin/certificates/toggle">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="id" value="{{$c.ID}}">
+      <input type="hidden" name="field" value="publish">
+      <button class="btn-sm" type="submit">{{if $c.Published}}Hide from site{{else}}Publish{{end}}</button>
+    </form>
+    <form method="post" action="/super-admin/certificates/toggle">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="id" value="{{$c.ID}}">
+      <input type="hidden" name="field" value="featured">
+      <button class="btn-sm" type="submit">{{if $c.Featured}}Remove from featured{{else}}Mark featured{{end}}</button>
+    </form>
+    <form method="post" action="/super-admin/certificates/delete" onsubmit="return confirm('Delete this certificate? This cannot be undone.');">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="id" value="{{$c.ID}}">
+      <button class="btn-sm danger" type="submit">Delete</button>
+    </form>
+  </div>
+</section>
+
+{{if $c.ImagePath}}
+<section class="card">
+  <div class="card-head"><h2>Certificate image</h2></div>
+  <img class="cert-preview" src="{{$c.ImagePath}}" alt="{{$c.Title}}">
+</section>
+{{end}}
+{{end}}

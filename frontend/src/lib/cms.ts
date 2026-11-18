@@ -3,9 +3,15 @@
 // (for example during a static `next build` without the API running).
 
 import type { Project } from "./cms-render";
+import {
+  CERTIFICATES_PER_PAGE,
+  type Certificate,
+  type CertificateFilters,
+  type CertificatePage,
+} from "./certificates-render";
 import { cacheLife, cacheTag } from "next/cache";
 
-export type { Project };
+export type { Certificate, CertificatePage, Project };
 
 // Every CMS read is tagged with this, so a single admin save can expire all of
 // them at once via POST /api/revalidate. Keep in sync with the revalidate route.
@@ -143,4 +149,50 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
   cacheLife("minutes");
   const data = await getJSON<Record<string, string>>("/api/v1/site-settings");
   return { ...SITE_SETTINGS_DEFAULTS, ...(data ?? {}) };
+}
+
+export const EMPTY_CERTIFICATE_PAGE: CertificatePage = {
+  certificates: [],
+  count: 0,
+  total: 0,
+  page: 1,
+  per_page: CERTIFICATES_PER_PAGE,
+  total_pages: 0,
+};
+
+// Published certificates for the public section. The controller repeats this
+// query from the browser for search, category, sort and paging.
+export async function getCertificates(
+  filters: Partial<CertificateFilters> = {},
+): Promise<CertificatePage> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const params = new URLSearchParams();
+  if (filters.search) params.set("search", filters.search);
+  if (filters.category) params.set("category", filters.category);
+  params.set("sort", filters.sort || "order");
+  params.set("page", String(filters.page && filters.page > 0 ? filters.page : 1));
+  params.set("per_page", String(CERTIFICATES_PER_PAGE));
+  const query = params.toString();
+  const data = await getJSON<CertificatePage>(`/api/v1/certificates?${query}`);
+  if (!data) return EMPTY_CERTIFICATE_PAGE;
+  return {
+    certificates: data.certificates ?? [],
+    count: data.count ?? data.certificates?.length ?? 0,
+    total: data.total ?? 0,
+    page: data.page ?? 1,
+    per_page: data.per_page ?? CERTIFICATES_PER_PAGE,
+    total_pages: data.total_pages ?? 0,
+  };
+}
+
+export async function getCertificateCategories(): Promise<string[]> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const data = await getJSON<{ count: number; categories: string[] }>(
+    "/api/v1/certificates/categories",
+  );
+  return data?.categories ?? [];
 }
