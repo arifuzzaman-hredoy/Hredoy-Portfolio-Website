@@ -2,6 +2,9 @@ package http
 
 import (
 	"bytes"
+	"image"
+	"image/color"
+	"image/png"
 	"io/fs"
 	"mime/multipart"
 	"net/http"
@@ -177,14 +180,14 @@ func TestAdminCertificateUploadReportsCloudinaryFailure(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
-	png := "\x89PNG\r\n\x1a\n" + strings.Repeat("\x00", 64)
+	png := encodeTestPNG(t, certificateImageWidth, certificateImageHeight)
 	body, contentType := multipartBody(t, map[string]string{
 		"title":      "Certified Kubernetes Administrator",
 		"issuer":     "CNCF",
 		"issue_date": "2024-05-01",
 		"published":  "on",
 	}, map[string]struct{ name, content string }{
-		"image": {"certificate.png", png},
+		"image": {"certificate.png", string(png)},
 	})
 	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
 	req.Header.Set("Content-Type", contentType)
@@ -193,6 +196,75 @@ func TestAdminCertificateUploadReportsCloudinaryFailure(t *testing.T) {
 
 	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=cloudinary") {
 		t.Fatalf("location = %q, want a cloudinary failure redirect", loc)
+	}
+	if len(store.createdCerts) != 0 {
+		t.Fatal("a failed upload must not create a certificate")
+	}
+}
+
+func encodeTestPNG(t *testing.T, w, h int) []byte {
+	t.Helper()
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			img.Set(x, y, color.RGBA{uint8(x), uint8(y), 128, 255})
+		}
+	}
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, img); err != nil {
+		t.Fatalf("encode png: %v", err)
+	}
+	return buf.Bytes()
+}
+
+func TestAdminCertificateUploadRejectsWrongDimensions(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	png := encodeTestPNG(t, 800, 600)
+	body, contentType := multipartBody(t, map[string]string{
+		"title":      "Certified Kubernetes Administrator",
+		"issuer":     "CNCF",
+		"issue_date": "2024-05-01",
+		"published":  "on",
+	}, map[string]struct{ name, content string }{
+		"image": {"certificate.png", string(png)},
+	})
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
+	req.Header.Set("Content-Type", contentType)
+	rr := httptest.NewRecorder()
+	deps.adminCertificateCreate(rr, req)
+
+	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=dimension") {
+		t.Fatalf("location = %q, want a dimension rejection", loc)
+	}
+	if len(store.createdCerts) != 0 {
+		t.Fatal("a mismatched upload must not create a certificate")
+	}
+}
+
+func TestAdminCertificateAcceptsCorrectDimensions(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	png := encodeTestPNG(t, certificateImageWidth, certificateImageHeight)
+	body, contentType := multipartBody(t, map[string]string{
+		"title":      "Certified Kubernetes Administrator",
+		"issuer":     "CNCF",
+		"issue_date": "2024-05-01",
+		"published":  "on",
+	}, map[string]struct{ name, content string }{
+		"image": {"certificate.png", string(png)},
+	})
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
+	req.Header.Set("Content-Type", contentType)
+	rr := httptest.NewRecorder()
+	deps.adminCertificateCreate(rr, req)
+
+	// Cloudinary is not configured in tests, so a validly-sized image passes
+	// the dimension check and reaches the cloudinary error instead.
+	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=cloudinary") {
+		t.Fatalf("location = %q, want cloudinary error after dimension check passes", loc)
 	}
 	if len(store.createdCerts) != 0 {
 		t.Fatal("a failed upload must not create a certificate")

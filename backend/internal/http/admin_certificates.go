@@ -1,8 +1,13 @@
 package http
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -18,12 +23,15 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	_ "golang.org/x/image/webp"
 )
 
 const (
 	certificatesPerPage      = 10
 	certificateImageMaxBytes = 5 << 20
 	certificatePDFMaxBytes   = 10 << 20
+	certificateImageWidth    = 1200
+	certificateImageHeight   = 800
 )
 
 var (
@@ -215,6 +223,8 @@ func certificateErrorMessage(code, field string) string {
 		return "Unsupported file type. Images must be JPG, PNG or WEBP and documents must be PDF."
 	case "file":
 		return "That file could not be read. Please choose it again."
+	case "dimension":
+		return fmt.Sprintf("Certificate images must be exactly %d × %d pixels.", certificateImageWidth, certificateImageHeight)
 	case "cloudinary":
 		return "The upload failed. Check the Cloudinary configuration and try again."
 	case "notfound":
@@ -541,6 +551,13 @@ func (d HandlerDeps) uploadCertificateFile(r *http.Request, field string, allowe
 	if code != "" {
 		return nil, code
 	}
+	if field == "image" {
+		if width, height, err := imageDimensions(data); err != nil {
+			return nil, "dimension"
+		} else if width != certificateImageWidth || height != certificateImageHeight {
+			return nil, "dimension"
+		}
+	}
 	if d.Cloudinary == nil || !d.Cloudinary.Enabled() {
 		return nil, "cloudinary"
 	}
@@ -570,6 +587,17 @@ func readCertificateUpload(file multipart.File, header *multipart.FileHeader, al
 		return nil, "", "type"
 	}
 	return data, mime, ""
+}
+
+// imageDimensions decodes just the image header to report its width and
+// height. It supports the same formats the upload form accepts (JPEG, PNG,
+// WEBP) without downloading or fully decoding the image.
+func imageDimensions(data []byte) (int, int, error) {
+	config, _, err := image.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		return 0, 0, err
+	}
+	return config.Width, config.Height, nil
 }
 
 func (d HandlerDeps) deleteCertificateAssets(results ...*cloudinary.UploadResult) {
