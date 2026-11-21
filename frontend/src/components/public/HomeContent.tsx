@@ -733,7 +733,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="col-xl-3 col-lg-5 col-12 mx-lg-auto">
                                 <div class="sec-5-home-7__photo scroll-move-up">
                                     <div class="fix anim-zoomin">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg" alt="Linux" class="w-100 h-100 object-fit-cover" width="900" height="1060" loading="lazy" />
+                                        <img src="/assets/imgs/portfolio/sections/technical-skills.svg" alt="Technical Skills & Tools" class="w-100 object-fit-contain" width="900" height="auto" loading="lazy" />
                                     </div>
 
                                 </div>
