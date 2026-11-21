@@ -180,7 +180,7 @@ func TestAdminCertificateUploadReportsCloudinaryFailure(t *testing.T) {
 	store := &fakeStore{}
 	deps := testDeps(store)
 
-	png := encodeTestPNG(t, certificateImageWidth, certificateImageHeight)
+	png := encodeTestPNG(t, 1200, 800)
 	body, contentType := multipartBody(t, map[string]string{
 		"title":      "Certified Kubernetes Administrator",
 		"issuer":     "CNCF",
@@ -202,6 +202,63 @@ func TestAdminCertificateUploadReportsCloudinaryFailure(t *testing.T) {
 	}
 }
 
+func TestAdminCertificateUploadAcceptsDifferentDimensions(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	// Both landscape and portrait images pass the dimension check; they fail
+	// later at Cloudinary (not configured in tests), not at validation.
+	for _, dim := range [][2]int{{1600, 900}, {900, 1600}, {800, 600}, {600, 800}} {
+		png := encodeTestPNG(t, dim[0], dim[1])
+		body, contentType := multipartBody(t, map[string]string{
+			"title":      "Certificate",
+			"issuer":     "Issuer",
+			"issue_date": "2024-05-01",
+			"published":  "on",
+		}, map[string]struct{ name, content string }{
+			"image": {"certificate.png", string(png)},
+		})
+		req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
+		req.Header.Set("Content-Type", contentType)
+		rr := httptest.NewRecorder()
+		deps.adminCertificateCreate(rr, req)
+
+		if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=cloudinary") {
+			t.Fatalf("dimensions %dx%d: location = %q, want cloudinary error after dimension check passes", dim[0], dim[1], loc)
+		}
+	}
+	if len(store.createdCerts) != 0 {
+		t.Fatal("a failed upload must not create a certificate")
+	}
+}
+
+func TestAdminCertificateUploadRejectsCorruptedImage(t *testing.T) {
+	store := &fakeStore{}
+	deps := testDeps(store)
+
+	// Corrupt PNG data: valid magic bytes but truncated/invalid structure.
+	corrupt := []byte("\x89PNG\r\n\x1a\n" + strings.Repeat("\x00", 8))
+	body, contentType := multipartBody(t, map[string]string{
+		"title":      "Certificate",
+		"issuer":     "Issuer",
+		"issue_date": "2024-05-01",
+		"published":  "on",
+	}, map[string]struct{ name, content string }{
+		"image": {"certificate.png", string(corrupt)},
+	})
+	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
+	req.Header.Set("Content-Type", contentType)
+	rr := httptest.NewRecorder()
+	deps.adminCertificateCreate(rr, req)
+
+	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=dimension") {
+		t.Fatalf("location = %q, want a dimension/corruption rejection", loc)
+	}
+	if len(store.createdCerts) != 0 {
+		t.Fatal("a corrupted upload must not create a certificate")
+	}
+}
+
 func encodeTestPNG(t *testing.T, w, h int) []byte {
 	t.Helper()
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
@@ -215,60 +272,6 @@ func encodeTestPNG(t *testing.T, w, h int) []byte {
 		t.Fatalf("encode png: %v", err)
 	}
 	return buf.Bytes()
-}
-
-func TestAdminCertificateUploadRejectsWrongDimensions(t *testing.T) {
-	store := &fakeStore{}
-	deps := testDeps(store)
-
-	png := encodeTestPNG(t, 800, 600)
-	body, contentType := multipartBody(t, map[string]string{
-		"title":      "Certified Kubernetes Administrator",
-		"issuer":     "CNCF",
-		"issue_date": "2024-05-01",
-		"published":  "on",
-	}, map[string]struct{ name, content string }{
-		"image": {"certificate.png", string(png)},
-	})
-	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
-	req.Header.Set("Content-Type", contentType)
-	rr := httptest.NewRecorder()
-	deps.adminCertificateCreate(rr, req)
-
-	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=dimension") {
-		t.Fatalf("location = %q, want a dimension rejection", loc)
-	}
-	if len(store.createdCerts) != 0 {
-		t.Fatal("a mismatched upload must not create a certificate")
-	}
-}
-
-func TestAdminCertificateAcceptsCorrectDimensions(t *testing.T) {
-	store := &fakeStore{}
-	deps := testDeps(store)
-
-	png := encodeTestPNG(t, certificateImageWidth, certificateImageHeight)
-	body, contentType := multipartBody(t, map[string]string{
-		"title":      "Certified Kubernetes Administrator",
-		"issuer":     "CNCF",
-		"issue_date": "2024-05-01",
-		"published":  "on",
-	}, map[string]struct{ name, content string }{
-		"image": {"certificate.png", string(png)},
-	})
-	req := httptest.NewRequest(http.MethodPost, "/super-admin/certificates/create", body)
-	req.Header.Set("Content-Type", contentType)
-	rr := httptest.NewRecorder()
-	deps.adminCertificateCreate(rr, req)
-
-	// Cloudinary is not configured in tests, so a validly-sized image passes
-	// the dimension check and reaches the cloudinary error instead.
-	if loc := rr.Header().Get("Location"); !strings.Contains(loc, "error=cloudinary") {
-		t.Fatalf("location = %q, want cloudinary error after dimension check passes", loc)
-	}
-	if len(store.createdCerts) != 0 {
-		t.Fatal("a failed upload must not create a certificate")
-	}
 }
 
 func TestAdminCertificateUpdatePreservesFilesWhenNotReplaced(t *testing.T) {

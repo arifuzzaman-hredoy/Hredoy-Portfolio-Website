@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -30,8 +29,6 @@ const (
 	certificatesPerPage      = 10
 	certificateImageMaxBytes = 5 << 20
 	certificatePDFMaxBytes   = 10 << 20
-	certificateImageWidth    = 1200
-	certificateImageHeight   = 800
 )
 
 var (
@@ -224,7 +221,7 @@ func certificateErrorMessage(code, field string) string {
 	case "file":
 		return "That file could not be read. Please choose it again."
 	case "dimension":
-		return fmt.Sprintf("Certificate images must be exactly %d × %d pixels.", certificateImageWidth, certificateImageHeight)
+		return "That image is corrupted or not a valid image file. Please choose a different image."
 	case "cloudinary":
 		return "The upload failed. Check the Cloudinary configuration and try again."
 	case "notfound":
@@ -551,10 +548,12 @@ func (d HandlerDeps) uploadCertificateFile(r *http.Request, field string, allowe
 	if code != "" {
 		return nil, code
 	}
+	// Confirm the file is a genuine, decodable image (not a corrupted or
+	// mislabeled upload) without enforcing any fixed dimension. Certificates
+	// may be landscape or portrait; the public site uses object-fit:cover so
+	// any aspect ratio renders correctly.
 	if field == "image" {
-		if width, height, err := imageDimensions(data); err != nil {
-			return nil, "dimension"
-		} else if width != certificateImageWidth || height != certificateImageHeight {
+		if _, _, err := imageDimensions(data); err != nil {
 			return nil, "dimension"
 		}
 	}
@@ -589,9 +588,10 @@ func readCertificateUpload(file multipart.File, header *multipart.FileHeader, al
 	return data, mime, ""
 }
 
-// imageDimensions decodes just the image header to report its width and
-// height. It supports the same formats the upload form accepts (JPEG, PNG,
-// WEBP) without downloading or fully decoding the image.
+// imageDimensions decodes just the image header to confirm the file is a
+// genuine, valid image (JPEG, PNG or WEBP). It does not enforce any fixed
+// dimensions: certificates may be landscape or portrait, and the public site
+// renders them with object-fit:cover so any aspect ratio displays correctly.
 func imageDimensions(data []byte) (int, int, error) {
 	config, _, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {

@@ -45,6 +45,14 @@
           </label>
           <button class="btn-sm" type="submit">Upload</button>
         </form>
+        <div class="field field--hint" style="margin-top: 6px;">
+          <span>Requirements</span>
+          <ul class="hint-list">
+            <li>Formats: JPG, PNG, WEBP, GIF, SVG</li>
+            <li>Maximum file size: 25 MiB</li>
+            <li>Dimensions: flexible</li>
+          </ul>
+        </div>
         <details class="alt-box">
           <summary>Alt text{{if .Alt}}<span class="alt-state">{{.Alt}}</span>{{end}}</summary>
           <form method="post" action="/super-admin/site-images/alt" class="media-form">
