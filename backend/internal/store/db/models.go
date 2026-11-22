@@ -94,16 +94,28 @@ type Project struct {
 }
 
 type SiteImage struct {
-	ID         pgtype.UUID
-	Key        string
-	Label      string
-	GroupName  string
-	Url        string
-	PublicID   string
-	Alt        string
-	UpdatedAt  pgtype.Timestamptz
-	DefaultUrl string
-	DefaultAlt string
+	ID             pgtype.UUID
+	Key            string
+	Label          string
+	GroupName      string
+	Url            string
+	PublicID       string
+	Alt            string
+	UpdatedAt      pgtype.Timestamptz
+	DefaultUrl     string
+	DefaultAlt     string
+	MobileUrl      string
+	MobilePublicID string
+	// Primary image metadata (captured at upload time from Cloudinary).
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Format string `json:"format"`
+	Size   int64  `json:"size"`
+	// Mobile variant metadata (captured when a mobile image is uploaded).
+	MobileWidth  int    `json:"mobile_width"`
+	MobileHeight int    `json:"mobile_height"`
+	MobileFormat string `json:"mobile_format"`
+	MobileSize   int64  `json:"mobile_size"`
 }
 
 type SiteSetting struct {

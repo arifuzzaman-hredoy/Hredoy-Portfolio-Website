@@ -41,7 +41,7 @@ export type ProjectsPayload = {
 
 export type SiteImagesPayload = {
   count: number;
-  images: { key: string; label: string; group: string; url: string; alt: string }[];
+  images: { key: string; label: string; group: string; url: string; alt: string; mobile_url: string; width: number; height: number; format: string; size: number; mobile_width: number; mobile_height: number; mobile_format: string; mobile_size: number }[];
   urls: Record<string, string>;
 };
 
@@ -140,6 +140,21 @@ export async function getSiteImageAlts(): Promise<Record<string, string>> {
   const alts: Record<string, string> = {};
   for (const image of data?.images ?? []) alts[image.key] = image.alt;
   return alts;
+}
+
+// Optional mobile image URLs for art-directed responsive rendering.
+// Only slots that genuinely benefit from a different mobile composition
+// have a value; all other slots fall back to the primary image.
+export async function getSiteImageMobiles(): Promise<Record<string, string>> {
+  "use cache";
+  cacheTag(CMS_CACHE_TAG);
+  cacheLife("minutes");
+  const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
+  const mobiles: Record<string, string> = {};
+  for (const image of data?.images ?? []) {
+    if (image.mobile_url) mobiles[image.key] = image.mobile_url;
+  }
+  return mobiles;
 }
 
 // Owner identity used by the metadata, the JSON-LD block and the contact links.

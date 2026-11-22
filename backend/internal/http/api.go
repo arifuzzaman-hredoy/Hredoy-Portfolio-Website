@@ -54,11 +54,20 @@ type mediaJSON struct {
 }
 
 type siteImageJSON struct {
-	Key   string `json:"key"`
-	Label string `json:"label"`
-	Group string `json:"group"`
-	URL   string `json:"url"`
-	Alt   string `json:"alt"`
+	Key         string `json:"key"`
+	Label       string `json:"label"`
+	Group       string `json:"group"`
+	URL         string `json:"url"`
+	Alt         string `json:"alt"`
+	MobileURL   string `json:"mobile_url"`
+	Width       int    `json:"width"`
+	Height      int    `json:"height"`
+	Format      string `json:"format"`
+	Size        int64  `json:"size"`
+	MobileWidth  int    `json:"mobile_width"`
+	MobileHeight int    `json:"mobile_height"`
+	MobileFormat string `json:"mobile_format"`
+	MobileSize   int64  `json:"mobile_size"`
 }
 
 // contentItemJSON is one repeatable item. Meta is passed through as an object so
@@ -124,11 +133,20 @@ func toMediaJSON(row db.Medium) mediaJSON {
 
 func toSiteImageJSON(row db.SiteImage) siteImageJSON {
 	return siteImageJSON{
-		Key:   row.Key,
-		Label: row.Label,
-		Group: row.GroupName,
-		URL:   row.Url,
-		Alt:   row.Alt,
+		Key:         row.Key,
+		Label:       row.Label,
+		Group:       row.GroupName,
+		URL:         row.Url,
+		Alt:         row.Alt,
+		MobileURL:   row.MobileUrl,
+		Width:       row.Width,
+		Height:      row.Height,
+		Format:      row.Format,
+		Size:        row.Size,
+		MobileWidth: row.MobileWidth,
+		MobileHeight: row.MobileHeight,
+		MobileFormat: row.MobileFormat,
+		MobileSize:   row.MobileSize,
 	}
 }
 

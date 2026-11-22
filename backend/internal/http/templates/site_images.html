@@ -4,7 +4,7 @@
   <div>
     <p class="eyebrow">Content library</p>
     <h1>Site Images</h1>
-    <p class="muted">Every image the public site renders, grouped by section. Replacing a slot publishes instantly to Cloudinary and the live site.</p>
+    <p class="muted">Every image the public site renders, grouped by section. Upload one image per slot; it adapts automatically to Desktop, Tablet, and Mobile. Slots marked with a mobile badge also accept an optional mobile variant for art-directed composition at small breakpoints.</p>
   </div>
   <div class="page-stat">
     <span class="page-stat__value">{{.total}}</span>
@@ -29,34 +29,91 @@
   </div>
   <div class="media-grid">
     {{range .Images}}
-    <figure class="media-card">
+    <figure class="media-card{{if .SupportsMobile}} supports-mobile{{end}}">
       <div class="media-preview{{if not .URL}} is-empty{{end}}">
         {{if .URL}}<img src="{{.URL}}" alt="{{.Alt}}" loading="lazy">{{else}}<span class="media-empty__text">No image</span>{{end}}
+        {{if .HasMobile}}<span class="mobile-badge">Mobile variant set</span>{{end}}
       </div>
       <figcaption class="media-body">
-        <div class="media-title" title="{{.Label}}">{{.Label}}</div>
-        <div class="media-key" title="{{.Key}}">{{.Key}}</div>
-        <div class="media-meta">
-          <span class="media-meta__updated">Updated {{.UpdatedAt}}</span>
-          {{if .URL}}<a href="{{.URL}}" target="_blank" rel="noopener" class="media-meta__url" title="{{.URL}}">View URL</a>{{end}}
+        <!-- Section 1: Identity -->
+        <div class="card-section card-section--identity">
+          <div class="media-title" title="{{.Label}}">{{.Label}}</div>
+          <div class="media-key" title="{{.Key}}">{{.Key}}</div>
         </div>
-        <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="media-form">
-          <input type="hidden" name="csrf_token" value="{{$.csrf}}">
-          <input type="hidden" name="key" value="{{.Key}}">
-          <label class="file-btn">
-            <span>Replace image</span>
-            <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" required>
-          </label>
-          <button class="btn-sm" type="submit">Upload</button>
-        </form>
-        <div class="field field--hint" style="margin-top: 6px;">
-          <span>Requirements</span>
+
+        <!-- Section 2: Current image -->
+        <div class="card-section card-section--current">
+          <span class="section-label">Current image</span>
+          <div class="media-meta">
+            <span class="media-meta__updated">Updated {{.UpdatedAt}}</span>
+            {{if .URL}}<a href="{{.URL}}" target="_blank" rel="noopener" class="media-meta__url" title="{{.URL}}">View URL</a>{{end}}
+          </div>
+          {{if or .Width .Height .Format .Size}}
+          <div class="media-meta image-meta">
+            <span class="image-meta__dim">{{.Width}} × {{.Height}}</span>
+            <span class="image-meta__fmt">{{.Format}}</span>
+            <span class="image-meta__size">{{.FormattedSize}}</span>
+          </div>
+          {{end}}
+        </div>
+
+        <!-- Section 3: Replace image -->
+        <div class="card-section card-section--replace">
+          <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="media-form">
+            <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+            <input type="hidden" name="key" value="{{.Key}}">
+            <label class="file-btn">
+              <span>Replace image</span>
+              <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml">
+            </label>
+            <button class="btn-sm" type="submit">Upload</button>
+          </form>
+        </div>
+
+        <!-- Section 4: Optional mobile variant -->
+        {{if .SupportsMobile}}
+        <div class="card-section card-section--mobile">
+          <span class="section-label">Optional mobile variant</span>
+          <p class="mobile-hint">Appears only at mobile breakpoint (≤767px). Leave empty to use the primary image at all sizes.</p>
+          <form method="post" action="/super-admin/site-images/mobile" enctype="multipart/form-data" class="media-form">
+            <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+            <input type="hidden" name="key" value="{{.Key}}">
+            <label class="file-btn file-btn--mobile">
+              <span>{{if .HasMobile}}Replace mobile{{else}}Upload mobile{{end}}</span>
+              <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml">
+            </label>
+            <button class="btn-sm" type="submit">Upload</button>
+          </form>
+          {{if .HasMobile}}
+          <form method="post" action="/super-admin/site-images/mobile" class="media-form media-form--clear">
+            <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+            <input type="hidden" name="key" value="{{.Key}}">
+            <button class="btn-sm btn-sm--ghost" type="submit">Clear mobile variant</button>
+          </form>
+          {{if or .MobileWidth .MobileHeight .MobileFormat .MobileSize}}
+          <div class="media-meta image-meta image-meta--mobile">
+            <span class="image-meta__label">Mobile:</span>
+            <span class="image-meta__dim">{{.MobileWidth}} × {{.MobileHeight}}</span>
+            <span class="image-meta__fmt">{{.MobileFormat}}</span>
+            <span class="image-meta__size">{{.FormattedMobileSize}}</span>
+          </div>
+          {{end}}
+          {{end}}
+        </div>
+        {{end}}
+
+        <!-- Section 5: Requirements -->
+        <div class="card-section card-section--requirements">
+          <span class="section-label">Recommended requirements</span>
           <ul class="hint-list">
-            <li>Formats: {{.Requirements.Formats}}</li>
-            <li>Max size: {{.Requirements.MaxSize}}</li>
-            <li>Dimensions: {{.Requirements.Dimensions}}</li>
+            <li><strong>Formats:</strong> {{.Requirements.Formats}}</li>
+            <li><strong>Max size:</strong> {{.Requirements.MaxSize}}</li>
+            <li><strong>Dimensions:</strong> {{.Requirements.Dimensions}}</li>
           </ul>
+          <p class="requirements-note">Recommendations guide uploads; they never restrict them. Any valid image in a supported format is accepted.</p>
         </div>
+
+        <!-- Section 6: Alt text -->
         <details class="alt-box">
           <summary>Alt text{{if .Alt}}<span class="alt-state">{{.Alt}}</span>{{end}}</summary>
           <form method="post" action="/super-admin/site-images/alt" class="media-form">
@@ -66,6 +123,8 @@
             <button class="btn-sm" type="submit">Save</button>
           </form>
         </details>
+
+        <!-- Section 7: Reset -->
         {{if .DefaultURL}}
         <div class="media-reset">
           {{if .IsDefault}}

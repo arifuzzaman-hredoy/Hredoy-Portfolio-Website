@@ -44,30 +44,31 @@ type fakeStore struct {
 	listErr         error
 	countUnread     int64
 
-	projects        []db.Project
-	createdProjects []db.CreateProjectParams
-	updatedProjects []db.UpdateProjectParams
-	deletedProjects []string
-	media           []db.Medium
-	createdMedia    []db.CreateMediaParams
-	updatedMediaAlt []db.UpdateMediaAltParams
-	deletedMedia    []string
-	contentBlocks   []db.ListContentBlocksRow
-	upsertedContent []db.UpsertContentBlockParams
-	updatedContent  []db.UpdateContentBlockValueParams
-	resetContent    []string
-	deletedContent  []string
-	siteImages      []db.SiteImage
-	updatedImgURL   []db.UpdateSiteImageURLParams
-	updatedImgAlt   []db.UpdateSiteImageAltParams
-	resetImgKeys    []string
-	deletedImgKeys  []string
-	contentItems    []db.ContentItem
-	createdItems    []db.InsertContentItemParams
-	updatedItems    []db.UpdateContentItemParams
-	reorderedItems  []db.UpdateContentItemOrderParams
-	toggledItems    []db.SetContentItemPublishedParams
-	deletedItems    []string
+	projects         []db.Project
+	createdProjects  []db.CreateProjectParams
+	updatedProjects  []db.UpdateProjectParams
+	deletedProjects  []string
+	media            []db.Medium
+	createdMedia     []db.CreateMediaParams
+	updatedMediaAlt  []db.UpdateMediaAltParams
+	deletedMedia     []string
+	contentBlocks    []db.ListContentBlocksRow
+	upsertedContent  []db.UpsertContentBlockParams
+	updatedContent   []db.UpdateContentBlockValueParams
+	resetContent     []string
+	deletedContent   []string
+	siteImages       []db.SiteImage
+	updatedImgURL    []db.UpdateSiteImageURLParams
+	updatedImgAlt    []db.UpdateSiteImageAltParams
+	updatedImgMobile []db.UpdateSiteImageMobileParams
+	resetImgKeys     []string
+	deletedImgKeys   []string
+	contentItems     []db.ContentItem
+	createdItems     []db.InsertContentItemParams
+	updatedItems     []db.UpdateContentItemParams
+	reorderedItems   []db.UpdateContentItemOrderParams
+	toggledItems     []db.SetContentItemPublishedParams
+	deletedItems     []string
 
 	certs        []db.Certificate
 	createdCerts []db.CreateCertificateParams
@@ -318,6 +319,13 @@ func (f *fakeStore) UpdateSiteImageAlt(_ context.Context, arg db.UpdateSiteImage
 	return nil
 }
 
+func (f *fakeStore) UpdateSiteImageMobile(_ context.Context, arg db.UpdateSiteImageMobileParams) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.updatedImgMobile = append(f.updatedImgMobile, arg)
+	return nil
+}
+
 func (f *fakeStore) DeleteSiteImage(_ context.Context, key string) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -334,6 +342,16 @@ func (f *fakeStore) ResetSiteImageToDefault(_ context.Context, key string) error
 			f.siteImages[i].Url = f.siteImages[i].DefaultUrl
 			f.siteImages[i].Alt = f.siteImages[i].DefaultAlt
 			f.siteImages[i].PublicID = ""
+			f.siteImages[i].MobileUrl = ""
+			f.siteImages[i].MobilePublicID = ""
+			f.siteImages[i].Width = 0
+			f.siteImages[i].Height = 0
+			f.siteImages[i].Format = ""
+			f.siteImages[i].Size = 0
+			f.siteImages[i].MobileWidth = 0
+			f.siteImages[i].MobileHeight = 0
+			f.siteImages[i].MobileFormat = ""
+			f.siteImages[i].MobileSize = 0
 		}
 	}
 	return nil

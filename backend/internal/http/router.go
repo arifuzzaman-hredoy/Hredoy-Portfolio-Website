@@ -157,6 +157,7 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		r.Post("/super-admin/site-images/replace", deps.adminSiteImageReplace)
 		r.Post("/super-admin/site-images/alt", deps.adminSiteImageAlt)
 		r.Post("/super-admin/site-images/reset", deps.adminSiteImageReset)
+		r.Post("/super-admin/site-images/mobile", deps.adminSiteImageMobile)
 
 		r.Get("/super-admin/certificates", deps.adminCertificates)
 		r.Get("/super-admin/certificates/{id}", deps.adminCertificateDetail)

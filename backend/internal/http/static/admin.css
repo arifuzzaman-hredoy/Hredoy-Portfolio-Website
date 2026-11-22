@@ -667,3 +667,90 @@ input:focus, textarea:focus { outline: 2px solid var(--primary); border-color: t
   font-size: 11.5px;
   border: 1px solid var(--border);
 }
+
+/* ---------------------------------------------------------------------------
+   Improved Site Images card sections
+   --------------------------------------------------------------------------- */
+.card-section {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+.card-section:first-child { margin-top: 0; }
+.card-section--identity { background: transparent; border: 0; padding: 0; }
+.card-section--identity .media-title { font-size: 15px; font-weight: 700; }
+.card-section--identity .media-key { font-size: 11px; }
+
+.section-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.media-meta__updated { white-space: nowrap; }
+.media-meta__url {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.media-meta__url:hover { color: var(--primary-hover, #2dd4bf); }
+
+/* Mobile variant badge */
+.supports-mobile .media-preview { position: relative; }
+.mobile-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--primary);
+  color: #04201c;
+  font-size: 10px;
+  font-weight: 800;
+  z-index: 2;
+}
+
+/* Mobile hint text */
+.mobile-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 4px 0 8px;
+  line-height: 1.4;
+}
+
+/* File button for mobile variant */
+.file-btn--mobile { border-style: dashed; border-color: rgba(99, 102, 241, 0.45); color: var(--primary-accent, #6366f1); }
+.file-btn--mobile:hover { background: rgba(99, 102, 241, 0.1); border-style: solid; }
+
+/* Clear mobile variant form */
+.media-form--clear { margin-top: 6px; }
+.btn-sm--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-sm--ghost:hover { background: var(--panel-2); border-color: var(--primary); }
+
+/* Requirements note */
+.requirements-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* Requirements hint list: stronger labels */
+.hint-list li strong { color: var(--text); }

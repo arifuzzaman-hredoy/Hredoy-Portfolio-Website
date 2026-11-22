@@ -9,19 +9,21 @@ import {
   getContentItems,
   getProjects,
   getSiteImageAlts,
+  getSiteImageMobiles,
   getSiteImages,
   getSiteSettings,
 } from "@/lib/cms";
 import { renderCertificatesSection } from "@/lib/certificates-render";
 
 export default async function Home() {
-  const [content, projects, lists, images, imageAlts, identity, certificates, categories] =
+  const [content, projects, lists, images, imageAlts, mobileImages, identity, certificates, categories] =
     await Promise.all([
       getContent(),
       getProjects(),
       getContentItems(),
       getSiteImages(),
       getSiteImageAlts(),
+      getSiteImageMobiles(),
       getSiteSettings(),
       getCertificates(),
       getCertificateCategories(),
@@ -37,6 +39,7 @@ export default async function Home() {
         lists={lists}
         images={images}
         imageAlts={imageAlts}
+        mobileImages={mobileImages}
         identity={identity}
         certificatesHTML={renderCertificatesSection(certificates, categories)}
       />

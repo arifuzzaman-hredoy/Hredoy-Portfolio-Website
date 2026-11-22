@@ -52,6 +52,7 @@ type Store interface {
 	ListSiteImages(ctx context.Context) ([]db.SiteImage, error)
 	GetSiteImage(ctx context.Context, key string) (db.SiteImage, error)
 	UpdateSiteImageURL(ctx context.Context, arg db.UpdateSiteImageURLParams) error
+	UpdateSiteImageMobile(ctx context.Context, arg db.UpdateSiteImageMobileParams) error
 	UpdateSiteImageAlt(ctx context.Context, arg db.UpdateSiteImageAltParams) error
 	ResetSiteImageToDefault(ctx context.Context, key string) error
 	DeleteSiteImage(ctx context.Context, key string) error

@@ -1623,6 +1623,7 @@ type HomeContentProps = {
   lists?: ContentGroups;
   images?: Record<string, string>;
   imageAlts?: Record<string, string>;
+  mobileImages?: Record<string, string>;
   identity?: Record<string, string>;
   certificatesHTML?: string;
 };
@@ -1634,12 +1635,13 @@ export default function HomeContent({
   lists,
   images,
   imageAlts,
+  mobileImages,
   identity,
   certificatesHTML,
 }: HomeContentProps) {
   let html = applyCMSContent(BODY_HTML, content ?? {}, defaults ?? {}, projects ?? [], identity ?? {});
   html = applyContentItems(html, lists ?? {});
-  html = applySiteImages(html, images ?? {}, imageAlts ?? {});
+  html = applySiteImages(html, images ?? {}, imageAlts ?? {}, mobileImages ?? {});
   html = insertCertificatesSection(html, certificatesHTML ?? "");
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

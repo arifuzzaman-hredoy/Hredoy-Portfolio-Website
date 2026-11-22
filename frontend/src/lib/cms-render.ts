@@ -661,7 +661,13 @@ function optimizeCloudinaryImg(tag: string): string {
 }
 
 /**
- * Apply CMS image URLs and alt text to template HTML. Each <img> is matched to
+ * Breakpoint (inclusive) below which a mobile variant image is used.
+ * Slots without a mobile variant always fall back to the primary image.
+ */
+const MOBILE_BREAKPOINT = 767;
+
+/**
+ * Apply CMS image URLs and alt text to template HTML. Each  is matched to
  * a site_images slot by the src it already has, so the admin screen and the
  * renderer cannot drift apart. A slot is only rewritten when the CMS value
  * differs from the template default, which keeps the render byte-identical
@@ -669,11 +675,17 @@ function optimizeCloudinaryImg(tag: string): string {
  *
  * An empty alt never overrides the markup: decorative images are better served
  * by the template's own alt than by a blank CMS field.
+ *
+ * When a slot has a mobile variant, the  is wrapped in a <picture> with a
+ * <source media="(max-width: 767px)"> so browsers pick the mobile composition
+ * at the appropriate breakpoint. Slots without a mobile variant render a plain
+ *  exactly as before.
  */
 export function applySiteImages(
   html: string,
   images: Record<string, string>,
   alts: Record<string, string> = {},
+  mobiles: Record<string, string> = {},
 ): string {
   const keyBySrc = new Map<string, string>();
   for (const [key, src] of Object.entries(SITE_IMAGE_DEFAULTS)) keyBySrc.set(src, key);
@@ -695,6 +707,15 @@ export function applySiteImages(
     if (alt) {
       const current = out.match(/\salt="([^"]*)"/)?.[1];
       if (current !== escapeHTML(alt)) out = setImageAttr(out, "alt", escapeHTML(alt));
+    }
+
+    // Wrap in <picture> with a mobile source when a mobile variant exists.
+    // Browsers use the <source> below the breakpoint, falling back to the
+    // primary <img> above it and when no mobile variant is configured.
+    const mobileUrl = mobiles[key]?.trim();
+    if (mobileUrl) {
+      const mobileSrc = escapeHTML(mobileUrl);
+      out = `<picture><source media="(max-width: ${MOBILE_BREAKPOINT}px)" srcset="${mobileSrc}">${out}</picture>`;
     }
 
     return optimizeCloudinaryImg(out);

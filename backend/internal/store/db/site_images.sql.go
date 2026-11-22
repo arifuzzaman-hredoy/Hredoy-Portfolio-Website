@@ -19,7 +19,7 @@ func (q *Queries) DeleteSiteImage(ctx context.Context, key string) error {
 }
 
 const getSiteImage = `-- name: GetSiteImage :one
-SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt FROM site_images WHERE key = $1
+SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt, mobile_url, mobile_public_id, width, height, format, size, mobile_width, mobile_height, mobile_format, mobile_size FROM site_images WHERE key = $1
 `
 
 func (q *Queries) GetSiteImage(ctx context.Context, key string) (SiteImage, error) {
@@ -36,12 +36,22 @@ func (q *Queries) GetSiteImage(ctx context.Context, key string) (SiteImage, erro
 		&i.UpdatedAt,
 		&i.DefaultUrl,
 		&i.DefaultAlt,
+		&i.MobileUrl,
+		&i.MobilePublicID,
+		&i.Width,
+		&i.Height,
+		&i.Format,
+		&i.Size,
+		&i.MobileWidth,
+		&i.MobileHeight,
+		&i.MobileFormat,
+		&i.MobileSize,
 	)
 	return i, err
 }
 
 const listSiteImages = `-- name: ListSiteImages :many
-SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt FROM site_images ORDER BY group_name, key
+SELECT id, key, label, group_name, url, public_id, alt, updated_at, default_url, default_alt, mobile_url, mobile_public_id, width, height, format, size, mobile_width, mobile_height, mobile_format, mobile_size FROM site_images ORDER BY group_name, key
 `
 
 func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
@@ -64,6 +74,16 @@ func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
 			&i.UpdatedAt,
 			&i.DefaultUrl,
 			&i.DefaultAlt,
+			&i.MobileUrl,
+			&i.MobilePublicID,
+			&i.Width,
+			&i.Height,
+			&i.Format,
+			&i.Size,
+			&i.MobileWidth,
+			&i.MobileHeight,
+			&i.MobileFormat,
+			&i.MobileSize,
 		); err != nil {
 			return nil, err
 		}
@@ -77,7 +97,11 @@ func (q *Queries) ListSiteImages(ctx context.Context) ([]SiteImage, error) {
 
 const resetSiteImageToDefault = `-- name: ResetSiteImageToDefault :exec
 UPDATE site_images
-SET url = default_url, alt = default_alt, public_id = '', updated_at = NOW()
+SET url = default_url, alt = default_alt, public_id = '',
+    width = 0, height = 0, format = '', size = 0,
+    mobile_url = '', mobile_public_id = '',
+    mobile_width = 0, mobile_height = 0, mobile_format = '', mobile_size = 0,
+    updated_at = NOW()
 WHERE key = $1
 `
 
@@ -104,7 +128,7 @@ func (q *Queries) UpdateSiteImageAlt(ctx context.Context, arg UpdateSiteImageAlt
 
 const updateSiteImageURL = `-- name: UpdateSiteImageURL :exec
 UPDATE site_images
-SET url = $2, public_id = $3, updated_at = NOW()
+SET url = $2, public_id = $3, width = $4, height = $5, format = $6, size = $7, updated_at = NOW()
 WHERE key = $1
 `
 
@@ -112,9 +136,35 @@ type UpdateSiteImageURLParams struct {
 	Key      string
 	Url      string
 	PublicID string
+	Width    int
+	Height   int
+	Format   string
+	Size     int64
 }
 
 func (q *Queries) UpdateSiteImageURL(ctx context.Context, arg UpdateSiteImageURLParams) error {
-	_, err := q.db.Exec(ctx, updateSiteImageURL, arg.Key, arg.Url, arg.PublicID)
+	_, err := q.db.Exec(ctx, updateSiteImageURL, arg.Key, arg.Url, arg.PublicID, arg.Width, arg.Height, arg.Format, arg.Size)
+	return err
+}
+
+const updateSiteImageMobile = `-- name: UpdateSiteImageMobile :exec
+UPDATE site_images
+SET mobile_url = $2, mobile_public_id = $3, mobile_width = $4, mobile_height = $5,
+    mobile_format = $6, mobile_size = $7, updated_at = NOW()
+WHERE key = $1
+`
+
+type UpdateSiteImageMobileParams struct {
+	Key           string
+	MobileUrl     string
+	MobilePublicID string
+	MobileWidth   int
+	MobileHeight  int
+	MobileFormat  string
+	MobileSize    int64
+}
+
+func (q *Queries) UpdateSiteImageMobile(ctx context.Context, arg UpdateSiteImageMobileParams) error {
+	_, err := q.db.Exec(ctx, updateSiteImageMobile, arg.Key, arg.MobileUrl, arg.MobilePublicID, arg.MobileWidth, arg.MobileHeight, arg.MobileFormat, arg.MobileSize)
 	return err
 }
