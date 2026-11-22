@@ -13,20 +13,8 @@ import {
   getSiteImageMobiles,
   getSiteImages,
   getSiteSettings,
-  SITE_SETTINGS_DEFAULTS,
 } from "@/lib/cms";
 import { renderCertificatesSection } from "@/lib/certificates-render";
-
-function HomeFallback() {
-  return (
-    <>
-      <ScriptLoader />
-      <HomeContent identity={SITE_SETTINGS_DEFAULTS} />
-      <CertificatesController />
-      <SiteInteractions contactEmail={SITE_SETTINGS_DEFAULTS.email} />
-    </>
-  );
-}
 
 async function HomeData() {
   const [content, projects, lists, images, imageAlts, mobileImages, identity, certificates, categories] =
@@ -57,14 +45,14 @@ async function HomeData() {
         certificatesHTML={renderCertificatesSection(certificates, categories)}
       />
       <CertificatesController />
-      <SiteInteractions contactEmail={identity.email} />
+      <SiteInteractions contactEmail={identity.email ?? ""} />
     </>
   );
 }
 
 export default function Home() {
   return (
-    <Suspense fallback={<HomeFallback />}>
+    <Suspense fallback={null}>
       <HomeData />
     </Suspense>
   );

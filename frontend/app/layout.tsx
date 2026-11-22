@@ -3,46 +3,37 @@ import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
 import "./globals.css";
 import "./certificates.css";
 
-const SITE_URL = "https://oxytumzone.com";
-const SITE_NAME = "Hredoy's Portfolio";
-const SITE_TITLE = "Hredoy's Portfolio — Junior DevOps Engineer";
-const SITE_DESCRIPTION =
-  "Arifuzzaman Hredoy — Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code.";
-const SITE_KEYWORDS = ["DevOps", "Linux", "Cloud", "CI/CD", "Docker", "Kubernetes", "AWS", "Terraform", "Portfolio"];
+const SITE_URL = process.env.SITE_URL ?? "http://localhost:3001";
 
-// The person behind the site comes from site_settings, so the owner edits it in
-// one place. name, jobTitle, email and sameAs are the only fields the JSON-LD
-// block needs; the description stays on the SEO content block.
-function buildStructuredData(identity: Record<string, string>) {
+// The person behind the site comes from site_settings and content_blocks in PostgreSQL.
+function buildStructuredData(identity: Record<string, string>, contentValues: Record<string, string>) {
+  const title = contentValues["seo.title"]?.trim() ?? "";
+  const description = contentValues["seo.description"]?.trim() ?? identity.bio ?? "";
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Person",
         "@id": `${SITE_URL}/#person`,
-        name: identity.owner_name,
+        name: identity.owner_name ?? "",
         url: SITE_URL,
-        jobTitle: identity.role,
-        description: SITE_DESCRIPTION,
-        email: `mailto:${identity.email}`,
-        sameAs: [identity.github, identity.linkedin],
+        jobTitle: identity.role ?? "",
+        description,
+        email: identity.email ? `mailto:${identity.email}` : undefined,
+        sameAs: [identity.github, identity.linkedin].filter(Boolean),
       },
       {
         "@type": "WebSite",
         "@id": `${SITE_URL}/#website`,
         url: SITE_URL,
-        name: SITE_NAME,
-        description: SITE_DESCRIPTION,
+        name: title,
+        description,
         inLanguage: "en",
         publisher: { "@id": `${SITE_URL}/#person` },
       },
     ],
   };
 }
-
-const DEFAULT_OG_IMAGE = "https://res.cloudinary.com/dvatduo79/image/upload/og/og-home.png";
-const DEFAULT_FAVICON = "https://res.cloudinary.com/dvatduo79/image/upload/favicon.png";
-const DEFAULT_APPLE_ICON = "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png";
 
 // Runs before first paint: flags that JS is available (so the navbar can start
 // hidden) and reveals the navbar as soon as the DOM is ready.
@@ -74,13 +65,13 @@ export async function generateMetadata(): Promise<Metadata> {
     getContent(),
     getSiteSettings(),
   ]);
-  const ogImage = images["og-image"] || DEFAULT_OG_IMAGE;
-  const favicon = images["favicon"] || DEFAULT_FAVICON;
-  const appleIcon = images["apple-touch-icon"] || DEFAULT_APPLE_ICON;
+  const ogImage = images["og-image"]?.trim();
+  const favicon = images["favicon"]?.trim();
+  const appleIcon = images["apple-touch-icon"]?.trim();
 
-  const title = content.values["seo.title"]?.trim() || SITE_TITLE;
-  const description = content.values["seo.description"]?.trim() || SITE_DESCRIPTION;
-  const keywords = (content.values["seo.keywords"] ?? SITE_KEYWORDS.join(", "))
+  const title = content.values["seo.title"]?.trim() ?? "";
+  const description = content.values["seo.description"]?.trim() ?? "";
+  const keywords = (content.values["seo.keywords"] ?? "")
     .split(",")
     .map((keyword) => keyword.trim())
     .filter(Boolean);
@@ -90,27 +81,27 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     keywords,
-    authors: [{ name: identity.owner_name, url: SITE_URL }],
-    creator: identity.owner_name,
+    authors: identity.owner_name ? [{ name: identity.owner_name, url: SITE_URL }] : undefined,
+    creator: identity.owner_name || undefined,
     alternates: { canonical: "/" },
     openGraph: {
-      title: SITE_TITLE,
-      description: SITE_DESCRIPTION,
+      title,
+      description,
       url: "/",
-      siteName: SITE_NAME,
+      siteName: title,
       locale: "en_US",
       type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: SITE_TITLE }],
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: title }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: SITE_TITLE,
-      description: SITE_DESCRIPTION,
-      images: [ogImage],
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
     },
     icons: {
-      icon: [{ url: favicon, type: "image/png", sizes: "64x64" }],
-      apple: [{ url: appleIcon, sizes: "180x180", type: "image/png" }],
+      icon: favicon ? [{ url: favicon, type: "image/png", sizes: "64x64" }] : undefined,
+      apple: appleIcon ? [{ url: appleIcon, sizes: "180x180", type: "image/png" }] : undefined,
     },
     robots: { index: true, follow: true },
   };
@@ -124,7 +115,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const identity = await getSiteSettings();
+  const [identity, content] = await Promise.all([getSiteSettings(), getContent()]);
 
   return (
     <html lang="en" data-bs-theme="dark" suppressHydrationWarning>
@@ -144,7 +135,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(buildStructuredData(identity)).replace(/</g, "\\u003c"),
+            __html: JSON.stringify(buildStructuredData(identity, content.values)).replace(/</g, "\\u003c"),
           }}
         />
       </head>

@@ -1,6 +1,5 @@
-// Server-side access to the Go CMS API. Every call degrades gracefully to an
-// empty result so the public page still renders if the backend is unreachable
-// (for example during a static `next build` without the API running).
+// Server-side access to the Go CMS API. Every value comes strictly from
+// PostgreSQL via the Go backend — no static defaults or fallbacks are used.
 
 import type { Project } from "./cms-render";
 import {
@@ -61,34 +60,20 @@ export type ContentItemsPayload = {
   groups: Record<string, ContentItem[]>;
 };
 
-// Owner identity as stored in site_settings. The fallbacks mirror the values the
-// template shipped with, so a missing row never changes the rendered page.
-export const SITE_SETTINGS_DEFAULTS: Record<string, string> = {
-  owner_name: "Arifuzzaman Hredoy",
-  role: "Junior DevOps Engineer",
-  email: "arifuzzamanhredoy@gmail.com",
-  github: "https://github.com/arifuzzaman-hredoy",
-  linkedin: "https://www.linkedin.com/in/arifuzzaman-hredoy/",
-  location: "Rangpur, Bangladesh",
-  bio: "Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code. I build reliable, automated, production-ready systems.",
-};
-
 const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
 
-async function getJSON<T>(path: string, revalidate = 30): Promise<T | null> {
-  try {
-    const res = await fetch(`${BACKEND_URL}${path}`, {
-      next: { revalidate },
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(500),
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
+async function getJSON<T>(path: string, revalidate = 30): Promise<T> {
+  const res = await fetch(`${BACKEND_URL}${path}`, {
+    next: { revalidate },
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(3000),
+  });
+  if (!res.ok) {
+    throw new Error(`CMS backend ${path} returned HTTP ${res.status}`);
   }
+  return (await res.json()) as T;
 }
 
 export async function getContent(): Promise<ContentPayload> {
@@ -96,7 +81,6 @@ export async function getContent(): Promise<ContentPayload> {
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ContentPayload>("/api/v1/content");
-  if (!data) return { count: 0, blocks: [], values: {}, defaults: {} };
   return {
     count: data.count ?? data.blocks?.length ?? 0,
     blocks: data.blocks ?? [],
@@ -110,17 +94,16 @@ export async function getProjects(): Promise<Project[]> {
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
-  return data?.projects ?? [];
+  return data.projects ?? [];
 }
 
-// Repeatable homepage lists, grouped by parent_key. Missing groups simply mean
-// "keep the template markup", which is what the renderers expect.
+// Repeatable homepage lists, grouped by parent_key.
 export async function getContentItems(): Promise<Record<string, ContentItem[]>> {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ContentItemsPayload>("/api/v1/content-items");
-  return data?.groups ?? {};
+  return data.groups ?? {};
 }
 
 export async function getSiteImages(): Promise<Record<string, string>> {
@@ -128,31 +111,28 @@ export async function getSiteImages(): Promise<Record<string, string>> {
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
-  return data?.urls ?? {};
+  return data.urls ?? {};
 }
 
-// Alt text for every CMS-managed image slot. Kept separate from
-// getSiteImages so the existing URL call sites stay untouched.
+// Alt text for every CMS-managed image slot.
 export async function getSiteImageAlts(): Promise<Record<string, string>> {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   const alts: Record<string, string> = {};
-  for (const image of data?.images ?? []) alts[image.key] = image.alt;
+  for (const image of data.images ?? []) alts[image.key] = image.alt;
   return alts;
 }
 
 // Optional mobile image URLs for art-directed responsive rendering.
-// Only slots that genuinely benefit from a different mobile composition
-// have a value; all other slots fall back to the primary image.
 export async function getSiteImageMobiles(): Promise<Record<string, string>> {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   const mobiles: Record<string, string> = {};
-  for (const image of data?.images ?? []) {
+  for (const image of data.images ?? []) {
     if (image.mobile_url) mobiles[image.key] = image.mobile_url;
   }
   return mobiles;
@@ -163,18 +143,8 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
-  const data = await getJSON<Record<string, string>>("/api/v1/site-settings");
-  return { ...SITE_SETTINGS_DEFAULTS, ...(data ?? {}) };
+  return getJSON<Record<string, string>>("/api/v1/site-settings");
 }
-
-export const EMPTY_CERTIFICATE_PAGE: CertificatePage = {
-  certificates: [],
-  count: 0,
-  total: 0,
-  page: 1,
-  per_page: CERTIFICATES_PER_PAGE,
-  total_pages: 0,
-};
 
 // Published certificates for the public section. The controller repeats this
 // query from the browser for search, category, sort and paging.
@@ -192,7 +162,6 @@ export async function getCertificates(
   params.set("per_page", String(CERTIFICATES_PER_PAGE));
   const query = params.toString();
   const data = await getJSON<CertificatePage>(`/api/v1/certificates?${query}`);
-  if (!data) return EMPTY_CERTIFICATE_PAGE;
   return {
     certificates: data.certificates ?? [],
     count: data.count ?? data.certificates?.length ?? 0,
@@ -210,5 +179,5 @@ export async function getCertificateCategories(): Promise<string[]> {
   const data = await getJSON<{ count: number; categories: string[] }>(
     "/api/v1/certificates/categories",
   );
-  return data?.categories ?? [];
+  return data.categories ?? [];
 }

@@ -21,7 +21,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                     <div class="at-search-top d-flex justify-content-between align-items-center">
                         <div class="at-header-logo at-search-logo">
                             <a href="/">
-                                <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                                <img data-width="30" width="256" height="256" data-site-image="brand-logo" alt="Hredoy">
                                 <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                             </a>
                         </div>
@@ -85,7 +85,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                     <div class="col-xl-2 col-6">
                         <div class="at-header-logo">
                             <a href="/">
-                                <img data-width="30" class="invert-0" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy" />
+                                <img data-width="30" class="invert-0" width="256" height="256" data-site-image="brand-logo" alt="Hredoy" />
                                 <p class="h6 fw-700 fz-24 text-white mb-0">Hredoy</p>
                             </a>
                         </div>
@@ -219,7 +219,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
             <div class="at-offcanvas-top d-flex align-items-center justify-content-between">
                 <div class="at-offcanvas-logo">
                     <a href="/">
-                        <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                        <img data-width="30" width="256" height="256" data-site-image="brand-logo" alt="Hredoy">
                         <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                     </a>
                 </div>
@@ -242,19 +242,19 @@ const BODY_HTML = `    <!-- prettier-ignore -->
             <div class="at-offcanvas-gallery d-none d-xl-block">
                 <div class="sec-2-home-5__avatars-row d-flex gap-2">
                     <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg" alt="Linux" width="103" height="103">
+                        <img class="img-cover" data-site-image="avatar-linux" alt="Linux" width="103" height="103">
                     </div>
                     <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg" alt="Docker" width="103" height="103">
+                        <img class="img-cover" data-site-image="avatar-docker" alt="Docker" width="103" height="103">
                     </div>
                     <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg" alt="AWS" width="103" height="103">
+                        <img class="img-cover" data-site-image="avatar-aws" alt="AWS" width="103" height="103">
                     </div>
                     <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg" alt="GitHub Actions" width="103" height="103">
+                        <img class="img-cover" data-site-image="avatar-github-actions" alt="GitHub Actions" width="103" height="103">
                     </div>
                     <div class="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                        <img class="img-cover" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg" alt="Terraform" width="103" height="103">
+                        <img class="img-cover" data-site-image="avatar-terraform" alt="Terraform" width="103" height="103">
                     </div>
                 </div>
             </div>
@@ -302,7 +302,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
             <div class="at-offcanvas-2-left">
                 <div class="at-header-logo d-flex justify-content-between align-items-center mb-50">
                     <a href="/">
-                        <img data-width="30" width="256" height="256" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png" alt="Hredoy">
+                        <img data-width="30" width="256" height="256" data-site-image="brand-logo" alt="Hredoy">
                         <p class="h6 fw-700 fz-24 mb-0">Hredoy</p>
                     </a>
                     <span class="hamburger-close-btn">
@@ -362,12 +362,12 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
                     <!-- Decorative 8-point asterisk sitting on the split -->
                     <div class="sec-1-home-7__star d-none d-lg-flex">
-                        <img class="at-scroll-rotate" data-rotate-duration="18" data-rotate-sensitivity="0.18" data-rotate-boost="12" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg" alt="decorative star" />
+                        <img class="at-scroll-rotate" data-rotate-duration="18" data-rotate-sensitivity="0.18" data-rotate-boost="12" data-site-image="star-asterisk" alt="decorative star" />
                     </div>
 
                     <div class="sec-1-home-7__img-wrap">
                         <div class="anim-zoomin">
-                            <img class="sec-1-home-7__img" width="1024" height="1053" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp" alt="Arifuzzaman Hredoy" loading="eager" fetchpriority="high" />
+                            <img class="sec-1-home-7__img" width="1024" height="1053" data-site-image="hero-portrait" alt="Arifuzzaman Hredoy" loading="eager" fetchpriority="high" />
                         </div>
 
                         <!-- Floating glass tech chips (decorative; hidden from AT) -->
@@ -436,27 +436,27 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                             <div class="sec-1-home-7__avatars">
                                                 <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Docker">
-                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker" loading="eager" decoding="async" />
+                                                        <img width="36" height="36" data-site-image="hero-badge-docker" alt="Docker" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
                                                 <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.1">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Kubernetes">
-                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/kubernetes-v3.svg" alt="Kubernetes" loading="eager" decoding="async" />
+                                                        <img width="36" height="36" data-site-image="hero-badge-kubernetes" alt="Kubernetes" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
                                                 <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.2">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="AWS">
-                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS" loading="eager" decoding="async" />
+                                                        <img width="36" height="36" data-site-image="hero-badge-aws" alt="AWS" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
                                                 <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.3">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Terraform">
-                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform" loading="eager" decoding="async" />
+                                                        <img width="36" height="36" data-site-image="hero-badge-terraform" alt="Terraform" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
                                                 <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.4">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Grafana">
-                                                        <img width="36" height="36" src="/assets/imgs/hero-tools/grafana-v3.svg" alt="Grafana" loading="eager" decoding="async" />
+                                                        <img width="36" height="36" data-site-image="hero-badge-grafana" alt="Grafana" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
                                             </div>
@@ -533,7 +533,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                 <div class="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-1">
                                     <div class="sec-2-home-7__img-wrap">
                                         <div class="thumb fix anim-zoomin">
-                                            <img data-speed=".8" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-linux.svg" alt="Linux terminal showing server commands" width="1000" height="1080" />
+                                            <img data-speed=".8" data-site-image="about-linux" alt="Linux terminal showing server commands" width="1000" height="1080" />
                                         </div>
                                     </div>
                                 </div>
@@ -559,7 +559,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                 <div class="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-2">
                                     <div class="sec-2-home-7__img-wrap ms-2">
                                         <div class="thumb fix anim-zoomin">
-                                            <img data-speed=".8" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cloud.svg" alt="Cloud with server stack illustration" width="1000" height="1080" />
+                                            <img data-speed=".8" data-site-image="about-cloud" alt="Cloud with server stack illustration" width="1000" height="1080" />
                                         </div>
                                     </div>
                                 </div>
@@ -592,7 +592,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                 <div class="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-3">
                                     <div class="sec-2-home-7__img-wrap ms-2">
                                         <div class="thumb fix anim-zoomin">
-                                            <img data-speed=".8" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cicd.svg" alt="CI/CD pipeline stages illustration" width="1000" height="1080" />
+                                            <img data-speed=".8" data-site-image="about-cicd" alt="CI/CD pipeline stages illustration" width="1000" height="1080" />
                                         </div>
                                     </div>
                                 </div>
@@ -617,27 +617,27 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
                                 <div class="about-me-slider-thumb at-item-anime marque">
-                                    <img class="w-100 rounded-4" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg" alt="Linux server session" width="1600" height="1000">
+                                    <img class="w-100 rounded-4" data-site-image="slider-1-linux" alt="Linux server session" width="1600" height="1000">
                                 </div>
                             </div>
                             <div class="swiper-slide">
                                 <div class="about-me-slider-thumb at-item-anime marque">
-                                    <img class="w-100 rounded-4" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg" alt="Cloud infrastructure" width="1600" height="1000">
+                                    <img class="w-100 rounded-4" data-site-image="slider-2-cloud" alt="Cloud infrastructure" width="1600" height="1000">
                                 </div>
                             </div>
                             <div class="swiper-slide">
                                 <div class="about-me-slider-thumb at-item-anime marque">
-                                    <img class="w-100 rounded-4" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg" alt="CI/CD pipeline" width="1600" height="1000">
+                                    <img class="w-100 rounded-4" data-site-image="slider-3-cicd" alt="CI/CD pipeline" width="1600" height="1000">
                                 </div>
                             </div>
                             <div class="swiper-slide">
                                 <div class="about-me-slider-thumb at-item-anime marque">
-                                    <img class="w-100 rounded-4" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-4-monitoring.svg" alt="Monitoring dashboard chart" width="1600" height="1000">
+                                    <img class="w-100 rounded-4" data-site-image="slider-4-monitoring" alt="Monitoring dashboard chart" width="1600" height="1000">
                                 </div>
                             </div>
                             <div class="swiper-slide">
                                 <div class="about-me-slider-thumb at-item-anime marque">
-                                    <img class="w-100 rounded-4" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg" alt="Security shield" width="1600" height="1000">
+                                    <img class="w-100 rounded-4" data-site-image="slider-5-security" alt="Security shield" width="1600" height="1000">
                                 </div>
                             </div>
                         </div>
@@ -655,7 +655,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     </svg>
                                 </div>
                                 <div class="sec-4-home-7__frame overflow-hidden mt-4 at-hover-parallax" data-parallax-strength="18" data-parallax-scale="1.05">
-                                    <img class="sec-4-home-7__img fix anim-zoomin" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg" alt="Learning path: Linux, Docker, CI/CD, AWS" width="900" height="1040" loading="lazy" decoding="async" />
+                                    <img class="sec-4-home-7__img fix anim-zoomin" data-site-image="mission-learning-path" alt="Learning path: Linux, Docker, CI/CD, AWS" width="900" height="1040" loading="lazy" decoding="async" />
                                 </div>
                             </div>
                             <div class="col-xl-9 col-lg-8 col-12">
@@ -679,7 +679,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     <div class="col-lg-6 col-12">
                                         <div class="d-flex gap-4">
                                             <div class="sec-4-home-7__pin flex-shrink-0" aria-hidden="true">
-                                                <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg" width="40" height="40" alt="" />
+                                                <img data-site-image="sec4-pin-icon" width="40" height="40" alt="" />
                                             </div>
                                             <div class="flex-grow-1 min-w-0">
                                                 <h3 class="sec-4-home-7__loc-title h6 mb-3 at-char-animation">Location</h3>
@@ -733,7 +733,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="col-xl-3 col-lg-5 col-12 mx-lg-auto">
                                 <div class="sec-5-home-7__photo scroll-move-up">
                                     <div class="fix anim-zoomin">
-                                        <img src="/assets/imgs/portfolio/sections/technical-skills.svg" alt="Technical Skills & Tools" class="w-100 object-fit-contain" width="900" height="auto" loading="lazy" />
+                                        <img data-site-image="technical-skills" alt="Technical Skills & Tools" class="w-100 object-fit-contain" width="900" height="auto" loading="lazy" />
                                     </div>
 
                                 </div>
@@ -916,7 +916,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         </p>
                                     </div>
                                     <div class="sec-6-home-7__card-media">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg" alt="Learn Fundamentals" width="1200" height="900" />
+                                        <img data-site-image="process-1-fundamentals" alt="Learn Fundamentals" width="1200" height="900" />
                                     </div>
                                 </div>
                             </div>
@@ -931,7 +931,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         </p>
                                     </div>
                                     <div class="sec-6-home-7__card-media">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg" alt="Hands-on Practice" width="1200" height="900" />
+                                        <img data-site-image="process-2-practice" alt="Hands-on Practice" width="1200" height="900" />
                                     </div>
                                 </div>
                             </div>
@@ -946,7 +946,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         </p>
                                     </div>
                                     <div class="sec-6-home-7__card-media">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg" alt="Project Development" width="1200" height="900" />
+                                        <img data-site-image="process-3-projects" alt="Project Development" width="1200" height="900" />
                                     </div>
                                 </div>
                             </div>
@@ -961,7 +961,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         </p>
                                     </div>
                                     <div class="sec-6-home-7__card-media">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg" alt="Continuous Improvement" width="1200" height="900" />
+                                        <img data-site-image="process-4-improvement" alt="Continuous Improvement" width="1200" height="900" />
                                     </div>
                                 </div>
                             </div>
@@ -976,7 +976,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="col-xxl-5 col-xl-6 col-12">
                                 <div class="sec-7-home-7__media">
                                     <div class="fix anim-zoomin">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/cta-connect.svg" alt="Network of DevOps tools connected around Hredoy" width="1500" height="1000" loading="lazy" />
+                                        <img data-site-image="cta-connect" alt="Network of DevOps tools connected around Hredoy" width="1500" height="1000" loading="lazy" />
                                     </div>
 
                                 </div>
@@ -987,7 +987,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                 <div class="sec-7-home-7__content ms-xxl-4">
                                     <div class="sec-7-home-7__eyebrow d-inline-flex align-items-center gap-2 mb-3 text-uppercase">
                                         <span class="text-scramble" data-scramble-text="Looking for my first DevOps role">Looking for my first DevOps role</span>
-                                        <img class="sec-7-home-7__eyebrow-icon" src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-eyebrow-arrow.svg" alt="" width="14" height="13" />
+                                        <img class="sec-7-home-7__eyebrow-icon" data-site-image="sec7-eyebrow-arrow" alt="" width="14" height="13" />
                                     </div>
 
                                     <p class="sec-7-home-7__headline mb-4 mb-lg-40 reveal-text">
@@ -996,19 +996,19 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
                                     <ul class="sec-7-home-7__features list-unstyled mb-4 mb-lg-60">
                                         <li class="sec-7-home-7__feature at_fade_anim" data-delay="0.1">
-                                            <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg" alt="" width="18" height="18" aria-hidden="true" />
+                                            <img data-site-image="sec7-plus" alt="" width="18" height="18" aria-hidden="true" />
                                             <span>Practical DevOps skills</span>
                                         </li>
                                         <li class="sec-7-home-7__feature at_fade_anim" data-delay="0.2">
-                                            <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg" alt="" width="18" height="18" aria-hidden="true" />
+                                            <img data-site-image="sec7-plus" alt="" width="18" height="18" aria-hidden="true" />
                                             <span>Real-world projects</span>
                                         </li>
                                         <li class="sec-7-home-7__feature at_fade_anim" data-delay="0.3">
-                                            <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg" alt="" width="18" height="18" aria-hidden="true" />
+                                            <img data-site-image="sec7-plus" alt="" width="18" height="18" aria-hidden="true" />
                                             <span>Continuous learning</span>
                                         </li>
                                         <li class="sec-7-home-7__feature at_fade_anim" data-delay="0.4">
-                                            <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg" alt="" width="18" height="18" aria-hidden="true" />
+                                            <img data-site-image="sec7-plus" alt="" width="18" height="18" aria-hidden="true" />
                                             <span>Hands-on practice</span>
                                         </li>
                                     </ul>
@@ -1021,7 +1021,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                             </span>
                                         </a>
                                         <a href="#contact" class="sec-7-home-7__cta-circle" aria-label="Get In Touch">
-                                            <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-btn-arrow.svg" alt="" width="24" height="24" aria-hidden="true" />
+                                            <img data-site-image="sec7-btn-arrow" alt="" width="24" height="24" aria-hidden="true" />
                                         </a>
                                     </div>
                                 </div>
@@ -1031,7 +1031,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
                     <!-- Decorative rotating star -->
                     <div class="sec-7-home-7__star" aria-hidden="true">
-                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg" alt="" width="100" height="100" />
+                        <img data-site-image="sec7-rotating" alt="" width="100" height="100" />
                     </div>
                 </div>
                 <!--Home 7 Section 8 (Team — Dedicated Team + Staggered Portrait Grid)-->
@@ -1081,7 +1081,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <a href="#contact" class="sec-8-home-7__card " aria-label="Arifuzzaman Hredoy — Junior DevOps Engineer">
                                             <div class="sec-8-home-7__photo">
                                                 <div class="fix anim-zoomin">
-                                                    <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/who-i-am-portrait.jpg" alt="Arifuzzaman Hredoy" width="1122" height="748" />
+                                                    <img data-site-image="who-i-am-portrait" alt="Arifuzzaman Hredoy" width="1122" height="748" />
                                                 </div>
 
                                             </div>
@@ -1114,49 +1114,49 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                         <div class="sec-9-home-7__ticker py-3 changeless carouselTicker carouselTicker-left">
                             <ul class="d-flex align-items-center gap-4 carouselTicker__list scroll-move-left list-unstyled mb-0 sec-9-home-7__list">
                                 <li class="sec-9-home-7__item">Linux</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Docker</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Kubernetes</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">AWS</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Terraform</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">CI/CD</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">GitHub Actions</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Nginx</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Prometheus</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Grafana</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">PostgreSQL</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Linux</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Docker</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Kubernetes</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">AWS</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Terraform</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">CI/CD</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">GitHub Actions</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Nginx</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Prometheus</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Grafana</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">PostgreSQL</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                             </ul>
                         </div>
                     </div>
@@ -1166,49 +1166,49 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                         <div class="sec-9-home-7__ticker py-3 changeless carouselTicker carouselTicker-right">
                             <ul class="d-flex align-items-center gap-4 carouselTicker__list scroll-move-right list-unstyled mb-0 sec-9-home-7__list">
                                 <li class="sec-9-home-7__item">Linux</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Docker</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Kubernetes</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">AWS</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Terraform</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">CI/CD</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">GitHub Actions</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Nginx</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Prometheus</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Grafana</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">PostgreSQL</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Linux</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Docker</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Kubernetes</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">AWS</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Terraform</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">CI/CD</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">GitHub Actions</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Nginx</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Prometheus</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">Grafana</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                                 <li class="sec-9-home-7__item">PostgreSQL</li>
-                                <li class="sec-9-home-7__sep"><img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg" alt="" /></li>
+                                <li class="sec-9-home-7__sep"><img data-site-image="marquee-star" alt="" /></li>
                             </ul>
                         </div>
                     </div>
@@ -1245,7 +1245,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg" class="blog-card__img22 project-img" alt="DevSecOps, Monitoring &amp; Kubernetes Platform stack diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-devsecops-monitoring-kubernetes" class="blog-card__img22 project-img" alt="DevSecOps, Monitoring &amp; Kubernetes Platform stack diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">DevSecOps, Monitoring &amp; Kubernetes Platform</h2>
@@ -1262,7 +1262,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg" class="blog-card__img22 project-img" alt="Automated CI/CD Pipeline flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-automated-cicd-pipeline" class="blog-card__img22 project-img" alt="Automated CI/CD Pipeline flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">Automated CI/CD Pipeline</h2>
@@ -1279,7 +1279,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg" class="blog-card__img22 project-img" alt="AWS VPC and EC2 infrastructure diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-aws-cloud-infrastructure-ec2" class="blog-card__img22 project-img" alt="AWS VPC and EC2 infrastructure diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">AWS Cloud Infrastructure &amp; EC2 Deployment</h2>
@@ -1296,7 +1296,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg" class="blog-card__img22 project-img" alt="Terraform plan and apply flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-terraform-infrastructure-as-code" class="blog-card__img22 project-img" alt="Terraform plan and apply flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">Infrastructure as Code with Terraform</h2>
@@ -1313,7 +1313,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg" class="blog-card__img22 project-img" alt="Docker Compose multi-tier platform diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-docker-compose-multi-tier" class="blog-card__img22 project-img" alt="Docker Compose multi-tier platform diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">Docker Compose Multi-Tier Platform</h2>
@@ -1330,7 +1330,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                                 <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
-                                        <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg" class="blog-card__img22 project-img" alt="Nginx reverse proxy with DNS and SSL/TLS diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
+                                        <img data-site-image="project-nginx-reverse-proxy-domain-ssl" class="blog-card__img22 project-img" alt="Nginx reverse proxy with DNS and SSL/TLS diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
                                     <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">
                                         <h2 class=" h6 blog-card__title mb-2">Nginx Reverse Proxy, Domain &amp; SSL</h2>

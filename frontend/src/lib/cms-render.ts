@@ -26,13 +26,11 @@ export type Project = {
 export const cmsUrl = (path: string, fallback: string): string => {
   const value = (path ?? "").trim();
   if (!value) return fallback;
-  return /^(https?:)?\/\//i.test(value) ? value : fallback;
+  return /^(\/|https?:\/\/)/i.test(value) ? value : fallback;
 };
 
 export function getProjectImage(project: Project): string {
-  const candidate = (project.image_path ?? "").trim();
-  if (!candidate) return "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg";
-  return cmsUrl(candidate, "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg");
+  return cmsUrl(project.image_path ?? "", "");
 }
 
 type ContentMap = Record<string, string | undefined>;
@@ -584,57 +582,8 @@ export function applyCMSContent(
 }
 
 // ---------------------------------------------------------------------------
-// Projects
+// Projects & Database-Driven Images
 // ---------------------------------------------------------------------------
-
-// Default URL of every CMS-managed image slot, exactly as it appears in the
-// template markup. Keys match the site_images table so the admin screen and the
-// renderer always agree on which slot is which. Slots that render no <img>
-// (favicon, og-image, apple-touch-icon) are metadata and are not listed here.
-export const SITE_IMAGE_DEFAULTS: Record<string, string> = {
-  "brand-logo": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/brand-logo.png",
-  "hero-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-13/Home-menu-pic.webp",
-  "hero-badge-docker": "/assets/imgs/hero-tools/docker-v3.svg",
-  "hero-badge-kubernetes": "/assets/imgs/hero-tools/kubernetes-v3.svg",
-  "hero-badge-aws": "/assets/imgs/hero-tools/aws-v3.svg",
-  "hero-badge-terraform": "/assets/imgs/hero-tools/terraform-v3.svg",
-  "hero-badge-grafana": "/assets/imgs/hero-tools/grafana-v3.svg",
-  "star-asterisk": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/star-asterisk.svg",
-  "avatar-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-1-linux.svg",
-  "avatar-docker": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-2-docker.svg",
-  "avatar-aws": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-3-aws.svg",
-  "avatar-github-actions": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-4-github-actions.svg",
-  "avatar-terraform": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/offcanvas/avatar-5-terraform.svg",
-  "about-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-linux.svg",
-  "about-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cloud.svg",
-  "about-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/about-cicd.svg",
-  "slider-1-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg",
-  "slider-2-cloud": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg",
-  "slider-3-cicd": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg",
-  "slider-4-monitoring": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-4-monitoring.svg",
-  "slider-5-security": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg",
-  "mission-learning-path": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg",
-  "skills-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg",
-  "technical-skills": "/assets/imgs/portfolio/sections/technical-skills.svg",
-  "process-1-fundamentals": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg",
-  "process-2-practice": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg",
-  "process-3-projects": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg",
-  "process-4-improvement": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg",
-  "project-automated-cicd-pipeline": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg",
-  "project-aws-cloud-infrastructure-ec2": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg",
-  "project-devsecops-monitoring-kubernetes": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg",
-  "project-docker-compose-multi-tier": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg",
-  "project-nginx-reverse-proxy-domain-ssl": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg",
-  "project-terraform-infrastructure-as-code": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg",
-  "cta-connect": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/cta-connect.svg",
-  "who-i-am-portrait": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/who-i-am-portrait.jpg",
-  "sec7-rotating": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg",
-  "sec4-pin-icon": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg",
-  "marquee-star": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/marquee-star.svg",
-  "sec7-plus": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg",
-  "sec7-btn-arrow": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-btn-arrow.svg",
-  "sec7-eyebrow-arrow": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-eyebrow-arrow.svg",
-};
 
 // setImageAttr replaces or appends one attribute on an <img> tag. The
 // replacement is a function so a value containing "$" is inserted literally.
@@ -694,31 +643,21 @@ export function applySiteImages(
   alts: Record<string, string> = {},
   mobiles: Record<string, string> = {},
 ): string {
-  const keyBySrc = new Map<string, string>();
-  for (const [key, src] of Object.entries(SITE_IMAGE_DEFAULTS)) keyBySrc.set(src, key);
-
   return html.replace(/<img\b[^>]*>/g, (tag) => {
-    const src = tag.match(/\ssrc="([^"]*)"/)?.[1];
-    if (!src) return optimizeCloudinaryImg(tag);
-    const key = keyBySrc.get(src);
+    const key = tag.match(/\sdata-site-image="([^"]*)"/)?.[1];
     if (!key) return optimizeCloudinaryImg(tag);
 
-    let out = tag;
-
     const url = images[key]?.trim();
-    if (url && url !== SITE_IMAGE_DEFAULTS[key]) {
-      out = setImageAttr(out, "src", escapeHTML(url));
-    }
+    if (!url) return "";
+
+    let out = tag.replace(/\sdata-site-image="[^"]*"/, "");
+    out = setImageAttr(out, "src", escapeHTML(url));
 
     const alt = alts[key]?.trim();
     if (alt) {
-      const current = out.match(/\salt="([^"]*)"/)?.[1];
-      if (current !== escapeHTML(alt)) out = setImageAttr(out, "alt", escapeHTML(alt));
+      out = setImageAttr(out, "alt", escapeHTML(alt));
     }
 
-    // Wrap in <picture> with a mobile source when a mobile variant exists.
-    // Browsers use the <source> below the breakpoint, falling back to the
-    // primary <img> above it and when no mobile variant is configured.
     const mobileUrl = mobiles[key]?.trim();
     if (mobileUrl) {
       const mobileSrc = escapeHTML(mobileUrl);
@@ -1210,11 +1149,14 @@ export function applyContentItems(html: string, groups: ContentGroups): string {
 function renderFeaturedCard(project: Project): string {
   const repoLink = cmsUrl(project.repo_url, "#");
   const liveLink = (project.live_url ?? "").trim();
+  const projectImg = getProjectImage(project);
   return (
     '                            <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">\n' +
     '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">\n' +
     '                                    <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">\n' +
-    `                                        <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">\n` +
+    (projectImg
+      ? `                                        <img src="${escapeHTML(projectImg)}" class="project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">\n`
+      : "") +
     "                                    </div>\n" +
     '                                    <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">\n' +
     `                                        <h2 class=" h6 blog-card__title mb-2">${escapeHTML(project.title)}</h2>\n` +
