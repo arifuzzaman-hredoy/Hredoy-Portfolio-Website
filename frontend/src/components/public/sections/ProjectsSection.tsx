@@ -52,8 +52,8 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
             const liveHref = safeHref(project.live_url, "");
             return (
               <div key={project.slug || project.title} className="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                <div className="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style={{ minHeight: "440px" }}>
-                  <div className="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style={{ flex: "0 0 65%" }}>
+                <div className="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column">
+                  <div className="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style={{ height: "230px", flexShrink: 0 }}>
                     {imgUrl && (
                       <img
                         src={imgUrl}
@@ -65,7 +65,7 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
                       />
                     )}
                   </div>
-                  <div className="blog-card__content p-4 d-flex flex-column" style={{ flex: 1 }}>
+                  <div className="blog-card__content p-4 d-flex flex-column justify-content-between" style={{ flex: 1 }}>
                     <h2 className="h6 blog-card__title mb-2">{project.title}</h2>
                     <p className="blog-card__meta mb-3">
                       <span className="blog-card__meta-text">{project.tech}</span>

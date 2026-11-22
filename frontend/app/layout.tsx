@@ -3,7 +3,9 @@ import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
 import "./globals.css";
 import "./certificates.css";
 
-const SITE_URL = process.env.SITE_URL ?? "http://localhost:3001";
+const SITE_URL =
+  process.env.SITE_URL ??
+  (process.env.NODE_ENV === "production" ? "https://oxytumzone.com" : "http://localhost:3001");
 
 // The person behind the site comes from site_settings and content_blocks in PostgreSQL.
 function buildStructuredData(identity: Record<string, string>, contentValues: Record<string, string>) {

@@ -88,6 +88,12 @@
 }
 
 /* Project card diagrams & theme-matched action buttons */
+.project-card-wrapper {
+  height: auto !important;
+  min-height: 100%;
+  overflow: visible !important;
+}
+
 .project-thumb {
   background: rgba(15, 23, 42, 0.45);
 }
@@ -231,10 +237,23 @@
 
 [data-bs-theme="light"] .footer-7__nav-link,
 [data-bs-theme="light"] .footer-7 a,
+[data-bs-theme="light"] .footer-7 .icon-social,
+[data-bs-theme="light"] .footer-7 .icon-arrow-right,
 [data-bs-theme="light"] .footer-7__hours-value,
 [data-bs-theme="light"] .footer-7__newsletter-title,
 [data-bs-theme="light"] .footer-7__copy {
-  color: var(--at-neutral-900, #1d1d1d);
+  color: var(--at-neutral-900, #1d1d1d) !important;
+}
+
+[data-bs-theme="light"] .footer-7__word {
+  color: rgba(29, 29, 29, 0.14) !important;
+}
+
+[data-bs-theme="dark"] .footer-7 .alt-footer-social-item a,
+[data-bs-theme="dark"] .footer-7 .alt-footer-social-item .icon-social,
+[data-bs-theme="dark"] .footer-7 .alt-footer-social-item .icon-arrow-right,
+[data-bs-theme="dark"] .footer-7__nav-link {
+  color: #e5e7eb !important;
 }
 
 [data-bs-theme="light"] .footer-7__hours-label,

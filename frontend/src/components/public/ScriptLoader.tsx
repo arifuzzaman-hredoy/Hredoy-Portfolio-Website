@@ -10,6 +10,7 @@ const CORE_SCRIPTS = [
   "/assets/js/vendors/bootstrap.min.js",
   "/assets/js/vendors/swiper-bundle.min.js",
   "/assets/js/vendors/jquery.carouselTicker.min.js",
+  "/assets/js/vendors/nice-select.js",
   "/assets/js/vendors/jquery.odometer.min.js",
   "/assets/js/vendors/jquery.appear.js",
   "/assets/js/vendors/parallax.js",
