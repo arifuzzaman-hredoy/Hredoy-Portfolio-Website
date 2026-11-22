@@ -42,7 +42,7 @@ type siteImageView struct {
 	MobileFormat string
 	MobileSize   int64
 
-	FormattedSize      string
+	FormattedSize       string
 	FormattedMobileSize string
 }
 
@@ -167,28 +167,28 @@ func toSiteImageViews(rows []db.SiteImage) []siteImageView {
 	views := make([]siteImageView, 0, len(rows))
 	for _, row := range rows {
 		views = append(views, siteImageView{
-			Key:            row.Key,
-			Label:          row.Label,
-			Group:          row.GroupName,
-			URL:            row.Url,
-			PublicID:       row.PublicID,
-			Alt:            row.Alt,
-			DefaultURL:     row.DefaultUrl,
-			IsDefault:      row.DefaultUrl != "" && row.Url == row.DefaultUrl,
-			UpdatedAt:      row.UpdatedAt.Time.Format("2006-01-02 15:04"),
-			MobileURL:      row.MobileUrl,
-			MobilePublicID: row.MobilePublicID,
-			SupportsMobile: mobileCapableSlots[row.Key],
-			Requirements:   requirementsFor(row.Key),
-			Width:          row.Width,
-			Height:         row.Height,
-			Format:         row.Format,
-			Size:           row.Size,
-			MobileWidth:    row.MobileWidth,
-			MobileHeight:   row.MobileHeight,
-			MobileFormat:   row.MobileFormat,
-			MobileSize:     row.MobileSize,
-			FormattedSize:      formatSize(row.Size),
+			Key:                 row.Key,
+			Label:               row.Label,
+			Group:               row.GroupName,
+			URL:                 row.Url,
+			PublicID:            row.PublicID,
+			Alt:                 row.Alt,
+			DefaultURL:          row.DefaultUrl,
+			IsDefault:           row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:           row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			MobileURL:           row.MobileUrl,
+			MobilePublicID:      row.MobilePublicID,
+			SupportsMobile:      mobileCapableSlots[row.Key],
+			Requirements:        requirementsFor(row.Key),
+			Width:               row.Width,
+			Height:              row.Height,
+			Format:              row.Format,
+			Size:                row.Size,
+			MobileWidth:         row.MobileWidth,
+			MobileHeight:        row.MobileHeight,
+			MobileFormat:        row.MobileFormat,
+			MobileSize:          row.MobileSize,
+			FormattedSize:       formatSize(row.Size),
 			FormattedMobileSize: formatSize(row.MobileSize),
 		})
 	}
@@ -227,28 +227,28 @@ func groupSiteImages(rows []db.SiteImage) []siteImageGroupView {
 			order = append(order, group)
 		}
 		byGroup[group] = append(byGroup[group], siteImageView{
-			Key:            row.Key,
-			Label:          row.Label,
-			Group:          group,
-			URL:            row.Url,
-			PublicID:       row.PublicID,
-			Alt:            row.Alt,
-			DefaultURL:     row.DefaultUrl,
-			IsDefault:      row.DefaultUrl != "" && row.Url == row.DefaultUrl,
-			UpdatedAt:      row.UpdatedAt.Time.Format("2006-01-02 15:04"),
-			MobileURL:      row.MobileUrl,
-			MobilePublicID: row.MobilePublicID,
-			SupportsMobile: mobileCapableSlots[row.Key],
-			Requirements:   requirementsFor(row.Key),
-			Width:          row.Width,
-			Height:         row.Height,
-			Format:         row.Format,
-			Size:           row.Size,
-			MobileWidth:    row.MobileWidth,
-			MobileHeight:   row.MobileHeight,
-			MobileFormat:   row.MobileFormat,
-			MobileSize:     row.MobileSize,
-			FormattedSize:      formatSize(row.Size),
+			Key:                 row.Key,
+			Label:               row.Label,
+			Group:               group,
+			URL:                 row.Url,
+			PublicID:            row.PublicID,
+			Alt:                 row.Alt,
+			DefaultURL:          row.DefaultUrl,
+			IsDefault:           row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:           row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			MobileURL:           row.MobileUrl,
+			MobilePublicID:      row.MobilePublicID,
+			SupportsMobile:      mobileCapableSlots[row.Key],
+			Requirements:        requirementsFor(row.Key),
+			Width:               row.Width,
+			Height:              row.Height,
+			Format:              row.Format,
+			Size:                row.Size,
+			MobileWidth:         row.MobileWidth,
+			MobileHeight:        row.MobileHeight,
+			MobileFormat:        row.MobileFormat,
+			MobileSize:          row.MobileSize,
+			FormattedSize:       formatSize(row.Size),
 			FormattedMobileSize: formatSize(row.MobileSize),
 		})
 	}
@@ -509,13 +509,13 @@ func (d HandlerDeps) adminSiteImageMobile(w http.ResponseWriter, r *http.Request
 	}
 
 	if err := d.Queries.UpdateSiteImageMobile(ctx, db.UpdateSiteImageMobileParams{
-		Key:           key,
-		MobileUrl:     result.SecureURL,
+		Key:            key,
+		MobileUrl:      result.SecureURL,
 		MobilePublicID: result.PublicID,
-		MobileWidth:   result.Width,
-		MobileHeight:  result.Height,
-		MobileFormat:  result.Format,
-		MobileSize:    result.Bytes,
+		MobileWidth:    result.Width,
+		MobileHeight:   result.Height,
+		MobileFormat:   result.Format,
+		MobileSize:     result.Bytes,
 	}); err != nil {
 		d.Logger.Error("update mobile image failed", "key", key, "error", err)
 		http.Redirect(w, r, "/super-admin/site-images?error=failed", http.StatusSeeOther)

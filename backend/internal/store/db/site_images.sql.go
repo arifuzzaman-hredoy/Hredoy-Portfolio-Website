@@ -155,13 +155,13 @@ WHERE key = $1
 `
 
 type UpdateSiteImageMobileParams struct {
-	Key           string
-	MobileUrl     string
+	Key            string
+	MobileUrl      string
 	MobilePublicID string
-	MobileWidth   int
-	MobileHeight  int
-	MobileFormat  string
-	MobileSize    int64
+	MobileWidth    int
+	MobileHeight   int
+	MobileFormat   string
+	MobileSize     int64
 }
 
 func (q *Queries) UpdateSiteImageMobile(ctx context.Context, arg UpdateSiteImageMobileParams) error {
