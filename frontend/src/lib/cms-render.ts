@@ -1209,19 +1209,21 @@ export function applyContentItems(html: string, groups: ContentGroups): string {
 
 function renderFeaturedCard(project: Project): string {
   return (
-    '                            <div class="blog-card col-lg-3 col-md-6 col-12 mb-30" data-category="">\n' +
-    '                                <div class="blog-card__thumb hover-effect-1">\n' +
-    `                                    <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__img-link">\n` +
-    `                                        <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="blog-card__img22" alt="${escapeHTML(project.title)}" width="1600" height="1000">\n` +
-    "                                    </a>\n" +
-    "                                </div>\n" +
-    '                                <div class="blog-card__content">\n' +
-    '                                    <h2 class=" h6 blog-card__title">\n' +
-    `                                        <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__title-link">${escapeHTML(project.title)}</a>\n` +
-    "                                    </h2>\n" +
-    '                                    <p class="blog-card__meta">\n' +
-    `                                        <span class="blog-card__meta-text">${escapeHTML(project.tech)}</span>\n` +
-    "                                    </p>\n" +
+    '                            <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">\n' +
+    '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm hover-shadow-lg transition-all duration-300">\n' +
+    '                                    <div class="blog-card__thumb hover-effect-1 project-thumb">\n' +
+    `                                        <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__img-link d-block overflow-hidden">\n` +
+    `                                            <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="blog-card__img22 project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:220px;object-fit:cover;display:block;">\n` +
+    "                                        </a>\n" +
+    "                                    </div>\n" +
+    '                                    <div class="blog-card__content p-4 d-flex flex-column">\n' +
+    '                                        <h2 class=" h6 blog-card__title mb-2">\n' +
+    `                                            <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__title-link text-decoration-none">${escapeHTML(project.title)}</a>\n` +
+    "                                        </h2>\n" +
+    '                                        <p class="blog-card__meta mb-3">\n' +
+    `                                            <span class="blog-card__meta-text">${escapeHTML(project.tech)}</span>\n` +
+    "                                        </p>\n" +
+    "                                    </div>\n" +
     "                                </div>\n" +
     "                            </div>"
   );
@@ -1242,7 +1244,7 @@ export function applyProjects(html: string, projects: Project[]): string {
   if (visible.length === 0) return html;
   let out = html;
 
-  const cardsMatch = out.match(/<div class="row g-3 sec-10-home-7__grid">([\s\S]*?)<\/div>\s*<div class="sec-10-home-7__all mt-50">/);
+  const cardsMatch = out.match(/<div class="row g-4 sec-10-home-7__grid">([\s\S]*?)<\/div>\s*<div class="sec-10-home-7__all mt-50">/);
   if (cardsMatch) {
     const cards = visible
       .slice(0, 6)
