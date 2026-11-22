@@ -1208,10 +1208,11 @@ export function applyContentItems(html: string, groups: ContentGroups): string {
 }
 
 function renderFeaturedCard(project: Project): string {
-  const viewLink = cmsUrl(project.live_url, cmsUrl(project.repo_url, "#"));
+  const repoLink = cmsUrl(project.repo_url, "#");
+  const liveLink = (project.live_url ?? "").trim();
   return (
     '                            <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">\n' +
-    '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">\n' +
+    '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">\n' +
     '                                    <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">\n' +
     `                                        <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">\n` +
     "                                    </div>\n" +
@@ -1220,7 +1221,12 @@ function renderFeaturedCard(project: Project): string {
     '                                        <p class="blog-card__meta mb-3">\n' +
     `                                            <span class="blog-card__meta-text">${escapeHTML(project.tech)}</span>\n` +
     "                                        </p>\n" +
-    `                                        <a href="${viewLink}" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>\n` +
+    '                                        <div class="project-card__actions d-flex gap-2">\n' +
+    `                                            <a href="${repoLink}" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>\n` +
+    (liveLink
+      ? `                                            <a href="${liveLink}" target="_blank" rel="noopener" class="btn btn-view-live">Live Demo</a>\n`
+      : "") +
+    "                                        </div>\n" +
     "                                    </div>\n" +
     "                                </div>\n" +
     "                            </div>"
@@ -1242,7 +1248,7 @@ export function applyProjects(html: string, projects: Project[]): string {
   if (visible.length === 0) return html;
   let out = html;
 
-  const cardsMatch = out.match(/<div class="row g-4 sec-10-home-7__grid">([\s\S]*?)<\/div>\s*<div class="sec-10-home-7__all mt-50">/);
+  const cardsMatch = out.match(/<div class="row g-3 sec-10-home-7__grid">([\s\S]*?)<\/div>\s*<div class="sec-10-home-7__all mt-50">/);
   if (cardsMatch) {
     const cards = visible
       .slice(0, 6)

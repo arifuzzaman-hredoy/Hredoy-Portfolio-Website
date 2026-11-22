@@ -1241,9 +1241,9 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                             </div>
                         </div>
 
-                        <div class="row g-4 sec-10-home-7__grid">
+                        <div class="row g-3 sec-10-home-7__grid">
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg" class="blog-card__img22 project-img" alt="DevSecOps, Monitoring &amp; Kubernetes Platform stack diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1252,13 +1252,15 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Kubernetes · Prometheus · Grafana · Trivy</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/DevSecOps-Monitoring-Kubernetes-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/DevSecOps-Monitoring-Kubernetes-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg" class="blog-card__img22 project-img" alt="Automated CI/CD Pipeline flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1267,13 +1269,15 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">GitHub Actions · Docker · GHCR</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Automated-CI-CD-Pipeline" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/Automated-CI-CD-Pipeline" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg" class="blog-card__img22 project-img" alt="AWS VPC and EC2 infrastructure diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1282,13 +1286,15 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">AWS · EC2 · VPC · IAM</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/AWS-Cloud-Infrastructure-EC2-Deployment" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/AWS-Cloud-Infrastructure-EC2-Deployment" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg" class="blog-card__img22 project-img" alt="Terraform plan and apply flow diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1297,13 +1303,15 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Terraform · AWS · Modules</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Terraform-Infrastructure-as-Code" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/Terraform-Infrastructure-as-Code" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg" class="blog-card__img22 project-img" alt="Docker Compose multi-tier platform diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1312,13 +1320,15 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Docker Compose · Nginx · PostgreSQL</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Docker-compose-Multi-Tier-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/Docker-compose-Multi-Tier-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
-                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">
+                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:440px;">
                                     <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">
                                         <img src="https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg" class="blog-card__img22 project-img" alt="Nginx reverse proxy with DNS and SSL/TLS diagram" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">
                                     </div>
@@ -1327,7 +1337,9 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Nginx · SSL/TLS · DNS</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Nginx-Reverse-Proxy-Domain-SSL" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        <div class="project-card__actions d-flex gap-2">
+                                            <a href="https://github.com/arifuzzaman-hredoy/Nginx-Reverse-Proxy-Domain-SSL" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
