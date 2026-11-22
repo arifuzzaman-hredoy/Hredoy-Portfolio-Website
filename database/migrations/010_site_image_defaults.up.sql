@@ -45,6 +45,12 @@ FROM (VALUES
   ('process-2-practice', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg', 'Hands-on Practice'),
   ('process-3-projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg', 'Project Development'),
   ('process-4-improvement', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-4-improvement.svg', 'Continuous Improvement'),
+  ('project-automated-cicd-pipeline', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg', 'Automated CI/CD Pipeline flow diagram'),
+  ('project-aws-cloud-infrastructure-ec2', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg', 'AWS VPC and EC2 infrastructure diagram'),
+  ('project-devsecops-monitoring-kubernetes', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg', 'DevSecOps, Monitoring & Kubernetes Platform stack diagram'),
+  ('project-docker-compose-multi-tier', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg', 'Docker Compose multi-tier platform diagram'),
+  ('project-nginx-reverse-proxy-domain-ssl', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg', 'Nginx reverse proxy with DNS and SSL/TLS diagram'),
+  ('project-terraform-infrastructure-as-code', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg', 'Terraform plan and apply flow diagram'),
   ('sec4-pin-icon', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-4-pin-icon.svg', ''),
   ('sec7-btn-arrow', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-btn-arrow.svg', ''),
   ('sec7-eyebrow-arrow', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-eyebrow-arrow.svg', ''),
@@ -76,4 +82,15 @@ INSERT INTO site_images (key, label, group_name, url, public_id, alt, default_ur
   ('hero-badge-aws', 'Hero Badge: AWS', 'Hero', '/assets/imgs/hero-tools/aws-v3.svg', '', 'AWS', '/assets/imgs/hero-tools/aws-v3.svg', 'AWS'),
   ('hero-badge-terraform', 'Hero Badge: Terraform', 'Hero', '/assets/imgs/hero-tools/terraform-v3.svg', '', 'Terraform', '/assets/imgs/hero-tools/terraform-v3.svg', 'Terraform'),
   ('hero-badge-grafana', 'Hero Badge: Grafana', 'Hero', '/assets/imgs/hero-tools/grafana-v3.svg', '', 'Grafana', '/assets/imgs/hero-tools/grafana-v3.svg', 'Grafana')
+ON CONFLICT (key) DO NOTHING;
+
+-- Featured Projects images: hardcoded Cloudinary SVGs in the template markup,
+-- now CMS-manageable so the owner can replace or reset them from Super Admin.
+INSERT INTO site_images (key, label, group_name, url, public_id, alt, default_url, default_alt) VALUES
+  ('project-automated-cicd-pipeline', 'Featured Project: Automated CI/CD Pipeline', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg', '', 'Automated CI/CD Pipeline flow diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/automated-cicd-pipeline.svg', 'Automated CI/CD Pipeline flow diagram'),
+  ('project-aws-cloud-infrastructure-ec2', 'Featured Project: AWS Cloud Infrastructure & EC2 Deployment', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg', '', 'AWS VPC and EC2 infrastructure diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/aws-cloud-infrastructure-ec2.svg', 'AWS VPC and EC2 infrastructure diagram'),
+  ('project-devsecops-monitoring-kubernetes', 'Featured Project: DevSecOps, Monitoring & Kubernetes Platform', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg', '', 'DevSecOps, Monitoring & Kubernetes Platform stack diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg', 'DevSecOps, Monitoring & Kubernetes Platform stack diagram'),
+  ('project-docker-compose-multi-tier', 'Featured Project: Docker Compose Multi-Tier Platform', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg', '', 'Docker Compose multi-tier platform diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/docker-compose-multi-tier.svg', 'Docker Compose multi-tier platform diagram'),
+  ('project-nginx-reverse-proxy-domain-ssl', 'Featured Project: Nginx Reverse Proxy, Domain & SSL', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg', '', 'Nginx reverse proxy with DNS and SSL/TLS diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/nginx-reverse-proxy-domain-ssl.svg', 'Nginx reverse proxy with DNS and SSL/TLS diagram'),
+  ('project-terraform-infrastructure-as-code', 'Featured Project: Infrastructure as Code with Terraform', 'Projects', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg', '', 'Terraform plan and apply flow diagram', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/projects/terraform-infrastructure-as-code.svg', 'Terraform plan and apply flow diagram')
 ON CONFLICT (key) DO NOTHING;
