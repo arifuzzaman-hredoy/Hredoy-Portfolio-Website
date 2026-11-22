@@ -19,6 +19,12 @@ const SCRIPTS = [
   "/assets/js/vendors/imagesloaded-pkgd.js",
   "/assets/js/vendors/isotope.pkgd.min.js",
   "/assets/js/vendors/image-hover-effects.js",
+  // GSAP animation stack — loaded asynchronously so it does NOT block initial render.
+  // main.js guards all GSAP usage with typeof gsap !== 'undefined' checks.
+  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js", async: true },
+  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js", async: true },
+  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollSmoother.min.js", async: true },
+  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js", async: true },
   "/assets/js/at-cursor.js",
   "/assets/js/main.js",
   "/assets/js/matter.js",
@@ -32,8 +38,10 @@ export default function ScriptLoader() {
     let cancelled = false;
 
     const loadInOrder = async () => {
-      for (const src of SCRIPTS) {
+      for (const entry of SCRIPTS) {
         if (cancelled) return;
+        const src = typeof entry === 'string' ? entry : entry.src;
+        const async = typeof entry === 'object' && entry.async === true;
         await new Promise<void>((resolve) => {
           // If already loaded (e.g. React strict-mode double effect), skip.
           const existing = document.querySelector(
@@ -45,7 +53,7 @@ export default function ScriptLoader() {
           }
           const s = document.createElement("script");
           s.src = src;
-          s.async = false;
+          s.async = async;
           s.setAttribute("data-orisa-src", src);
           s.onload = () => resolve();
           s.onerror = () => resolve();
