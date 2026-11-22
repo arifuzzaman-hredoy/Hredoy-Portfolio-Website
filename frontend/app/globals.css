@@ -17,11 +17,12 @@
   filter: brightness(1.4) contrast(1.15);
 }
 
-/* Ensure above-the-fold hero content is immediately visible on load (desktop & mobile) */
+/* Ensure above-the-fold hero and footer content remain visible without waiting on scroll triggers */
 .sec-1-home-7 .at_fade_anim,
 .sec-1-home-7 .sec-1-home-7__headline,
 .sec-1-home-7 .sec-1-home-7__desc,
-.sec-1-home-7 .sec-1-home-7__cta {
+.sec-1-home-7 .sec-1-home-7__cta,
+.footer-7 .at_fade_anim {
   opacity: 1 !important;
   visibility: visible !important;
 }

@@ -15,7 +15,6 @@ import {
   getSiteImages,
   getSiteSettings,
 } from "@/lib/cms";
-import { renderCertificatesSection } from "@/lib/certificates-render";
 
 async function HomeData() {
   await connection();
@@ -44,7 +43,8 @@ async function HomeData() {
         imageAlts={imageAlts}
         mobileImages={mobileImages}
         identity={identity}
-        certificatesHTML={renderCertificatesSection(certificates, categories)}
+        certificates={certificates}
+        categories={categories}
       />
       <CertificatesController />
       <SiteInteractions contactEmail={identity.email ?? ""} />
