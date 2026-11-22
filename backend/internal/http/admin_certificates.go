@@ -22,7 +22,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	_ "golang.org/x/image/webp"
 )
 
 const (
@@ -589,7 +588,7 @@ func readCertificateUpload(file multipart.File, header *multipart.FileHeader, al
 }
 
 // imageDimensions decodes just the image header to confirm the file is a
-// genuine, valid image (JPEG, PNG or WEBP). It does not enforce any fixed
+// genuine, valid image (JPEG or PNG). It does not enforce any fixed
 // dimensions: certificates may be landscape or portrait, and the public site
 // renders them with object-fit:cover so any aspect ratio displays correctly.
 func imageDimensions(data []byte) (int, int, error) {
