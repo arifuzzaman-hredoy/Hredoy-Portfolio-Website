@@ -57,7 +57,7 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
                     {imgUrl && (
                       <img
                         src={imgUrl}
-                        className="project-img"
+                        className="blog-card__img22 project-img"
                         alt={project.title}
                         width={1600}
                         height={800}
