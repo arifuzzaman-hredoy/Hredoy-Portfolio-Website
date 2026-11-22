@@ -2,12 +2,12 @@ import { val, type PortfolioData } from "@/lib/portfolio-data";
 import CmsImage from "../CmsImage";
 import { ArrowDiagIcon, ArrowUpRightIcon } from "../Icons";
 
-const SLIDES = [
-  { slot: "slider-1-linux", alt: "Linux server session" },
-  { slot: "slider-2-cloud", alt: "Cloud infrastructure" },
-  { slot: "slider-3-cicd", alt: "CI/CD pipeline" },
-  { slot: "slider-4-monitoring", alt: "Monitoring dashboard chart" },
-  { slot: "slider-5-security", alt: "Security shield" },
+const SLIDE_SLOTS = [
+  "slider-1-linux",
+  "slider-2-cloud",
+  "slider-3-cicd",
+  "slider-4-monitoring",
+  "slider-5-security",
 ];
 
 export default function MissionSection({ data }: { data: PortfolioData }) {
@@ -24,10 +24,10 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
       <div className="home-2-section-8 py-4">
         <div className="swiper about-me-slider-active at-item-anime-area">
           <div className="swiper-wrapper">
-            {SLIDES.map((slide) => (
-              <div key={slide.slot} className="swiper-slide">
+            {SLIDE_SLOTS.map((slot) => (
+              <div key={slot} className="swiper-slide">
                 <div className="about-me-slider-thumb at-item-anime marque">
-                  <CmsImage data={data} slot={slide.slot} className="w-100 rounded-4" altFallback={slide.alt} width={1600} height={1000} />
+                  <CmsImage data={data} slot={slot} className="w-100 rounded-4" width={1600} height={1000} />
                 </div>
               </div>
             ))}
@@ -48,7 +48,6 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
                   data={data}
                   slot="mission-learning-path"
                   className="sec-4-home-7__img fix anim-zoomin"
-                  altFallback="Learning path"
                   width={900}
                   height={1040}
                   loading="lazy"
@@ -77,7 +76,7 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
                 <div className="col-lg-6 col-12">
                   <div className="d-flex gap-4">
                     <div className="sec-4-home-7__pin flex-shrink-0" aria-hidden="true">
-                      <CmsImage data={data} slot="sec4-pin-icon" width={40} height={40} altFallback="" />
+                      <CmsImage data={data} slot="sec4-pin-icon" width={40} height={40} />
                     </div>
                     <div className="flex-grow-1 min-w-0">
                       <h3 className="sec-4-home-7__loc-title h6 mb-3 at-char-animation">{val(data, "mission.loc.title")}</h3>

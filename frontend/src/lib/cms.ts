@@ -1,6 +1,7 @@
 // Server-side access to the Go CMS API. Every value comes strictly from
 // PostgreSQL via the Go backend — no static defaults or fallbacks are used.
 
+import { cache } from "react";
 import type { Project } from "./cms-render";
 import {
   CERTIFICATES_PER_PAGE,
@@ -88,7 +89,7 @@ async function getJSON<T>(path: string, revalidate = 30): Promise<T> {
   }
 }
 
-export async function getContent(): Promise<ContentPayload> {
+const fetchContentCached = cache(async (): Promise<ContentPayload> => {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
@@ -99,64 +100,64 @@ export async function getContent(): Promise<ContentPayload> {
     values: data.values ?? {},
     defaults: data.defaults ?? {},
   };
+});
+
+export function getContent(): Promise<ContentPayload> {
+  return fetchContentCached();
 }
 
-export async function getProjects(): Promise<Project[]> {
+export const getProjects = cache(async (): Promise<Project[]> => {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
   return data.projects ?? [];
-}
+});
 
 // Repeatable homepage lists, grouped by parent_key.
-export async function getContentItems(): Promise<Record<string, ContentItem[]>> {
+export const getContentItems = cache(async (): Promise<Record<string, ContentItem[]>> => {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<ContentItemsPayload>("/api/v1/content-items");
   return data.groups ?? {};
-}
+});
 
-export async function getSiteImages(): Promise<Record<string, string>> {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
-  const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
-  return data.urls ?? {};
-}
+export type SiteImagesBundle = {
+  urls: Record<string, string>;
+  alts: Record<string, string>;
+  mobiles: Record<string, string>;
+};
 
-// Alt text for every CMS-managed image slot.
-export async function getSiteImageAlts(): Promise<Record<string, string>> {
+export const getSiteImagesBundle = cache(async (): Promise<SiteImagesBundle> => {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   const alts: Record<string, string> = {};
-  for (const image of data.images ?? []) alts[image.key] = image.alt;
-  return alts;
-}
-
-// Optional mobile image URLs for art-directed responsive rendering.
-export async function getSiteImageMobiles(): Promise<Record<string, string>> {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
-  const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   const mobiles: Record<string, string> = {};
   for (const image of data.images ?? []) {
+    alts[image.key] = image.alt;
     if (image.mobile_url) mobiles[image.key] = image.mobile_url;
   }
-  return mobiles;
+  return {
+    urls: data.urls ?? {},
+    alts,
+    mobiles,
+  };
+});
+
+export async function getSiteImages(): Promise<Record<string, string>> {
+  return (await getSiteImagesBundle()).urls;
 }
 
 // Owner identity used by the metadata, the JSON-LD block and the contact links.
-export async function getSiteSettings(): Promise<Record<string, string>> {
+export const getSiteSettings = cache(async (): Promise<Record<string, string>> => {
   "use cache";
   cacheTag(CMS_CACHE_TAG);
   cacheLife("minutes");
   return getJSON<Record<string, string>>("/api/v1/site-settings");
-}
+});
 
 // Published certificates for the public section. The controller repeats this
 // query from the browser for search, category, sort and paging.

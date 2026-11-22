@@ -49,7 +49,7 @@ export default function ProcessSection({ data }: { data: PortfolioData }) {
                     <p className="sec-6-home-7__card-desc mb-0">{card.body}</p>
                   </div>
                   <div className="sec-6-home-7__card-media">
-                    {imageSlot && <CmsImage data={data} slot={imageSlot} altFallback={card.title} width={1200} height={900} />}
+                    {imageSlot && <CmsImage data={data} slot={imageSlot} width={1200} height={900} />}
                   </div>
                 </div>
               </div>

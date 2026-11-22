@@ -26,11 +26,11 @@ function SocialLinks({ data }: { data: PortfolioData }) {
 }
 
 const OFFCANVAS_AVATARS = [
-  { slot: "avatar-linux", alt: "Linux" },
-  { slot: "avatar-docker", alt: "Docker" },
-  { slot: "avatar-aws", alt: "AWS" },
-  { slot: "avatar-github-actions", alt: "GitHub Actions" },
-  { slot: "avatar-terraform", alt: "Terraform" },
+  "avatar-linux",
+  "avatar-docker",
+  "avatar-aws",
+  "avatar-github-actions",
+  "avatar-terraform",
 ];
 
 export default function OffcanvasSidebar({ data }: { data: PortfolioData }) {
@@ -68,9 +68,9 @@ export default function OffcanvasSidebar({ data }: { data: PortfolioData }) {
           </div>
           <div className="at-offcanvas-gallery d-none d-xl-block">
             <div className="sec-2-home-5__avatars-row d-flex gap-2">
-              {OFFCANVAS_AVATARS.map(({ slot, alt }) => (
+              {OFFCANVAS_AVATARS.map((slot) => (
                 <div key={slot} className="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                  <CmsImage data={data} slot={slot} className="img-cover" altFallback={alt} width={103} height={103} />
+                  <CmsImage data={data} slot={slot} className="img-cover" width={103} height={103} />
                 </div>
               ))}
             </div>

@@ -10,22 +10,18 @@ import {
   getContent,
   getContentItems,
   getProjects,
-  getSiteImageAlts,
-  getSiteImageMobiles,
-  getSiteImages,
+  getSiteImagesBundle,
   getSiteSettings,
 } from "@/lib/cms";
 
 async function HomeData() {
   await connection();
-  const [content, projects, lists, images, imageAlts, mobileImages, identity, certificates, categories] =
+  const [content, projects, lists, siteImages, identity, certificates, categories] =
     await Promise.all([
       getContent(),
       getProjects(),
       getContentItems(),
-      getSiteImages(),
-      getSiteImageAlts(),
-      getSiteImageMobiles(),
+      getSiteImagesBundle(),
       getSiteSettings(),
       getCertificates(),
       getCertificateCategories(),
@@ -39,9 +35,9 @@ async function HomeData() {
         defaults={content.defaults}
         projects={projects}
         lists={lists}
-        images={images}
-        imageAlts={imageAlts}
-        mobileImages={mobileImages}
+        images={siteImages.urls}
+        imageAlts={siteImages.alts}
+        mobileImages={siteImages.mobiles}
         identity={identity}
         certificates={certificates}
         categories={categories}

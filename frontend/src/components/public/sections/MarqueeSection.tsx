@@ -20,7 +20,7 @@ function MarqueeRow({
             <Fragment key={`${direction}-${item}-${idx}`}>
               <li className="sec-9-home-7__item">{item}</li>
               <li className="sec-9-home-7__sep">
-                <CmsImage data={data} slot="marquee-star" altFallback="" />
+                <CmsImage data={data} slot="marquee-star" />
               </li>
             </Fragment>
           ))}

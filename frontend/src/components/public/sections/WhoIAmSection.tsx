@@ -52,7 +52,7 @@ export default function WhoIAmSection({ data }: { data: PortfolioData }) {
                 <a href="#contact" className="sec-8-home-7__card" aria-label={`${ownerName} — ${role}`}>
                   <div className="sec-8-home-7__photo">
                     <div className="anim-zoomin-wrap">
-                      <CmsImage data={data} slot="who-i-am-portrait" altFallback={ownerName} width={1122} height={748} />
+                      <CmsImage data={data} slot="who-i-am-portrait" width={1122} height={748} />
                     </div>
                   </div>
                   <span className="sec-8-home-7__badge">

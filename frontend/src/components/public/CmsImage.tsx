@@ -4,7 +4,6 @@ import { optimizeCloudinaryUrl, type PortfolioData } from "@/lib/portfolio-data"
 type CmsImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & {
   data: PortfolioData;
   slot: string;
-  altFallback?: string;
   dataWidth?: string | number;
   dataSpeed?: string | number;
 };
@@ -12,7 +11,6 @@ type CmsImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & 
 export default function CmsImage({
   data,
   slot,
-  altFallback = "",
   dataWidth,
   dataSpeed,
   ...rest
@@ -21,7 +19,7 @@ export default function CmsImage({
   if (!rawUrl) return null;
 
   const src = optimizeCloudinaryUrl(rawUrl);
-  const alt = data.imageAlts[slot]?.trim() || altFallback;
+  const alt = data.imageAlts[slot]?.trim() ?? "";
   const mobileUrl = data.mobileImages[slot]?.trim() ?? "";
 
   const extraAttrs: Record<string, string | number | undefined> = {};

@@ -1,18 +1,19 @@
 import { Fragment } from "react";
-import { lines, val, type PortfolioData } from "@/lib/portfolio-data";
+import { lines, listItems, val, type PortfolioData } from "@/lib/portfolio-data";
 import CmsImage from "../CmsImage";
 
-const HERO_BADGES = [
-  { slot: "hero-badge-docker", title: "Docker" },
-  { slot: "hero-badge-kubernetes", title: "Kubernetes" },
-  { slot: "hero-badge-aws", title: "AWS" },
-  { slot: "hero-badge-terraform", title: "Terraform" },
-  { slot: "hero-badge-grafana", title: "Grafana" },
+const HERO_BADGE_SLOTS = [
+  "hero-badge-docker",
+  "hero-badge-kubernetes",
+  "hero-badge-aws",
+  "hero-badge-terraform",
+  "hero-badge-grafana",
 ];
 
 export default function HeroSection({ data }: { data: PortfolioData }) {
   const brackets = lines(data, "hero.brackets");
   const tags = lines(data, "hero.tags");
+  const floatChips = listItems(data, "hero.tags").slice(0, 5);
   const proofLines = lines(data, "hero.proof");
   const ctaText = val(data, "hero.cta");
 
@@ -31,7 +32,6 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
           data-rotate-duration="18"
           data-rotate-sensitivity="0.18"
           data-rotate-boost="12"
-          altFallback="decorative star"
         />
       </div>
 
@@ -43,16 +43,15 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
             className="sec-1-home-7__img"
             width={1024}
             height={1053}
-            altFallback={data.identity.owner_name ?? ""}
             loading="eager"
             fetchPriority="high"
           />
         </div>
-        <span className="hero-float-chip" aria-hidden="true">Linux</span>
-        <span className="hero-float-chip" aria-hidden="true">Docker</span>
-        <span className="hero-float-chip" aria-hidden="true">Kubernetes</span>
-        <span className="hero-float-chip" aria-hidden="true">AWS</span>
-        <span className="hero-float-chip" aria-hidden="true">Terraform</span>
+        {floatChips.map((chip) => (
+          <span key={chip.id} className="hero-float-chip" aria-hidden="true">
+            {chip.title}
+          </span>
+        ))}
       </div>
 
       <div className="container-2200 px-lg-5 px-3 p-relative z-index-1">
@@ -109,10 +108,10 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
                     ))}
                   </p>
                   <div className="sec-1-home-7__avatars">
-                    {HERO_BADGES.map((badge, idx) => (
-                      <span key={badge.slot} className="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay={String(idx * 0.1)}>
-                        <span className="sec-1-home-7__badge" tabIndex={0} title={badge.title}>
-                          <CmsImage data={data} slot={badge.slot} width={36} height={36} altFallback={badge.title} loading="eager" decoding="async" />
+                    {HERO_BADGE_SLOTS.map((slot, idx) => (
+                      <span key={slot} className="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay={String(idx * 0.1)}>
+                        <span className="sec-1-home-7__badge" tabIndex={0} title={data.imageAlts[slot] ?? ""}>
+                          <CmsImage data={data} slot={slot} width={36} height={36} loading="eager" decoding="async" />
                         </span>
                       </span>
                     ))}

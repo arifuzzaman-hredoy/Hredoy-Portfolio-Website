@@ -16,7 +16,6 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
                 <CmsImage
                   data={data}
                   slot="cta-connect"
-                  altFallback="Network of DevOps tools"
                   width={1500}
                   height={1000}
                   loading="lazy"
@@ -29,7 +28,7 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
             <div className="sec-7-home-7__content ms-xxl-4">
               <div className="sec-7-home-7__eyebrow d-inline-flex align-items-center gap-2 mb-3 text-uppercase">
                 <span className="text-scramble" data-scramble-text={eyebrow}>{eyebrow}</span>
-                <CmsImage data={data} slot="sec7-eyebrow-arrow" className="sec-7-home-7__eyebrow-icon" altFallback="" width={14} height={13} />
+                <CmsImage data={data} slot="sec7-eyebrow-arrow" className="sec-7-home-7__eyebrow-icon" width={14} height={13} />
               </div>
 
               <p className="sec-7-home-7__headline mb-4 mb-lg-40 reveal-text">{val(data, "cta.desc")}</p>
@@ -37,7 +36,7 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
               <ul className="sec-7-home-7__features list-unstyled mb-4 mb-lg-60">
                 {features.map((item, idx) => (
                   <li key={item.id} className="sec-7-home-7__feature at_fade_anim" data-delay={((idx + 1) * 0.1).toFixed(1)}>
-                    <CmsImage data={data} slot="sec7-plus" altFallback="" width={18} height={18} aria-hidden="true" />
+                    <CmsImage data={data} slot="sec7-plus" width={18} height={18} aria-hidden="true" />
                     <span>{item.title}</span>
                   </li>
                 ))}
@@ -51,7 +50,7 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
                   </span>
                 </a>
                 <a href="#contact" className="sec-7-home-7__cta-circle" aria-label={ctaText}>
-                  <CmsImage data={data} slot="sec7-btn-arrow" altFallback="" width={24} height={24} aria-hidden="true" />
+                  <CmsImage data={data} slot="sec7-btn-arrow" width={24} height={24} aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -60,7 +59,7 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
       </div>
 
       <div className="sec-7-home-7__star" aria-hidden="true">
-        <CmsImage data={data} slot="sec7-rotating" altFallback="" width={100} height={100} />
+        <CmsImage data={data} slot="sec7-rotating" width={100} height={100} />
       </div>
     </div>
   );

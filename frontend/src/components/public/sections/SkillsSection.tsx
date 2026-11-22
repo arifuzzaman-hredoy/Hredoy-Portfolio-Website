@@ -37,7 +37,6 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
                 <CmsImage
                   data={data}
                   slot="technical-skills"
-                  altFallback="Technical Skills & Tools"
                   className="w-100 object-fit-contain"
                   width={900}
                   loading="lazy"

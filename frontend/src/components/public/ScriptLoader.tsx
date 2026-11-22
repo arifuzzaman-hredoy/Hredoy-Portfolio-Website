@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const SCRIPTS = [
+const CORE_SCRIPTS = [
   "/assets/js/vendors/color-modes.js",
   "/assets/js/vendors/jquery-3.7.1.min.js",
   // plugin.js already bundles GSAP 3.11.4, ScrollTrigger, ScrollSmoother, ScrollToPlugin, and SplitText.
@@ -22,26 +22,41 @@ const SCRIPTS = [
   "/assets/js/vendors/image-hover-effects.js",
   "/assets/js/at-cursor.js",
   "/assets/js/main.js",
+];
+
+const DEFERRED_PHYSICS_SCRIPTS = [
   "/assets/js/matter.js",
   "/assets/js/throwable.js",
   "/assets/js/vendors/poly-decomp.js",
   "/assets/js/tech-physics.js",
 ];
 
+function appendScripts(list: string[]) {
+  for (const src of list) {
+    if (document.querySelector(`script[data-orisa-src="${src}"]`)) {
+      continue;
+    }
+    const s = document.createElement("script");
+    s.src = src;
+    s.async = false;
+    s.setAttribute("data-orisa-src", src);
+    document.body.appendChild(s);
+  }
+}
+
 export default function ScriptLoader() {
   useEffect(() => {
-    // Setting async = false on dynamically inserted scripts lets the browser
-    // fetch all scripts in parallel while executing them in strict array order.
-    for (const src of SCRIPTS) {
-      if (document.querySelector(`script[data-orisa-src="${src}"]`)) {
-        continue;
-      }
-      const s = document.createElement("script");
-      s.src = src;
-      s.async = false;
-      s.setAttribute("data-orisa-src", src);
-      document.body.appendChild(s);
-    }
+    appendScripts(CORE_SCRIPTS);
+
+    // Defer Matter.js physics simulation until the browser is idle so initial
+    // paint and hero interactions are not blocked.
+    const scheduleIdle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 120));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const id = scheduleIdle(() => appendScripts(DEFERRED_PHYSICS_SCRIPTS));
+
+    return () => {
+      cancelIdle(id as number);
+    };
   }, []);
 
   return null;

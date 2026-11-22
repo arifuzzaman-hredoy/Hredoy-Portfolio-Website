@@ -61,7 +61,7 @@ export function BrandLogo({
   const brand = (data.identity.owner_name ?? "").split(" ").pop() || "";
   return (
     <Link href="/">
-      <CmsImage data={data} slot="brand-logo" dataWidth="30" className={imgClassName} width={256} height={256} altFallback={brand} />
+      <CmsImage data={data} slot="brand-logo" dataWidth="30" className={imgClassName} width={256} height={256} />
       <p className={textClassName}>{brand}</p>
     </Link>
   );
