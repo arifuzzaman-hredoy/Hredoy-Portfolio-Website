@@ -68,6 +68,11 @@
             </label>
             <button class="btn-sm" type="submit">Upload</button>
           </form>
+          <div class="upload-suggestion">
+            <span class="suggestion-label">Best fit for this slot:</span>
+            <span class="suggestion-type">{{.Requirements.Formats}}</span>
+            <span class="suggestion-dim">{{.Requirements.Dimensions}}</span>
+          </div>
         </div>
 
         <!-- Section 4: Optional mobile variant -->
@@ -84,6 +89,11 @@
             </label>
             <button class="btn-sm" type="submit">Upload</button>
           </form>
+          <div class="upload-suggestion">
+            <span class="suggestion-label">Best fit for this slot:</span>
+            <span class="suggestion-type">{{.Requirements.Formats}}</span>
+            <span class="suggestion-dim">{{.Requirements.Dimensions}}</span>
+          </div>
           {{if .HasMobile}}
           <form method="post" action="/super-admin/site-images/mobile" class="media-form media-form--clear">
             <input type="hidden" name="csrf_token" value="{{$.csrf}}">
