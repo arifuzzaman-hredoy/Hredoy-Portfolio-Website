@@ -117,21 +117,21 @@ export default function Header({ data }: { data: PortfolioData }) {
                   </button>
                 </div>
                 <div className="at-main-menu menu-light style-1 gap-3 d-flex justify-content-end align-items-center">
-                  <button className="at-header-search-btn at-search-click ms-2" aria-label="Search">
+                  <button className="at-header-search-btn at-search-click ms-2 text-white" aria-label="Search">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path d="M18.7508 18.5233L13.5538 13.392M13.5538 13.392C14.9604 12.0032 15.7506 10.1196 15.7506 8.15551C15.7506 6.19144 14.9604 4.30782 13.5538 2.91902C12.1472 1.53022 10.2395 0.75 8.25028 0.75C6.26108 0.75 4.35336 1.53022 2.94678 2.91902C1.54021 4.30782 0.75 6.19144 0.75 8.15551C0.75 10.1196 1.54021 12.0032 2.94678 13.392C4.35336 14.7808 6.26108 15.561 8.25028 15.561C10.2395 15.561 12.1472 14.7808 13.5538 13.392Z" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M18.7508 18.5233L13.5538 13.392M13.5538 13.392C14.9604 12.0032 15.7506 10.1196 15.7506 8.15551C15.7506 6.19144 14.9604 4.30782 13.5538 2.91902C12.1472 1.53022 10.2395 0.75 8.25028 0.75C6.26108 0.75 4.35336 1.53022 2.94678 2.91902C1.54021 4.30782 0.75 6.19144 0.75 8.15551C0.75 10.1196 1.54021 12.0032 2.94678 13.392C4.35336 14.7808 6.26108 15.561 8.25028 15.561C10.2395 15.561 12.1472 14.7808 13.5538 13.392Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                   <div className="dark-light-mode">
-                    <label htmlFor="switch" className="toggle dark-light-switcher">
+                    <label htmlFor="switch" className="toggle dark-light-switcher text-white" aria-label="Toggle dark or light mode">
                       <input type="checkbox" className="input" id="switch" />
                       <span className="icon icon--moon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                          <path d="M7.51166 0C6.33857 1.09609 5.6053 2.65694 5.6053 4.38904C5.6053 7.70586 8.29416 10.3947 11.611 10.3947C13.3431 10.3947 14.9039 9.66146 16 8.48836C15.7439 12.6798 12.2635 16 8.00757 16C3.58511 16 0 12.4149 0 7.99245C0 3.73655 3.32017 0.256105 7.51166 0Z" fill="white" />
+                          <path d="M7.51166 0C6.33857 1.09609 5.6053 2.65694 5.6053 4.38904C5.6053 7.70586 8.29416 10.3947 11.611 10.3947C13.3431 10.3947 14.9039 9.66146 16 8.48836C15.7439 12.6798 12.2635 16 8.00757 16C3.58511 16 0 12.4149 0 7.99245C0 3.73655 3.32017 0.256105 7.51166 0Z" fill="currentColor" />
                         </svg>
                       </span>
                       <span className="icon icon--sun">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" width="28" height="28" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
                           <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
                         </svg>
                       </span>

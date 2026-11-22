@@ -35,10 +35,16 @@ function buildStructuredData(identity: Record<string, string>, contentValues: Re
   };
 }
 
-// Runs before first paint: flags that JS is available (so the navbar can start
-// hidden) and reveals the navbar as soon as the DOM is ready.
+// Runs before first paint: applies saved theme (dark/light), flags JS availability,
+// and reveals the navbar as soon as the DOM is ready.
 const NAVBAR_REVEAL_BOOT = `(function () {
   var d = document;
+  try {
+    var savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      d.documentElement.setAttribute("data-bs-theme", savedTheme);
+    }
+  } catch (e) {}
   d.documentElement.classList.add("has-js");
   var started = false;
   var reveal = function () {

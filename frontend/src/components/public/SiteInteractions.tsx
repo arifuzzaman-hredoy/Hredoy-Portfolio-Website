@@ -85,25 +85,11 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
     if (form && (sent || error)) {
       form.querySelector(".contact-form-status")?.remove();
       statusEl = document.createElement("p");
-      statusEl.className = "contact-form-status";
+      statusEl.className = `contact-form-status ${sent ? "contact-form-status--sent" : "contact-form-status--error"}`;
       statusEl.setAttribute("role", error ? "alert" : "status");
-      statusEl.style.marginTop = "16px";
-      statusEl.style.marginBottom = "0";
-      statusEl.style.padding = "12px 16px";
-      statusEl.style.borderRadius = "8px";
-      statusEl.style.fontSize = "14px";
-      statusEl.style.lineHeight = "1.5";
-      if (sent) {
-        statusEl.style.backgroundColor = "rgba(15, 118, 110, 0.2)";
-        statusEl.style.border = "1px solid rgba(45, 212, 191, 0.45)";
-        statusEl.style.color = "#ccfbf1";
-        statusEl.textContent = "Thank you! Your message has been sent.";
-      } else {
-        statusEl.style.backgroundColor = "rgba(185, 28, 28, 0.2)";
-        statusEl.style.border = "1px solid rgba(248, 113, 113, 0.45)";
-        statusEl.style.color = "#fee2e2";
-        statusEl.textContent = `Could not send your message right now. Please try again or email ${contactEmail}.`;
-      }
+      statusEl.textContent = sent
+        ? "Thank you! Your message has been sent."
+        : `Could not send your message right now. Please try again or email ${contactEmail}.`;
       const disclaimer = form.querySelector(".sec-4-about-form__disclaimer");
       if (disclaimer) {
         form.insertBefore(statusEl, disclaimer);

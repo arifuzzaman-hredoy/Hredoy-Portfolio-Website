@@ -7,7 +7,7 @@
   z-index: 2;
 }
 
-/* Improve contrast for offcanvas tech icons in dark mode */
+/* Offcanvas tech icons: crisp in both dark and light modes */
 [data-bs-theme="dark"] .at-offcanvas-gallery-img {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -15,6 +15,15 @@
 
 [data-bs-theme="dark"] .at-offcanvas-gallery-img img {
   filter: brightness(1.4) contrast(1.15);
+}
+
+[data-bs-theme="light"] .at-offcanvas-gallery-img {
+  background: var(--at-neutral-50);
+  border: 1px solid var(--at-neutral-100);
+}
+
+[data-bs-theme="light"] .at-offcanvas-gallery-img img {
+  filter: none;
 }
 
 /* Ensure above-the-fold hero and footer content remain visible without waiting on scroll triggers */
@@ -25,4 +34,143 @@
 .footer-7 .at_fade_anim {
   opacity: 1 !important;
   visibility: visible !important;
+}
+
+/* Keep hero portrait flush at the bottom of the hero display with zero empty space below */
+.sec-1-home-7__img-wrap .anim-zoomin,
+.sec-1-home-7__img-wrap picture {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.sec-1-home-7__img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+}
+
+@media (max-width: 1199.98px) {
+  .sec-1-home-7 {
+    padding-bottom: 0 !important;
+  }
+
+  .sec-1-home-7__img-wrap {
+    margin-bottom: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+}
+
+/* Contact form status banner — readable in both dark and light modes */
+.contact-form-status {
+  margin-top: 16px;
+  margin-bottom: 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contact-form-status--sent {
+  background-color: rgba(15, 118, 110, 0.14);
+  border: 1px solid rgba(15, 118, 110, 0.45);
+  color: #0f766e;
+}
+
+.contact-form-status--error {
+  background-color: rgba(185, 28, 28, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.45);
+  color: #b91c1c;
+}
+
+[data-bs-theme="dark"] .contact-form-status--sent {
+  background-color: rgba(15, 118, 110, 0.22);
+  border-color: rgba(45, 212, 191, 0.45);
+  color: #ccfbf1;
+}
+
+[data-bs-theme="dark"] .contact-form-status--error {
+  background-color: rgba(185, 28, 28, 0.22);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fee2e2;
+}
+
+/* Light (white) mode polish across header, cards, forms, offcanvas, and sticky menu */
+[data-bs-theme="light"] body {
+  background-color: var(--at-neutral-0, #fefefe);
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .header-7 .at-header-area {
+  background: rgba(254, 254, 254, 0.86);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .header-7 .at-header-logo img {
+  filter: none;
+}
+
+[data-bs-theme="light"] .header-7 .at-header-logo p,
+[data-bs-theme="light"] .header-7 #header7Nav nav > ul > li > a,
+[data-bs-theme="light"] .header-7 .at-header-search-btn,
+[data-bs-theme="light"] .header-7 .dark-light-switcher,
+[data-bs-theme="light"] .header-7 .at-header-sidebar-btn,
+[data-bs-theme="light"] .header-7 .at-header-menu-btn {
+  color: #1d1d1d !important;
+}
+
+[data-bs-theme="light"] .header-7 .at-hamburger__bar {
+  background-color: #1d1d1d;
+}
+
+[data-bs-theme="light"] .header-7 .at-main-menu nav ul li.has-dropdown > a::after {
+  filter: none;
+}
+
+[data-bs-theme="light"] .project-card-wrapper {
+  background-color: var(--at-neutral-0, #fefefe);
+  color: var(--at-neutral-900, #1d1d1d);
+  border: 1px solid var(--at-neutral-100, #dfdfdf) !important;
+}
+
+[data-bs-theme="light"] .blog-card__title {
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .blog-card__meta-text {
+  color: var(--at-neutral-500, #585959);
+}
+
+[data-bs-theme="light"] .sec-4-about-form__input {
+  color: var(--at-neutral-900, #1d1d1d);
+  border-color: var(--at-neutral-200, #d4d4d4);
+}
+
+[data-bs-theme="light"] .sec-4-about-form__input::placeholder {
+  color: var(--at-neutral-500, #585959);
+}
+
+[data-bs-theme="light"] .at-offcanvas {
+  background-color: var(--at-neutral-0, #fefefe);
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .at-offcanvas-logo img {
+  filter: none;
+}
+
+[data-bs-theme="light"] .at-search-form-toggle {
+  background-color: var(--at-neutral-0, #fefefe);
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .hamburger-sticky-menu {
+  background-color: var(--at-neutral-900, #1d1d1d);
+  color: #ffffff;
 }
