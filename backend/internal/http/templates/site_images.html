@@ -36,6 +36,10 @@
       <figcaption class="media-body">
         <div class="media-title" title="{{.Label}}">{{.Label}}</div>
         <div class="media-key" title="{{.Key}}">{{.Key}}</div>
+        <div class="media-meta">
+          <span class="media-meta__updated">Updated {{.UpdatedAt}}</span>
+          {{if .URL}}<a href="{{.URL}}" target="_blank" rel="noopener" class="media-meta__url" title="{{.URL}}">View URL</a>{{end}}
+        </div>
         <form method="post" action="/super-admin/site-images/replace" enctype="multipart/form-data" class="media-form">
           <input type="hidden" name="csrf_token" value="{{$.csrf}}">
           <input type="hidden" name="key" value="{{.Key}}">
@@ -48,9 +52,9 @@
         <div class="field field--hint" style="margin-top: 6px;">
           <span>Requirements</span>
           <ul class="hint-list">
-            <li>Formats: JPG, PNG, WEBP, GIF, SVG</li>
-            <li>Maximum file size: 25 MiB</li>
-            <li>Dimensions: flexible</li>
+            <li>Formats: {{.Requirements.Formats}}</li>
+            <li>Max size: {{.Requirements.MaxSize}}</li>
+            <li>Dimensions: {{.Requirements.Dimensions}}</li>
           </ul>
         </div>
         <details class="alt-box">

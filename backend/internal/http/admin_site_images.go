@@ -26,6 +26,75 @@ type siteImageView struct {
 	DefaultURL string
 	IsDefault  bool
 	UpdatedAt  string
+	Requirements
+}
+
+// Requirements describes the accepted formats, max size, and preferred
+// dimensions for one image slot.
+type Requirements struct {
+	Formats    string
+	MaxSize    string
+	Dimensions string
+}
+
+// defaultRequirements applies to any slot without a specific entry.
+var defaultRequirements = Requirements{
+	Formats:    "JPG, PNG, WEBP, GIF, SVG",
+	MaxSize:    "25 MiB",
+	Dimensions: "Flexible",
+}
+
+// slotRequirements maps known image slot keys to their specific constraints.
+// SVG icons and illustrations stay small; brand logos and portraits have
+// tighter size and aspect-ratio guidance.
+var slotRequirements = map[string]Requirements{
+	// Brand
+	"brand-logo": {Formats: "PNG, SVG", MaxSize: "2 MiB", Dimensions: "Square (1:1)"},
+	// Hero
+	"hero-portrait":         {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Portrait (4:5)"},
+	"hero-badge-docker":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"hero-badge-kubernetes": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"hero-badge-aws":        {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"hero-badge-terraform":  {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"hero-badge-grafana":    {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	// Avatars
+	"avatar-linux":          {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"avatar-docker":         {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"avatar-aws":            {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"avatar-github-actions": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	"avatar-terraform":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
+	// Section illustrations (SVG)
+	"about-linux":            {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"about-cloud":            {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"about-cicd":             {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"slider-1-linux":         {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"slider-2-cloud":         {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"slider-3-cicd":          {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"slider-4-monitoring":    {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"slider-5-security":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"mission-learning-path":  {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"skills-linux":           {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"process-1-fundamentals": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"process-2-practice":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"process-3-projects":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"process-4-improvement":  {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"cta-connect":            {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	// Decorative (SVG)
+	"sec7-rotating":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"sec4-pin-icon":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"marquee-star":       {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"sec7-plus":          {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"sec7-btn-arrow":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	"sec7-eyebrow-arrow": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	// Photo
+	"who-i-am-portrait": {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Portrait (4:5)"},
+}
+
+func requirementsFor(key string) Requirements {
+	if r, ok := slotRequirements[key]; ok {
+		return r
+	}
+	return defaultRequirements
 }
 
 type siteImageGroupView struct {
@@ -38,15 +107,16 @@ func toSiteImageViews(rows []db.SiteImage) []siteImageView {
 	views := make([]siteImageView, 0, len(rows))
 	for _, row := range rows {
 		views = append(views, siteImageView{
-			Key:        row.Key,
-			Label:      row.Label,
-			Group:      row.GroupName,
-			URL:        row.Url,
-			PublicID:   row.PublicID,
-			Alt:        row.Alt,
-			DefaultURL: row.DefaultUrl,
-			IsDefault:  row.DefaultUrl != "" && row.Url == row.DefaultUrl,
-			UpdatedAt:  row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Key:          row.Key,
+			Label:        row.Label,
+			Group:        row.GroupName,
+			URL:          row.Url,
+			PublicID:     row.PublicID,
+			Alt:          row.Alt,
+			DefaultURL:   row.DefaultUrl,
+			IsDefault:    row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:    row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Requirements: requirementsFor(row.Key),
 		})
 	}
 	return views
@@ -84,15 +154,16 @@ func groupSiteImages(rows []db.SiteImage) []siteImageGroupView {
 			order = append(order, group)
 		}
 		byGroup[group] = append(byGroup[group], siteImageView{
-			Key:        row.Key,
-			Label:      row.Label,
-			Group:      group,
-			URL:        row.Url,
-			PublicID:   row.PublicID,
-			Alt:        row.Alt,
-			DefaultURL: row.DefaultUrl,
-			IsDefault:  row.DefaultUrl != "" && row.Url == row.DefaultUrl,
-			UpdatedAt:  row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Key:          row.Key,
+			Label:        row.Label,
+			Group:        group,
+			URL:          row.Url,
+			PublicID:     row.PublicID,
+			Alt:          row.Alt,
+			DefaultURL:   row.DefaultUrl,
+			IsDefault:    row.DefaultUrl != "" && row.Url == row.DefaultUrl,
+			UpdatedAt:    row.UpdatedAt.Time.Format("2006-01-02 15:04"),
+			Requirements: requirementsFor(row.Key),
 		})
 	}
 

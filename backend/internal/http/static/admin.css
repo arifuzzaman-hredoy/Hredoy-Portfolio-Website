@@ -451,6 +451,23 @@ input:focus, textarea:focus { outline: 2px solid var(--primary); border-color: t
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.media-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.media-meta__updated { white-space: nowrap; }
+.media-meta__url {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+.media-meta__url:hover { color: var(--primary-hover, #2dd4bf); }
 .media-form { display: flex; align-items: stretch; gap: 8px; margin-top: 2px; }
 .media-form .file-btn { flex: 1 1 auto; min-width: 0; }
 .file-btn {
