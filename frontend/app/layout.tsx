@@ -137,7 +137,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <link rel="stylesheet" href="/assets/css/vendors/carouselTicker.css" />
         <link rel="stylesheet" href="/assets/css/vendors/swiper-bundle.min.css" />
         <link rel="stylesheet" href="/assets/css/vendors/nice-select.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/font-awesome-pro.css" />
         <link rel="stylesheet" href="/assets/css/vendors/magnific-popup.css" />
         <link rel="stylesheet" href="/assets/css/vendors/odometer.css" />
         <link rel="stylesheet" href="/assets/css/vendors/spacing.css" />
