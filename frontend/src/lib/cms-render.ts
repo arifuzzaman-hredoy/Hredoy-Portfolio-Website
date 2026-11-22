@@ -1208,21 +1208,19 @@ export function applyContentItems(html: string, groups: ContentGroups): string {
 }
 
 function renderFeaturedCard(project: Project): string {
+  const viewLink = cmsUrl(project.live_url, cmsUrl(project.repo_url, "#"));
   return (
     '                            <div class="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">\n' +
-    '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm hover-shadow-lg transition-all duration-300">\n' +
-    '                                    <div class="blog-card__thumb hover-effect-1 project-thumb">\n' +
-    `                                        <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__img-link d-block overflow-hidden">\n` +
-    `                                            <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="blog-card__img22 project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:220px;object-fit:cover;display:block;">\n` +
-    "                                        </a>\n" +
+    '                                <div class="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column" style="min-height:480px;">\n' +
+    '                                    <div class="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style="flex:0 0 65%;">\n' +
+    `                                        <img src="${cmsUrl(getProjectImage(project), "/assets/imgs/portfolio/projects/devsecops-monitoring-kubernetes.svg")}" class="project-img" alt="${escapeHTML(project.title)}" width="1600" height="800" style="width:100%;height:100%;object-fit:cover;display:block;">\n` +
     "                                    </div>\n" +
-    '                                    <div class="blog-card__content p-4 d-flex flex-column">\n' +
-    '                                        <h2 class=" h6 blog-card__title mb-2">\n' +
-    `                                            <a href="${cmsUrl(project.repo_url, "#")}" target="_blank" rel="noopener" class="blog-card__title-link text-decoration-none">${escapeHTML(project.title)}</a>\n` +
-    "                                        </h2>\n" +
+    '                                    <div class="blog-card__content p-4 d-flex flex-column" style="flex:1;">\n' +
+    `                                        <h2 class=" h6 blog-card__title mb-2">${escapeHTML(project.title)}</h2>\n` +
     '                                        <p class="blog-card__meta mb-3">\n' +
     `                                            <span class="blog-card__meta-text">${escapeHTML(project.tech)}</span>\n` +
     "                                        </p>\n" +
+    `                                        <a href="${viewLink}" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>\n` +
     "                                    </div>\n" +
     "                                </div>\n" +
     "                            </div>"
