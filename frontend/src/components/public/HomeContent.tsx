@@ -1252,7 +1252,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Kubernetes · Prometheus · Grafana · Trivy</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/DevSecOps-Monitoring-Kubernetes-Platform" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/DevSecOps-Monitoring-Kubernetes-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>
@@ -1267,7 +1267,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">GitHub Actions · Docker · GHCR</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Automated-CI-CD-Pipeline" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/Automated-CI-CD-Pipeline" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>
@@ -1282,7 +1282,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">AWS · EC2 · VPC · IAM</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/AWS-Cloud-Infrastructure-EC2-Deployment" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/AWS-Cloud-Infrastructure-EC2-Deployment" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>
@@ -1297,7 +1297,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Terraform · AWS · Modules</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Terraform-Infrastructure-as-Code" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/Terraform-Infrastructure-as-Code" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>
@@ -1312,7 +1312,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Docker Compose · Nginx · PostgreSQL</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Docker-compose-Multi-Tier-Platform" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/Docker-compose-Multi-Tier-Platform" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>
@@ -1327,7 +1327,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                         <p class="blog-card__meta mb-3">
                                             <span class="blog-card__meta-text">Nginx · SSL/TLS · DNS</span>
                                         </p>
-                                        <a href="https://github.com/arifuzzaman-hredoy/Nginx-Reverse-Proxy-Domain-SSL" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>
+                                        <a href="https://github.com/arifuzzaman-hredoy/Nginx-Reverse-Proxy-Domain-SSL" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>
                                     </div>
                                 </div>
                             </div>

@@ -1220,7 +1220,7 @@ function renderFeaturedCard(project: Project): string {
     '                                        <p class="blog-card__meta mb-3">\n' +
     `                                            <span class="blog-card__meta-text">${escapeHTML(project.tech)}</span>\n` +
     "                                        </p>\n" +
-    `                                        <a href="${viewLink}" target="_blank" rel="noopener" class="btn btn-primary mt-auto">View Project</a>\n` +
+    `                                        <a href="${viewLink}" target="_blank" rel="noopener" class="btn btn-primary btn-view-project">View Project</a>\n` +
     "                                    </div>\n" +
     "                                </div>\n" +
     "                            </div>"
