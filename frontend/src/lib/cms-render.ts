@@ -615,6 +615,7 @@ export const SITE_IMAGE_DEFAULTS: Record<string, string> = {
   "slider-5-security": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-5-security.svg",
   "mission-learning-path": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/mission-learning-path.svg",
   "skills-linux": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg",
+  "technical-skills": "/assets/imgs/portfolio/sections/technical-skills.svg",
   "process-1-fundamentals": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-1-fundamentals.svg",
   "process-2-practice": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-2-practice.svg",
   "process-3-projects": "https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/process-3-projects.svg",

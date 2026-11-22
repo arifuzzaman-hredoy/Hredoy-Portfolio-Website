@@ -51,6 +51,7 @@ FROM (VALUES
   ('sec7-plus', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-plus.svg', ''),
   ('sec7-rotating', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/pages/home-7/sec-7-rotating.svg', ''),
   ('skills-linux', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/skills-linux.svg', 'Linux'),
+  ('technical-skills', '/assets/imgs/portfolio/sections/technical-skills.svg', 'Technical Skills & Tools'),
   ('slider-1-linux', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-1-linux.svg', 'Linux server session'),
   ('slider-2-cloud', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-2-cloud.svg', 'Cloud infrastructure'),
   ('slider-3-cicd', 'https://res.cloudinary.com/dvatduo79/image/upload/assets/imgs/portfolio/sections/slider-3-cicd.svg', 'CI/CD pipeline'),
