@@ -174,12 +174,12 @@ const RULES: Rule[] = [
     close: "</ul>",
     wrap: (items) =>
       items
-        .map((v, i) => `                                        <li class="at_fade_anim" data-start="100%" data-delay="0.${i + 1}">[ ${escapeHTML(v)} ]</li>`)
+        .map((v, i) => `                                        <li class="at_fade_anim" data-start="10%" data-delay="0.${i}">[ ${escapeHTML(v)} ]</li>`)
         .join("\n"),
   },
-  el("hero.desc", '<p class="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-start="100%" data-delay="0.5">', "</p>"),
+  el("hero.desc", '<p class="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-start="10%" data-delay="0.2">', "</p>"),
   scoped("hero.cta", SCOPE.hero, "Get In Touch", 3),
-  el("hero.proof", '<p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">', "</p>", {
+  el("hero.proof", '<p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="10%" data-delay="0.3">', "</p>", {
     wrap: breakable("d-none d-xl-inline"),
   }),
   {
@@ -191,7 +191,7 @@ const RULES: Rule[] = [
       items
         .map(
           (v, i) =>
-            `                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.${i + 1}">\n` +
+            `                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.${i}">\n` +
             `                                                <span>${escapeHTML(v)}</span>\n` +
             `                                                ${TAG_ARROW_SVG}\n` +
             `                                            </a>`,
@@ -870,7 +870,7 @@ function renderHeroTags(items: ListItem[]): string {
   return items
     .map(
       (item, i) =>
-        `${LIST_INDENT}<a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.${i + 1}">\n` +
+        `${LIST_INDENT}<a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.${i}">\n` +
         `${LIST_INDENT}    <span>${escapeHTML(item.title)}</span>\n` +
         `${LIST_INDENT}    ${TAG_ARROW_SVG}\n` +
         `${LIST_INDENT}</a>`,

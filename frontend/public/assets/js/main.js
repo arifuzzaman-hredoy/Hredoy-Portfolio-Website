@@ -214,8 +214,8 @@
 
         if ($('#smooth-wrapper').length && $('#smooth-content').length) {
             ScrollSmoother.create({
-                smooth: 1.35,
-                effects: true,
+                smooth: 0.8,
+                effects: false,
                 smoothTouch: 0.15,
                 ignoreMobileResize: true,
             });

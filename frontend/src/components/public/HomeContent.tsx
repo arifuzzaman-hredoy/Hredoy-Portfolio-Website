@@ -389,21 +389,21 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                 <div class="sec-1-home-7__content">
                                     <!-- [BUILD] [GROW] [SCALE] [BOOST] -->
                                     <ul class="sec-1-home-7__brackets list-unstyled d-flex flex-wrap gap-4 mb-30">
-                                        <li class="at_fade_anim" data-start="100%" data-delay="0.1">[ BUILD ]</li>
-                                        <li class="at_fade_anim" data-start="100%" data-delay="0.2">[ AUTOMATE ]</li>
-                                        <li class="at_fade_anim" data-start="100%" data-delay="0.3">[ SCALE ]</li>
-                                        <li class="at_fade_anim" data-start="100%" data-delay="0.4">[ DEPLOY ]</li>
+                                        <li class="at_fade_anim" data-start="10%" data-delay="0">[ BUILD ]</li>
+                                        <li class="at_fade_anim" data-start="10%" data-delay="0.1">[ AUTOMATE ]</li>
+                                        <li class="at_fade_anim" data-start="10%" data-delay="0.2">[ SCALE ]</li>
+                                        <li class="at_fade_anim" data-start="10%" data-delay="0.3">[ DEPLOY ]</li>
                                     </ul>
 
                                     <!-- Headline with diagonal arrow -->
                                     <div class="sec-1-home-7__headline-wrap p-relative">
-                                        <h1 class="sec-1-home-7__headline text-white text-uppercase fw-700 mb-30 at_fade_anim" data-start="100%" data-delay="0.3">
+                                        <h1 class="sec-1-home-7__headline text-white text-uppercase fw-700 mb-30 at_fade_anim" data-start="10%" data-delay="0">
                                             <span class="sec-1-home-7__headline-line">Junior</span>
                                             <span class="sec-1-home-7__headline-line">DevOps</span>
                                             <span class="sec-1-home-7__headline-line">Engineer</span>
                                         </h1>
                                         <span class="sec-1-home-7__headline-arrow-cover d-none d-md-inline-block">
-                                            <span class="sec-1-home-7__headline-arrow at_fade_anim" data-start="100%" data-delay="0.6">
+                                            <span class="sec-1-home-7__headline-arrow at_fade_anim" data-start="10%" data-delay="0.1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="70" height="53" viewBox="0 0 69 53" fill="none">
                                                     <path d="M40.2 0L67.72 25.4267L69 26.7141L67.72 27.6797L40.2 53.1064L38.6 51.4971L64.2 27.6797H-59V25.4267H64.2L38.6 1.60928L40.2 0Z" fill="currentColor" />
                                                 </svg>
@@ -411,13 +411,13 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     </div>
 
                                     <!-- Description -->
-                                    <p class="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-start="100%" data-delay="0.5">
+                                    <p class="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-start="10%" data-delay="0.2">
                                         I'm Arifuzzaman Hredoy, a Junior DevOps Engineer passionate about Linux, Cloud Computing, Automation, CI/CD, and Infrastructure as Code. Continuously building practical projects and production-oriented engineering skills.
                                     </p>
 
                                     <!-- Primary CTA + icon bubble -->
                                     <div class="sec-1-home-7__cta d-flex align-items-center flex-wrap gap-2 mb-60">
-                                        <a href="#contact" class="sec-1-home-7__cta-btn at_fade_anim" data-start="100%" data-delay="0.3">
+                                        <a href="#contact" class="sec-1-home-7__cta-btn at_fade_anim" data-start="10%" data-delay="0.3">
                                             <span>Get In Touch</span>
                                         </a>
                                         <a href="#contact" class="sec-1-home-7__cta-arrow" aria-label="Get In Touch">
@@ -430,31 +430,31 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                                     <!-- Social proof: caption, then the tech logo badges, then the tag row -->
                                     <div class="sec-1-home-7__meta">
                                         <div class="sec-1-home-7__proof">
-                                            <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="100%" data-delay="0.6">
+                                            <p class="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="10%" data-delay="0.3">
                                                 Building reliable infrastructure with <br class="d-none d-xl-inline" />modern DevOps practices
                                             </p>
                                             <div class="sec-1-home-7__avatars">
-                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.1">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Docker">
                                                         <img width="36" height="36" src="/assets/imgs/hero-tools/docker-v3.svg" alt="Docker" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
-                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.2">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.1">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Kubernetes">
                                                         <img width="36" height="36" src="/assets/imgs/hero-tools/kubernetes-v3.svg" alt="Kubernetes" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
-                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.3">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.2">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="AWS">
                                                         <img width="36" height="36" src="/assets/imgs/hero-tools/aws-v3.svg" alt="AWS" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
-                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.4">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.3">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Terraform">
                                                         <img width="36" height="36" src="/assets/imgs/hero-tools/terraform-v3.svg" alt="Terraform" loading="eager" decoding="async" />
                                                     </span>
                                                 </span>
-                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="100%" data-delay="0.5">
+                                                <span class="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay="0.4">
                                                     <span class="sec-1-home-7__badge" tabindex="0" title="Grafana">
                                                         <img width="36" height="36" src="/assets/imgs/hero-tools/grafana-v3.svg" alt="Grafana" loading="eager" decoding="async" />
                                                     </span>
@@ -464,31 +464,31 @@ const BODY_HTML = `    <!-- prettier-ignore -->
 
                                         <!-- Tech skill badges -->
                                         <div class="sec-1-home-7__tags">
-                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.1">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0">
                                                 <span>Linux</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                                                     <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
                                                 </svg>
                                             </a>
-                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.2">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.1">
                                                 <span>CI/CD</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                                                     <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
                                                 </svg>
                                             </a>
-                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.3">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.2">
                                                 <span>Git</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                                                     <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
                                                 </svg>
                                             </a>
-                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.4">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.3">
                                                 <span>Nginx</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                                                     <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
                                                 </svg>
                                             </a>
-                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="100%" data-delay="0.5">
+                                            <a href="#skills" class="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay="0.4">
                                                 <span>GitHub Actions</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none">
                                                     <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />
@@ -1596,7 +1596,7 @@ const BODY_HTML = `    <!-- prettier-ignore -->
                     </div>
 
                     <!-- Bottom -->
-                    <div class="footer-7__bottom" data-delay="0.1" data-start="100%">
+                    <div class="footer-7__bottom" data-delay="0.1" data-start="10%">
                         <div class="footer-7__bottom-inner d-flex flex-wrap gap-3 align-items-center justify-content-between">
                             <span class="footer-7__copy">Arifuzzaman Hredoy © ${new Date().getFullYear()}</span>
                             <ul class="footer-7__policies list-unstyled d-flex flex-wrap gap-3 mb-0">
