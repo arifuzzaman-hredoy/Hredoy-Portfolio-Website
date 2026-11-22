@@ -306,10 +306,6 @@ func siteImageErrorMessage(code string) string {
 	switch code {
 	case "":
 		return ""
-	case "size":
-		return "That file is too large (max 25 MiB)."
-	case "type":
-		return "Unsupported file type (allowed: png, jpg, jpeg, gif, webp, svg)."
 	case "key":
 		return "Choose an image slot first."
 	case "file", "read":
@@ -330,7 +326,7 @@ func siteImageErrorMessage(code string) string {
 // adminSiteImageReplace uploads a new file to Cloudinary and updates the slot.
 func (d HandlerDeps) adminSiteImageReplace(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(maxUploadBytes); err != nil {
-		http.Redirect(w, r, "/super-admin/site-images?error=size", http.StatusSeeOther)
+		http.Redirect(w, r, "/super-admin/site-images?error=read", http.StatusSeeOther)
 		return
 	}
 	key := strings.TrimSpace(r.FormValue("key"))
@@ -346,21 +342,16 @@ func (d HandlerDeps) adminSiteImageReplace(w http.ResponseWriter, r *http.Reques
 	}
 	defer file.Close()
 
-	ext := strings.ToLower(filepath.Ext(header.Filename))
-	mime, ok := allowedUploadExt[ext]
-	if !ok {
-		http.Redirect(w, r, "/super-admin/site-images?error=type", http.StatusSeeOther)
-		return
-	}
-
-	data, err := io.ReadAll(io.LimitReader(file, maxUploadBytes+1))
+	data, err := io.ReadAll(file)
 	if err != nil || len(data) == 0 {
 		http.Redirect(w, r, "/super-admin/site-images?error=read", http.StatusSeeOther)
 		return
 	}
-	if len(data) > maxUploadBytes {
-		http.Redirect(w, r, "/super-admin/site-images?error=size", http.StatusSeeOther)
-		return
+
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	mime, ok := allowedUploadExt[ext]
+	if !ok {
+		mime = http.DetectContentType(data)
 	}
 
 	if d.Cloudinary == nil || !d.Cloudinary.Enabled() {
@@ -464,7 +455,7 @@ func (d HandlerDeps) adminSiteImageMobile(w http.ResponseWriter, r *http.Request
 	defer cancel()
 
 	if err := r.ParseMultipartForm(maxUploadBytes); err != nil {
-		http.Redirect(w, r, "/super-admin/site-images?error=size", http.StatusSeeOther)
+		http.Redirect(w, r, "/super-admin/site-images?error=read", http.StatusSeeOther)
 		return
 	}
 	key := strings.TrimSpace(r.FormValue("key"))
@@ -493,21 +484,16 @@ func (d HandlerDeps) adminSiteImageMobile(w http.ResponseWriter, r *http.Request
 	}
 	defer file.Close()
 
-	ext := strings.ToLower(filepath.Ext(header.Filename))
-	mime, ok := allowedUploadExt[ext]
-	if !ok {
-		http.Redirect(w, r, "/super-admin/site-images?error=type", http.StatusSeeOther)
-		return
-	}
-
-	data, err := io.ReadAll(io.LimitReader(file, maxUploadBytes+1))
+	data, err := io.ReadAll(file)
 	if err != nil || len(data) == 0 {
 		http.Redirect(w, r, "/super-admin/site-images?error=read", http.StatusSeeOther)
 		return
 	}
-	if len(data) > maxUploadBytes {
-		http.Redirect(w, r, "/super-admin/site-images?error=size", http.StatusSeeOther)
-		return
+
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	mime, ok := allowedUploadExt[ext]
+	if !ok {
+		mime = http.DetectContentType(data)
 	}
 
 	if d.Cloudinary == nil || !d.Cloudinary.Enabled() {

@@ -45,14 +45,16 @@
         <div class="card-section card-section--current">
           <span class="section-label">Current image</span>
           <div class="media-meta">
-            <span class="media-meta__updated">Updated {{.UpdatedAt}}</span>
             {{if .URL}}<a href="{{.URL}}" target="_blank" rel="noopener" class="media-meta__url" title="{{.URL}}">View URL</a>{{end}}
           </div>
           {{if or .Width .Height .Format .Size}}
-          <div class="media-meta image-meta">
-            <span class="image-meta__dim">{{.Width}} × {{.Height}}</span>
-            <span class="image-meta__fmt">{{.Format}}</span>
-            <span class="image-meta__size">{{.FormattedSize}}</span>
+          <div class="image-details">
+            <span class="image-details__label">File size:</span>
+            <span class="image-details__value">{{.FormattedSize}}</span>
+            <span class="image-details__label">Dimensions:</span>
+            <span class="image-details__value">{{.Width}} × {{.Height}}</span>
+            <span class="image-details__label">Type:</span>
+            <span class="image-details__value">{{.Format}}</span>
           </div>
           {{end}}
         </div>
@@ -102,15 +104,14 @@
         </div>
         {{end}}
 
-        <!-- Section 5: Requirements -->
+        <!-- Section 5: Best fit suggestions -->
         <div class="card-section card-section--requirements">
-          <span class="section-label">Recommended requirements</span>
+          <span class="section-label">Suggested for this slot</span>
           <ul class="hint-list">
-            <li><strong>Formats:</strong> {{.Requirements.Formats}}</li>
-            <li><strong>Max size:</strong> {{.Requirements.MaxSize}}</li>
-            <li><strong>Dimensions:</strong> {{.Requirements.Dimensions}}</li>
+            <li><strong>Best fit type:</strong> {{.Requirements.Formats}}</li>
+            <li><strong>Best fit dimensions:</strong> {{.Requirements.Dimensions}}</li>
           </ul>
-          <p class="requirements-note">Recommendations guide uploads; they never restrict them. Any valid image in a supported format is accepted.</p>
+          <p class="requirements-note">These are suggestions only — there is no upload size or file type restriction. You can upload any image in any size.</p>
         </div>
 
         <!-- Section 6: Alt text -->

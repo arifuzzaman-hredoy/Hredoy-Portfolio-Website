@@ -233,17 +233,24 @@ func (d HandlerDeps) adminProjectDelete(w http.ResponseWriter, r *http.Request) 
 // Media
 // ---------------------------------------------------------------------------
 
-const maxUploadBytes = 25 << 20 // 25 MiB, leaves room for multipart overhead
+const maxUploadBytes = 1 << 40 // 1 TiB — effectively no upload size limit
 
 var allowedUploadExt = map[string]string{
-	".png":  "image/png",
-	".jpg":  "image/jpeg",
-	".jpeg": "image/jpeg",
-	".gif":  "image/gif",
-	".webp": "image/webp",
-	".svg":  "image/svg+xml",
-	".mp4":  "video/mp4",
-	".webm": "video/webm",
+	".png":   "image/png",
+	".jpg":   "image/jpeg",
+	".jpeg":  "image/jpeg",
+	".gif":   "image/gif",
+	".webp":  "image/webp",
+	".svg":   "image/svg+xml",
+	".bmp":   "image/bmp",
+	".tiff":  "image/tiff",
+	".tif":   "image/tiff",
+	".ico":   "image/x-icon",
+	".heic":  "image/heic",
+	".heif":  "image/heif",
+	".avif":  "image/avif",
+	".mp4":   "video/mp4",
+	".webm":  "video/webm",
 }
 
 func (d HandlerDeps) adminMedia(w http.ResponseWriter, r *http.Request) {
