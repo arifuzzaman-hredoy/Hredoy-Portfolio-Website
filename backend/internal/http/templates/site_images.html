@@ -47,16 +47,14 @@
           <div class="media-meta">
             {{if .URL}}<a href="{{.URL}}" target="_blank" rel="noopener" class="media-meta__url" title="{{.URL}}">View URL</a>{{end}}
           </div>
-          {{if or .Width .Height .Format .Size}}
           <div class="image-details">
             <span class="image-details__label">File size:</span>
-            <span class="image-details__value">{{.FormattedSize}}</span>
+            <span class="image-details__value">{{if .Size}}{{.FormattedSize}}{{else}}Not available{{end}}</span>
             <span class="image-details__label">Dimensions:</span>
-            <span class="image-details__value">{{.Width}} × {{.Height}}</span>
+            <span class="image-details__value">{{if or .Width .Height}}{{.Width}} × {{.Height}}{{else}}Not available{{end}}</span>
             <span class="image-details__label">Type:</span>
-            <span class="image-details__value">{{.Format}}</span>
+            <span class="image-details__value">{{if .Format}}{{.Format}}{{else}}Not available{{end}}</span>
           </div>
-          {{end}}
         </div>
 
         <!-- Section 3: Replace image -->
