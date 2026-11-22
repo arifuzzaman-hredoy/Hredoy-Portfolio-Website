@@ -83,6 +83,7 @@ services:
     environment:
       NODE_ENV: production
       PORTFOLIO_BACKEND_URL: http://app:8080
+      SITE_URL: ${SITE_URL:-https://oxytumzone.com}
       REVALIDATE_TOKEN: ${REVALIDATE_TOKEN:-}
     depends_on:
       - app

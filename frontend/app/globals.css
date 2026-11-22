@@ -8,35 +8,40 @@
 }
 
 /* Offcanvas tech icons: crisp in both dark and light modes */
-[data-bs-theme="dark"] .at-offcanvas-gallery-img {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+.at-offcanvas-gallery-img {
+  background: #f2f4f7 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
-[data-bs-theme="dark"] .at-offcanvas-gallery-img img {
-  filter: brightness(1.4) contrast(1.15);
+.at-offcanvas-gallery-img img {
+  filter: none !important;
 }
 
-[data-bs-theme="light"] .at-offcanvas-gallery-img {
-  background: var(--at-neutral-50);
-  border: 1px solid var(--at-neutral-100);
-}
-
-[data-bs-theme="light"] .at-offcanvas-gallery-img img {
-  filter: none;
-}
-
-/* Ensure above-the-fold hero and footer content remain visible without waiting on scroll triggers */
-.sec-1-home-7 .at_fade_anim,
-.sec-1-home-7 .sec-1-home-7__headline,
-.sec-1-home-7 .sec-1-home-7__desc,
-.sec-1-home-7 .sec-1-home-7__cta,
+/* Prevent GSAP ScrollTrigger from leaving sections, headings, or contact inputs invisible or dimmed */
+.at_fade_anim,
+.reveal-text,
+.reveal-text *,
+.sec-1-home-7__headline,
+.sec-1-home-7__desc,
+.sec-1-home-7__cta,
+.sec-11-home-7__form .sec-4-about-form__field,
+.sec-11-home-7__form .sec-4-about-form__actions,
+.sec-11-home-7__form .sec-4-about-form__disclaimer,
 .footer-7 .at_fade_anim {
   opacity: 1 !important;
   visibility: visible !important;
 }
 
 /* Keep hero portrait flush at the bottom of the hero display with zero empty space below */
+@media (min-width: 1200px) {
+  .sec-1-home-7__img-wrap {
+    top: clamp(36px, 7vh, 80px) !important;
+    bottom: 0 !important;
+    height: calc(100% - clamp(36px, 7vh, 80px)) !important;
+    margin-top: 0 !important;
+  }
+}
+
 .sec-1-home-7__img-wrap .anim-zoomin,
 .sec-1-home-7__img-wrap picture {
   display: block !important;
@@ -63,6 +68,42 @@
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
   }
+
+  .sec-1-home-7__desc {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  .sec-1-home-7__cta-btn {
+    color: #ffffff !important;
+  }
+
+  .back-to-top-wrapper {
+    right: 12px;
+    bottom: 12px;
+    transform: scale(0.85);
+  }
+}
+
+/* Project card diagrams & theme-matched action buttons */
+.project-thumb {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+[data-bs-theme="light"] .project-thumb {
+  background: #f8fafc;
+}
+
+.btn-view-project {
+  background-color: var(--at-theme-primary, #0f766e) !important;
+  border-color: var(--at-theme-primary, #0f766e) !important;
+  color: #ffffff !important;
+}
+
+.btn-view-project:hover {
+  opacity: 0.92;
 }
 
 /* Contact form status banner — readable in both dark and light modes */
@@ -99,14 +140,14 @@
   color: #fee2e2;
 }
 
-/* Light (white) mode polish across header, cards, forms, offcanvas, and sticky menu */
+/* Light (white) mode polish across header, cards, physics icons, forms, offcanvas, and footer */
 [data-bs-theme="light"] body {
   background-color: var(--at-neutral-0, #fefefe);
   color: var(--at-neutral-900, #1d1d1d);
 }
 
 [data-bs-theme="light"] .header-7 .at-header-area {
-  background: rgba(254, 254, 254, 0.86);
+  background: rgba(254, 254, 254, 0.88);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -131,6 +172,10 @@
 
 [data-bs-theme="light"] .header-7 .at-main-menu nav ul li.has-dropdown > a::after {
   filter: none;
+}
+
+[data-bs-theme="light"] .tech-phys-item img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 
 [data-bs-theme="light"] .project-card-wrapper {
@@ -173,4 +218,32 @@
 [data-bs-theme="light"] .hamburger-sticky-menu {
   background-color: var(--at-neutral-900, #1d1d1d);
   color: #ffffff;
+}
+
+[data-bs-theme="light"] .footer-7 {
+  background: var(--at-neutral-50, #f2f2f2);
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .footer-7__top {
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-bs-theme="light"] .footer-7__nav-link,
+[data-bs-theme="light"] .footer-7 a,
+[data-bs-theme="light"] .footer-7__hours-value,
+[data-bs-theme="light"] .footer-7__newsletter-title,
+[data-bs-theme="light"] .footer-7__copy {
+  color: var(--at-neutral-900, #1d1d1d);
+}
+
+[data-bs-theme="light"] .footer-7__hours-label,
+[data-bs-theme="light"] .footer-7__address,
+[data-bs-theme="light"] .footer-7__input::placeholder {
+  color: var(--at-neutral-500, #585959);
+}
+
+[data-bs-theme="light"] .footer-7__input {
+  color: var(--at-neutral-900, #1d1d1d);
+  border-color: rgba(0, 0, 0, 0.2);
 }

@@ -1,4 +1,4 @@
-import { listItems, metaText, val, type PortfolioData } from "@/lib/portfolio-data";
+import { listItems, metaText, optimizeCloudinaryUrl, val, type PortfolioData } from "@/lib/portfolio-data";
 import CmsImage from "../CmsImage";
 import { ArrowDiagIcon } from "../Icons";
 
@@ -39,7 +39,9 @@ export default function ProcessSection({ data }: { data: PortfolioData }) {
         <div className="sec-6-home-7__cards pb-120">
           {cards.map((card, idx) => {
             const num = metaText(card, "number") || `[${String(idx + 1).padStart(2, "0")}]`;
-            const imageSlot = metaText(card, "image");
+            const imageVal = metaText(card, "image");
+            const imageAlt = metaText(card, "image_alt") || card.title;
+            const isDirectUrl = /^(\/|https?:\/\/)/i.test(imageVal);
             return (
               <div key={card.id} className="sec-6-home-7__card-wrap at_fade_anim" data-delay={(0.1 + idx * 0.2).toFixed(1)}>
                 <div className="sec-6-home-7__card">
@@ -49,7 +51,13 @@ export default function ProcessSection({ data }: { data: PortfolioData }) {
                     <p className="sec-6-home-7__card-desc mb-0">{card.body}</p>
                   </div>
                   <div className="sec-6-home-7__card-media">
-                    {imageSlot && <CmsImage data={data} slot={imageSlot} width={1200} height={900} />}
+                    {imageVal &&
+                      (isDirectUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={optimizeCloudinaryUrl(imageVal)} alt={imageAlt} width={1200} height={900} loading="lazy" />
+                      ) : (
+                        <CmsImage data={data} slot={imageVal} width={1200} height={900} />
+                      ))}
                   </div>
                 </div>
               </div>

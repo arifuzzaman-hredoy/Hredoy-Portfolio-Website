@@ -76,6 +76,19 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
       header.classList.add("nav-ready", "nav-settled");
     }
 
+    // Release ScrollSmoother scroll-jacking once initialized so native 60/120fps
+    // scrolling and section anchor jumps work without lag or missed triggers.
+    const releaseSmoother = window.setInterval(() => {
+      const smoother = (
+        window as unknown as { ScrollSmoother?: { get?: () => { kill?: () => void } | null } }
+      ).ScrollSmoother?.get?.();
+      if (smoother?.kill) {
+        smoother.kill();
+        window.clearInterval(releaseSmoother);
+      }
+    }, 100);
+    window.setTimeout(() => window.clearInterval(releaseSmoother), 4000);
+
     const params = new URLSearchParams(window.location.search);
     const sent = params.get("sent") === "1";
     const error = params.get("error") === "1";
@@ -146,6 +159,7 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
     document.addEventListener("click", handleClick);
     document.addEventListener("submit", handleSearchSubmit);
     return () => {
+      window.clearInterval(releaseSmoother);
       document.removeEventListener("click", handleClick);
       document.removeEventListener("submit", handleSearchSubmit);
       statusEl?.remove();

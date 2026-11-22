@@ -61,7 +61,7 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
                         alt={project.title}
                         width={1600}
                         height={800}
-                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
                       />
                     )}
                   </div>
