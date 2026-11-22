@@ -60,20 +60,32 @@ export type ContentItemsPayload = {
   groups: Record<string, ContentItem[]>;
 };
 
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
+
 const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
 
 async function getJSON<T>(path: string, revalidate = 30): Promise<T> {
-  const res = await fetch(`${BACKEND_URL}${path}`, {
-    next: { revalidate },
-    headers: { Accept: "application/json" },
-    signal: AbortSignal.timeout(3000),
-  });
-  if (!res.ok) {
-    throw new Error(`CMS backend ${path} returned HTTP ${res.status}`);
+  try {
+    const res = await fetch(`${BACKEND_URL}${path}`, {
+      next: { revalidate },
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) {
+      throw new Error(`CMS backend ${path} returned HTTP ${res.status}`);
+    }
+    return (await res.json()) as T;
+  } catch (err) {
+    // During `docker build` (next build), the Go backend service (`app:8080`) is
+    // not running yet. Allow static shell/404 build to complete; runtime requests
+    // always require a live Go backend + PostgreSQL and will throw on failure.
+    if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+      return {} as T;
+    }
+    throw err;
   }
-  return (await res.json()) as T;
 }
 
 export async function getContent(): Promise<ContentPayload> {

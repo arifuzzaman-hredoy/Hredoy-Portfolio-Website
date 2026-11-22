@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import ScriptLoader from "@/components/public/ScriptLoader";
 import HomeContent from "@/components/public/HomeContent";
 import SiteInteractions from "@/components/public/SiteInteractions";
@@ -17,6 +18,7 @@ import {
 import { renderCertificatesSection } from "@/lib/certificates-render";
 
 async function HomeData() {
+  await connection();
   const [content, projects, lists, images, imageAlts, mobileImages, identity, certificates, categories] =
     await Promise.all([
       getContent(),
