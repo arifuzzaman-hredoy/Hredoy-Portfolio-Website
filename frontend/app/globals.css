@@ -88,14 +88,24 @@
 }
 
 /* Project card diagrams & theme-matched action buttons */
+.sec-10-home-7__grid .project-card {
+  height: auto !important;
+}
+
 .project-card-wrapper {
   height: auto !important;
   min-height: 100%;
   overflow: visible !important;
 }
 
-.project-thumb {
+.sec-10-home-7__grid .blog-card__thumb.project-thumb {
+  height: 220px !important;
+  flex: 0 0 auto !important;
   background: rgba(15, 23, 42, 0.45);
+}
+
+.sec-10-home-7__grid .blog-card__thumb.project-thumb img {
+  object-fit: contain !important;
 }
 
 [data-bs-theme="light"] .project-thumb {
