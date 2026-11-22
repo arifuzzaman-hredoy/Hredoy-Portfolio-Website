@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ScriptLoader from "@/components/public/ScriptLoader";
 import HomeContent from "@/components/public/HomeContent";
 import SiteInteractions from "@/components/public/SiteInteractions";
@@ -12,10 +13,22 @@ import {
   getSiteImageMobiles,
   getSiteImages,
   getSiteSettings,
+  SITE_SETTINGS_DEFAULTS,
 } from "@/lib/cms";
 import { renderCertificatesSection } from "@/lib/certificates-render";
 
-export default async function Home() {
+function HomeFallback() {
+  return (
+    <>
+      <ScriptLoader />
+      <HomeContent identity={SITE_SETTINGS_DEFAULTS} />
+      <CertificatesController />
+      <SiteInteractions contactEmail={SITE_SETTINGS_DEFAULTS.email} />
+    </>
+  );
+}
+
+async function HomeData() {
   const [content, projects, lists, images, imageAlts, mobileImages, identity, certificates, categories] =
     await Promise.all([
       getContent(),
@@ -46,5 +59,13 @@ export default async function Home() {
       <CertificatesController />
       <SiteInteractions contactEmail={identity.email} />
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<HomeFallback />}>
+      <HomeData />
+    </Suspense>
   );
 }

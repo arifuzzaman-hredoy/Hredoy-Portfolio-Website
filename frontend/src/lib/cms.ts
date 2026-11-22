@@ -82,6 +82,7 @@ async function getJSON<T>(path: string, revalidate = 30): Promise<T | null> {
     const res = await fetch(`${BACKEND_URL}${path}`, {
       next: { revalidate },
       headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(500),
     });
     if (!res.ok) return null;
     return (await res.json()) as T;

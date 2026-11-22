@@ -1649,5 +1649,5 @@ export default function HomeContent({
   html = applyContentItems(html, lists ?? {});
   html = applySiteImages(html, images ?? {}, imageAlts ?? {}, mobileImages ?? {});
   html = insertCertificatesSection(html, certificatesHTML ?? "");
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: html }} />;
 }

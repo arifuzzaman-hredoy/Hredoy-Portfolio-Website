@@ -5,6 +5,7 @@ import { useEffect } from "react";
 const SCRIPTS = [
   "/assets/js/vendors/color-modes.js",
   "/assets/js/vendors/jquery-3.7.1.min.js",
+  // plugin.js already bundles GSAP 3.11.4, ScrollTrigger, ScrollSmoother, ScrollToPlugin, and SplitText.
   "/assets/js/vendors/plugin.js",
   "/assets/js/vendors/bootstrap.min.js",
   "/assets/js/vendors/swiper-bundle.min.js",
@@ -19,12 +20,6 @@ const SCRIPTS = [
   "/assets/js/vendors/imagesloaded-pkgd.js",
   "/assets/js/vendors/isotope.pkgd.min.js",
   "/assets/js/vendors/image-hover-effects.js",
-  // GSAP animation stack — loaded asynchronously so it does NOT block initial render.
-  // main.js guards all GSAP usage with typeof gsap !== 'undefined' checks.
-  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js", async: true },
-  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js", async: true },
-  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollSmoother.min.js", async: true },
-  { src: "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js", async: true },
   "/assets/js/at-cursor.js",
   "/assets/js/main.js",
   "/assets/js/matter.js",
@@ -35,38 +30,18 @@ const SCRIPTS = [
 
 export default function ScriptLoader() {
   useEffect(() => {
-    let cancelled = false;
-
-    const loadInOrder = async () => {
-      for (const entry of SCRIPTS) {
-        if (cancelled) return;
-        const src = typeof entry === 'string' ? entry : entry.src;
-        const async = typeof entry === 'object' && entry.async === true;
-        await new Promise<void>((resolve) => {
-          // If already loaded (e.g. React strict-mode double effect), skip.
-          const existing = document.querySelector(
-            `script[data-orisa-src="${src}"]`
-          );
-          if (existing) {
-            resolve();
-            return;
-          }
-          const s = document.createElement("script");
-          s.src = src;
-          s.async = async;
-          s.setAttribute("data-orisa-src", src);
-          s.onload = () => resolve();
-          s.onerror = () => resolve();
-          document.body.appendChild(s);
-        });
+    // Setting async = false on dynamically inserted scripts lets the browser
+    // fetch all scripts in parallel while executing them in strict array order.
+    for (const src of SCRIPTS) {
+      if (document.querySelector(`script[data-orisa-src="${src}"]`)) {
+        continue;
       }
-    };
-
-    loadInOrder();
-
-    return () => {
-      cancelled = true;
-    };
+      const s = document.createElement("script");
+      s.src = src;
+      s.async = false;
+      s.setAttribute("data-orisa-src", src);
+      document.body.appendChild(s);
+    }
   }, []);
 
   return null;

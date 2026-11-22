@@ -20,6 +20,32 @@ function closeOverlays() {
   document.querySelectorAll(".at-offcanvas.opened").forEach((el) => el.classList.remove("opened"));
   document.querySelectorAll(".body-overlay.apply").forEach((el) => el.classList.remove("apply"));
   document.querySelectorAll(".header-7.is-menu-open").forEach((el) => el.classList.remove("is-menu-open"));
+  document.querySelectorAll(".at-search-form-toggle.active, .at-search-body-overlay.active").forEach((el) =>
+    el.classList.remove("active"),
+  );
+}
+
+function findSearchTarget(rawQuery: string): string {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return "#";
+
+  const keywordSections: Array<[RegExp, string]> = [
+    [/\b(contact|email|hire|message|reach)\b/i, "#contact"],
+    [/\b(cert|certificate|certificates|credential)\b/i, "#certificates"],
+    [/\b(project|projects|portfolio|terraform|ansible|nginx|prometheus|grafana)\b/i, "#projects"],
+    [/\b(skill|skills|linux|docker|kubernetes|k8s|ci\/cd|cloud|aws|automation|git|devops)\b/i, "#skills"],
+    [/\b(about|bio|mission|experience|who)\b/i, "#about"],
+  ];
+
+  for (const [pattern, selector] of keywordSections) {
+    if (pattern.test(q) && document.querySelector(selector)) {
+      return selector;
+    }
+  }
+
+  const sections = Array.from(document.querySelectorAll<HTMLElement>("main section, main [id]"));
+  const matched = sections.find((el) => el.id && (el.textContent ?? "").toLowerCase().includes(q));
+  return matched ? `#${matched.id}` : "#skills";
 }
 
 function scrollToTarget(target: string) {
@@ -45,9 +71,69 @@ function scrollToTarget(target: string) {
 // owner's email, which comes from site_settings via the server component.
 export default function SiteInteractions({ contactEmail }: { contactEmail: string }) {
   useEffect(() => {
+    const header = document.querySelector(".header-7");
+    if (header) {
+      header.classList.add("nav-ready", "nav-settled");
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const sent = params.get("sent") === "1";
+    const error = params.get("error") === "1";
+    const form = document.querySelector<HTMLFormElement>(".sec-11-home-7__form");
+    let statusEl: HTMLParagraphElement | null = null;
+
+    if (form && (sent || error)) {
+      form.querySelector(".contact-form-status")?.remove();
+      statusEl = document.createElement("p");
+      statusEl.className = "contact-form-status";
+      statusEl.setAttribute("role", error ? "alert" : "status");
+      statusEl.style.marginTop = "16px";
+      statusEl.style.marginBottom = "0";
+      statusEl.style.padding = "12px 16px";
+      statusEl.style.borderRadius = "8px";
+      statusEl.style.fontSize = "14px";
+      statusEl.style.lineHeight = "1.5";
+      if (sent) {
+        statusEl.style.backgroundColor = "rgba(15, 118, 110, 0.2)";
+        statusEl.style.border = "1px solid rgba(45, 212, 191, 0.45)";
+        statusEl.style.color = "#ccfbf1";
+        statusEl.textContent = "Thank you! Your message has been sent.";
+      } else {
+        statusEl.style.backgroundColor = "rgba(185, 28, 28, 0.2)";
+        statusEl.style.border = "1px solid rgba(248, 113, 113, 0.45)";
+        statusEl.style.color = "#fee2e2";
+        statusEl.textContent = `Could not send your message right now. Please try again or email ${contactEmail}.`;
+      }
+      const disclaimer = form.querySelector(".sec-4-about-form__disclaimer");
+      if (disclaimer) {
+        form.insertBefore(statusEl, disclaimer);
+      } else {
+        form.appendChild(statusEl);
+      }
+    }
+
+    function handleSearchSubmit(event: Event) {
+      const formEl = (event.target as Element | null)?.closest?.(".at-search-form form");
+      if (!formEl) return;
+      event.preventDefault();
+      const input = formEl.querySelector<HTMLInputElement>("input");
+      const target = findSearchTarget(input?.value ?? "");
+      closeOverlays();
+      scrollToTarget(target);
+    }
+
     function handleClick(event: MouseEvent) {
       if (event.defaultPrevented) return;
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const searchTag = (event.target as Element | null)?.closest?.(".at-categories-item");
+      if (searchTag) {
+        event.preventDefault();
+        const target = findSearchTarget(searchTag.textContent ?? "");
+        closeOverlays();
+        scrollToTarget(target);
+        return;
+      }
 
       const anchor = (event.target as Element | null)?.closest?.("a");
       const href = anchor?.getAttribute("href");
@@ -72,7 +158,12 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
     }
 
     document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
+    document.addEventListener("submit", handleSearchSubmit);
+    return () => {
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("submit", handleSearchSubmit);
+      statusEl?.remove();
+    };
   }, [contactEmail]);
 
   return null;

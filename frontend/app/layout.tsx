@@ -45,7 +45,7 @@ const DEFAULT_FAVICON = "https://res.cloudinary.com/dvatduo79/image/upload/favic
 const DEFAULT_APPLE_ICON = "https://res.cloudinary.com/dvatduo79/image/upload/apple-touch-icon.png";
 
 // Runs before first paint: flags that JS is available (so the navbar can start
-// hidden) and reveals the navbar once the page has finished loading.
+// hidden) and reveals the navbar as soon as the DOM is ready.
 const NAVBAR_REVEAL_BOOT = `(function () {
   var d = document;
   d.documentElement.classList.add("has-js");
@@ -60,12 +60,12 @@ const NAVBAR_REVEAL_BOOT = `(function () {
       header.classList.add("nav-settled");
     }, 1300);
   };
-  if (d.readyState === "complete") {
-    reveal();
+  if (d.readyState === "loading") {
+    d.addEventListener("DOMContentLoaded", reveal, { once: true });
   } else {
-    window.addEventListener("load", reveal, { once: true });
+    requestAnimationFrame(reveal);
   }
-  window.setTimeout(reveal, 3500);
+  window.setTimeout(reveal, 1500);
 })();`;
 
 export async function generateMetadata(): Promise<Metadata> {

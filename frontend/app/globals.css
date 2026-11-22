@@ -1,2 +1,27 @@
 /* Orisa template styles are loaded from public/assets/css/main.css */
 /* Additional global styles can be added here */
+
+/* Keep footer navigation links clickable above decorative overlays */
+.footer-7__nav-link {
+  position: relative;
+  z-index: 2;
+}
+
+/* Improve contrast for offcanvas tech icons in dark mode */
+[data-bs-theme="dark"] .at-offcanvas-gallery-img {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+[data-bs-theme="dark"] .at-offcanvas-gallery-img img {
+  filter: brightness(1.4) contrast(1.15);
+}
+
+/* Ensure above-the-fold hero content is immediately visible on load (desktop & mobile) */
+.sec-1-home-7 .at_fade_anim,
+.sec-1-home-7 .sec-1-home-7__headline,
+.sec-1-home-7 .sec-1-home-7__desc,
+.sec-1-home-7 .sec-1-home-7__cta {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
