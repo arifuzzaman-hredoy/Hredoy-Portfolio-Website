@@ -13,6 +13,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const [loadingHtml, setLoadingHtml] = useState<boolean>(false);
   const [htmlError, setHtmlError] = useState<boolean>(false);
   const [viewerMode, setViewerMode] = useState<"image" | "native" | "gdocs">("image");
+  const [fitMode, setFitMode] = useState<"width" | "page">("width");
 
   useEffect(() => {
     setMounted(true);
@@ -111,7 +112,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
     }
   }, [activeDoc, activeUrl, activeFormat, isHtml, isPdf]);
 
-  // Handle ESC key to close modal
+  // Handle ESC key to close modal and strictly lock background website scrolling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -120,12 +121,27 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
     };
     if (activeDoc) {
       window.addEventListener("keydown", handleKeyDown);
+      const prevBodyOverflow = document.body.style.overflow;
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      const prevBodyPaddingRight = document.body.style.paddingRight;
+
+      // Prevent scrollbar layout jump
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+
+      // Lock both documentElement and body so the background website CANNOT scroll
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = prevBodyOverflow;
+        document.documentElement.style.overflow = prevHtmlOverflow;
+        document.body.style.paddingRight = prevBodyPaddingRight;
+      };
     }
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
   }, [activeDoc]);
 
   return (
@@ -306,11 +322,13 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
           <div
             className="resume-modal-backdrop"
             onClick={() => setActiveDoc(null)}
+            onWheel={(e) => e.stopPropagation()}
             role="presentation"
           >
             <div
               className="resume-modal-dialog"
               onClick={(e) => e.stopPropagation()}
+              onWheel={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="resume-modal-title"
@@ -324,6 +342,27 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                   </h3>
                 </div>
                 <div className="d-flex align-items-center gap-2">
+                  {/* Fit Mode Toggle for Image View */}
+                  {((isPdf && viewerMode === "image") || isImage) && (
+                    <button
+                      type="button"
+                      onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
+                      className="d-none d-sm-inline-flex align-items-center gap-1 p-1 px-2 me-1"
+                      style={{
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        borderRadius: "8px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        color: "#94a3b8",
+                        cursor: "pointer",
+                      }}
+                      title={fitMode === "width" ? "Switch to Fit Page" : "Switch to Fit Width (Scrollable)"}
+                    >
+                      <span>{fitMode === "width" ? "📜 Full Width (Scroll)" : "🔍 Fit Page"}</span>
+                    </button>
+                  )}
+
                   {isPdf && (
                     <div className="d-none d-sm-flex align-items-center gap-1 p-1 me-2" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
                       {activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") && (
@@ -432,20 +471,20 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                     />
                   )
                 ) : isImage ? (
-                  <div className="d-flex align-items-center justify-content-center p-3 p-md-4" style={{ minHeight: "65vh", background: "#0b1e22" }}>
+                  <div className="resume-document-viewport">
                     <img
                       src={activeUrl}
                       alt={activeTitle}
-                      style={{ maxWidth: "100%", maxHeight: "72vh", objectFit: "contain", borderRadius: "8px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}
+                      className={`resume-document-img ${fitMode === "page" ? "resume-document-img--fit-page" : ""}`}
                     />
                   </div>
                 ) : isPdf ? (
                   viewerMode === "image" && activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") ? (
-                    <div className="d-flex align-items-center justify-content-center p-3 p-md-4" style={{ minHeight: "65vh", background: "#0b1e22", overflow: "auto" }}>
+                    <div className="resume-document-viewport">
                       <img
                         src={activeUrl.replace(/\.pdf$/i, ".png")}
                         alt={activeTitle}
-                        style={{ maxWidth: "100%", maxHeight: "78vh", objectFit: "contain", borderRadius: "8px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}
+                        className={`resume-document-img ${fitMode === "page" ? "resume-document-img--fit-page" : ""}`}
                       />
                     </div>
                   ) : viewerMode === "native" ? (
