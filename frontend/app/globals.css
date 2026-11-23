@@ -1263,9 +1263,75 @@
 }
 
 .process-detail-showcase__desc {
-  font-size: 16px;
+  font-size: 15.5px;
   line-height: 1.65;
   color: var(--at-neutral-500, #a1a1aa);
+}
+
+.process-detail-showcase__tagline {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--at-theme-primary, #14b8a6);
+}
+
+.process-detail-subheading {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--at-neutral-400, #94a3b8);
+}
+
+.process-detail-practice-item {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.process-detail-check-icon {
+  color: var(--at-theme-primary, #14b8a6);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.process-detail-deliverable {
+  background: rgba(20, 184, 166, 0.08);
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  border-radius: 12px;
+}
+
+.process-detail-deliverable-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--at-theme-primary, #14b8a6);
+}
+
+.process-detail-deliverable-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.process-detail-tools-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--at-neutral-400, #94a3b8);
+}
+
+.process-detail-tool-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .process-detail-nav-btn {
@@ -1374,6 +1440,45 @@
 
 [data-bs-theme="light"] .process-detail-showcase__desc {
   color: #475569;
+}
+
+[data-bs-theme="light"] .process-detail-showcase__tagline {
+  color: #0f766e !important;
+}
+
+[data-bs-theme="light"] .process-detail-subheading {
+  color: #475569 !important;
+}
+
+[data-bs-theme="light"] .process-detail-practice-item {
+  color: #334155 !important;
+}
+
+[data-bs-theme="light"] .process-detail-check-icon {
+  color: #0d9488 !important;
+}
+
+[data-bs-theme="light"] .process-detail-deliverable {
+  background: rgba(13, 148, 136, 0.06) !important;
+  border: 1px solid rgba(13, 148, 136, 0.25) !important;
+}
+
+[data-bs-theme="light"] .process-detail-deliverable-title {
+  color: #0f766e !important;
+}
+
+[data-bs-theme="light"] .process-detail-deliverable-text {
+  color: #0f172a !important;
+}
+
+[data-bs-theme="light"] .process-detail-tools-label {
+  color: #475569 !important;
+}
+
+[data-bs-theme="light"] .process-detail-tool-tag {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 [data-bs-theme="light"] .process-detail-nav-btn {
