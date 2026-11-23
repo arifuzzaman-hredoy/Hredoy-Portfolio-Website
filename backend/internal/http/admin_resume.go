@@ -19,10 +19,13 @@ var documentMIMETypes = map[string]string{
 	".odt":  "application/vnd.oasis.opendocument.text",
 	".rtf":  "application/rtf",
 	".txt":  "text/plain",
+	".html": "text/html",
+	".htm":  "text/html",
 	".png":  "image/png",
 	".jpg":  "image/jpeg",
 	".jpeg": "image/jpeg",
 	".webp": "image/webp",
+	".svg":  "image/svg+xml",
 	".zip":  "application/zip",
 }
 
@@ -35,6 +38,17 @@ type resumeDocView struct {
 	Updated  string
 	FileURL  string
 	FileSize string
+}
+
+type resumeUploadItem struct {
+	ID            string
+	Filename      string
+	Path          string
+	Mime          string
+	Alt           string
+	Size          int64
+	FormattedSize string
+	CreatedAt     time.Time
 }
 
 func formatDocSize(bytes int64) string {
@@ -104,13 +118,29 @@ func (d HandlerDeps) adminResume(w http.ResponseWriter, r *http.Request) {
 
 	// Fetch recent uploads from media library
 	mediaList, _ := d.Queries.ListMedia(ctx)
-	var documentUploads []mediaView
-	for _, m := range toMediaViews(mediaList) {
+	var documentUploads []resumeUploadItem
+	for _, m := range mediaList {
 		ext := strings.ToLower(filepath.Ext(m.Filename))
-		if ext == ".pdf" || ext == ".docx" || ext == ".doc" || ext == ".txt" || ext == ".odt" ||
-			strings.Contains(strings.ToLower(m.Alt), "cv") || strings.Contains(strings.ToLower(m.Alt), "resume") ||
-			strings.Contains(strings.ToLower(m.Filename), "cv") || strings.Contains(strings.ToLower(m.Filename), "resume") {
-			documentUploads = append(documentUploads, m)
+		isDocExt := ext == ".pdf" || ext == ".docx" || ext == ".doc" || ext == ".txt" ||
+			ext == ".odt" || ext == ".rtf" || ext == ".html" || ext == ".htm" || ext == ".zip" ||
+			ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".webp" || ext == ".svg"
+		isTaggedDoc := strings.Contains(strings.ToLower(m.Alt), "cv") ||
+			strings.Contains(strings.ToLower(m.Alt), "resume") ||
+			strings.Contains(strings.ToLower(m.Filename), "cv") ||
+			strings.Contains(strings.ToLower(m.Filename), "resume") ||
+			strings.Contains(strings.ToLower(m.Alt), "document")
+
+		if isDocExt || isTaggedDoc {
+			documentUploads = append(documentUploads, resumeUploadItem{
+				ID:            uuidToString(m.ID),
+				Filename:      m.Filename,
+				Path:          m.Path,
+				Mime:          m.Mime,
+				Alt:           m.Alt,
+				Size:          m.Size,
+				FormattedSize: formatDocSize(m.Size),
+				CreatedAt:     m.CreatedAt.Time,
+			})
 		}
 	}
 
@@ -223,4 +253,62 @@ func (d HandlerDeps) adminResumeUpload(w http.ResponseWriter, r *http.Request) {
 		redirectPath = "/super-admin/content?saved=1"
 	}
 	http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+}
+
+func (d HandlerDeps) adminResumeSetActive(w http.ResponseWriter, r *http.Request) {
+	target := strings.ToLower(strings.TrimSpace(r.FormValue("target")))
+	if target != "cv" && target != "resume" {
+		http.Redirect(w, r, "/super-admin/resume?error=invalid_target", http.StatusSeeOther)
+		return
+	}
+
+	fileURL := strings.TrimSpace(r.FormValue("file_url"))
+	if fileURL == "" {
+		http.Redirect(w, r, "/super-admin/resume?error=missing_url", http.StatusSeeOther)
+		return
+	}
+
+	filename := strings.TrimSpace(r.FormValue("filename"))
+	ext := strings.ToLower(filepath.Ext(filename))
+	if ext == "" {
+		ext = strings.ToLower(filepath.Ext(fileURL))
+	}
+	formatLabel := strings.ToUpper(strings.TrimPrefix(ext, "."))
+	if formatLabel == "" {
+		formatLabel = "DOCUMENT"
+	}
+
+	var sizeBytes int64
+	if s := strings.TrimSpace(r.FormValue("file_size")); s != "" {
+		fmt.Sscanf(s, "%d", &sizeBytes)
+	}
+	fileSizeLabel := formatDocSize(sizeBytes)
+	if sizeBytes <= 0 && r.FormValue("formatted_size") != "" {
+		fileSizeLabel = r.FormValue("formatted_size")
+	}
+	updatedLabel := time.Now().Format("Updated Jan 2006")
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	prefix := "resume." + target + "."
+	_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+		Key:   prefix + "file_url",
+		Value: fileURL,
+	})
+	_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+		Key:   prefix + "file_size",
+		Value: fileSizeLabel,
+	})
+	_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+		Key:   prefix + "format",
+		Value: formatLabel,
+	})
+	_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+		Key:   prefix + "updated",
+		Value: updatedLabel,
+	})
+
+	d.Logger.Info("activated resume document from history", "target", target, "url", fileURL, "format", formatLabel)
+	http.Redirect(w, r, "/super-admin/resume?saved=1", http.StatusSeeOther)
 }

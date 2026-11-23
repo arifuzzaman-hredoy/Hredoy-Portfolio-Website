@@ -9,6 +9,10 @@ import { ArrowDiagIcon } from "../Icons";
 export default function ResumeSection({ data }: { data: PortfolioData }) {
   const [activeDoc, setActiveDoc] = useState<"cv" | "resume" | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [htmlContent, setHtmlContent] = useState<string>("");
+  const [loadingHtml, setLoadingHtml] = useState<boolean>(false);
+  const [htmlError, setHtmlError] = useState<boolean>(false);
+  const [viewerMode, setViewerMode] = useState<"native" | "gdocs">("native");
 
   useEffect(() => {
     setMounted(true);
@@ -48,6 +52,60 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const activeFormat = activeDoc === "cv" ? cvFormat : resumeFormat;
   const activeSize = activeDoc === "cv" ? cvSize : resumeSize;
   const activeBadge = activeDoc === "cv" ? cvBadge : resumeBadge;
+
+  const isHtml =
+    (activeFormat || "").toUpperCase() === "HTML" ||
+    (activeFormat || "").toUpperCase() === "HTM" ||
+    (activeUrl || "").toLowerCase().endsWith(".html") ||
+    (activeUrl || "").toLowerCase().endsWith(".htm");
+
+  const isPdf =
+    (activeFormat || "").toUpperCase() === "PDF" ||
+    (activeUrl || "").toLowerCase().includes(".pdf");
+
+  const isImage =
+    ["PNG", "JPG", "JPEG", "WEBP", "SVG", "GIF"].includes((activeFormat || "").toUpperCase()) ||
+    /\.(png|jpe?g|webp|svg|gif)$/i.test(activeUrl || "");
+
+  // Load HTML text if previewing an HTML document
+  useEffect(() => {
+    if (!activeDoc || !activeUrl) {
+      setHtmlContent("");
+      setLoadingHtml(false);
+      setHtmlError(false);
+      return;
+    }
+
+    if (isHtml) {
+      setLoadingHtml(true);
+      setHtmlError(false);
+      setHtmlContent("");
+      fetch(activeUrl)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load document");
+          return res.text();
+        })
+        .then((text) => {
+          setHtmlContent(text);
+          setLoadingHtml(false);
+        })
+        .catch(() => {
+          setHtmlError(true);
+          setLoadingHtml(false);
+        });
+    } else {
+      setHtmlContent("");
+      setLoadingHtml(false);
+      setHtmlError(false);
+    }
+
+    // Default viewer mode for PDF: if Cloudinary raw URL, default to Google Docs viewer
+    if (isPdf && activeUrl.includes("/raw/upload/")) {
+      setViewerMode("gdocs");
+    } else {
+      setViewerMode("native");
+    }
+  }, [activeDoc, activeUrl, activeFormat, isHtml, isPdf]);
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -262,6 +320,42 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                   </h3>
                 </div>
                 <div className="d-flex align-items-center gap-2">
+                  {isPdf && (
+                    <div className="d-none d-sm-flex align-items-center gap-1 p-1 me-2" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setViewerMode("native")}
+                        style={{
+                          fontSize: "11px",
+                          padding: "3px 8px",
+                          border: "none",
+                          borderRadius: "6px",
+                          cursor: "pointer",
+                          background: viewerMode === "native" ? "#14b8a6" : "transparent",
+                          color: viewerMode === "native" ? "#020617" : "#94a3b8",
+                          fontWeight: 600,
+                        }}
+                      >
+                        Native PDF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewerMode("gdocs")}
+                        style={{
+                          fontSize: "11px",
+                          padding: "3px 8px",
+                          border: "none",
+                          borderRadius: "6px",
+                          cursor: "pointer",
+                          background: viewerMode === "gdocs" ? "#14b8a6" : "transparent",
+                          color: viewerMode === "gdocs" ? "#020617" : "#94a3b8",
+                          fontWeight: 600,
+                        }}
+                      >
+                        Docs Viewer
+                      </button>
+                    </div>
+                  )}
                   <a
                     href={activeUrl}
                     target="_blank"
@@ -292,16 +386,51 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
 
               {/* Modal Body / Viewer */}
               <div className="resume-modal-body p-0">
-                {(activeFormat || "").toUpperCase() === "PDF" || (activeUrl || "").toLowerCase().includes(".pdf") ? (
-                  <iframe
-                    src={`${activeUrl}#toolbar=0`}
-                    className="resume-modal-iframe"
-                    title={`${activeTitle} Document Preview`}
-                  />
-                ) : ["PNG", "JPG", "JPEG", "WEBP"].includes((activeFormat || "").toUpperCase()) ? (
-                  <div className="d-flex align-items-center justify-content-center p-4" style={{ minHeight: "60vh" }}>
-                    <img src={activeUrl} alt={activeTitle} style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain", borderRadius: "8px" }} />
+                {isHtml ? (
+                  loadingHtml ? (
+                    <div className="d-flex flex-column align-items-center justify-content-center p-5 text-center" style={{ minHeight: "65vh" }}>
+                      <div className="spinner-border text-info mb-3" role="status" style={{ width: "2.5rem", height: "2.5rem" }}>
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <p className="text-muted mb-0">Rendering formatted document...</p>
+                    </div>
+                  ) : htmlError ? (
+                    <div className="d-flex flex-column align-items-center justify-content-center p-5 text-center" style={{ minHeight: "65vh" }}>
+                      <p className="text-warning mb-3">Unable to embed HTML document inline.</p>
+                      <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="btn-resume-modal-primary" style={{ textDecoration: "none" }}>
+                        Open in New Window &rarr;
+                      </a>
+                    </div>
+                  ) : (
+                    <iframe
+                      srcDoc={htmlContent}
+                      className="resume-modal-iframe"
+                      title={`${activeTitle} Document Preview`}
+                      sandbox="allow-scripts allow-same-origin allow-popups"
+                    />
+                  )
+                ) : isImage ? (
+                  <div className="d-flex align-items-center justify-content-center p-3 p-md-4" style={{ minHeight: "65vh", background: "#0b1e22" }}>
+                    <img
+                      src={activeUrl}
+                      alt={activeTitle}
+                      style={{ maxWidth: "100%", maxHeight: "72vh", objectFit: "contain", borderRadius: "8px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}
+                    />
                   </div>
+                ) : isPdf ? (
+                  viewerMode === "native" ? (
+                    <iframe
+                      src={`${activeUrl}#toolbar=0`}
+                      className="resume-modal-iframe"
+                      title={`${activeTitle} Document Preview`}
+                    />
+                  ) : (
+                    <iframe
+                      src={`https://docs.google.com/viewer?url=${encodeURIComponent(activeUrl)}&embedded=true`}
+                      className="resume-modal-iframe"
+                      title={`${activeTitle} Document Preview`}
+                    />
+                  )
                 ) : (
                   <iframe
                     src={`https://docs.google.com/viewer?url=${encodeURIComponent(activeUrl)}&embedded=true`}

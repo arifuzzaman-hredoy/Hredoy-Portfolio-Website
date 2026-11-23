@@ -101,7 +101,27 @@
           <td>{{.FormattedSize}}</td>
           <td class="time">{{.CreatedAt.Format "02 Jan 2006, 15:04"}}</td>
           <td>
-            <a href="{{.Path}}" target="_blank" rel="noopener" class="btn-sm" style="display: inline-block;">Open &rarr;</a>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <a href="{{.Path}}" target="_blank" rel="noopener" class="btn-sm" style="display: inline-flex; align-items: center; text-decoration: none;">Open &rarr;</a>
+              <form method="post" action="/super-admin/resume/set-active" style="display: inline-block; margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+                <input type="hidden" name="target" value="cv">
+                <input type="hidden" name="file_url" value="{{.Path}}">
+                <input type="hidden" name="filename" value="{{.Filename}}">
+                <input type="hidden" name="file_size" value="{{.Size}}">
+                <input type="hidden" name="formatted_size" value="{{.FormattedSize}}">
+                <button type="submit" class="btn-sm" style="background: rgba(15, 118, 110, 0.25); border: 1px solid rgba(15, 118, 110, 0.4); cursor: pointer;" title="Set this file as active CV">Set as CV</button>
+              </form>
+              <form method="post" action="/super-admin/resume/set-active" style="display: inline-block; margin: 0;">
+                <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+                <input type="hidden" name="target" value="resume">
+                <input type="hidden" name="file_url" value="{{.Path}}">
+                <input type="hidden" name="filename" value="{{.Filename}}">
+                <input type="hidden" name="file_size" value="{{.Size}}">
+                <input type="hidden" name="formatted_size" value="{{.FormattedSize}}">
+                <button type="submit" class="btn-sm" style="background: rgba(20, 184, 166, 0.2); border: 1px solid rgba(20, 184, 166, 0.35); cursor: pointer;" title="Set this file as active Resume">Set as Resume</button>
+              </form>
+            </div>
           </td>
         </tr>
         {{end}}

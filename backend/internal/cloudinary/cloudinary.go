@@ -66,7 +66,7 @@ func (c *Client) Upload(data []byte, filename, mimeType string) (*UploadResult, 
 
 	resourceType := "raw"
 	switch {
-	case strings.HasPrefix(mimeType, "image/"):
+	case strings.HasPrefix(mimeType, "image/") || mimeType == "application/pdf" || strings.HasSuffix(strings.ToLower(filename), ".pdf"):
 		resourceType = "image"
 	case strings.HasPrefix(mimeType, "video/"):
 		resourceType = "video"
@@ -143,7 +143,7 @@ func (c *Client) Delete(publicID string) error {
 
 	resourceType := "raw"
 	switch {
-	case strings.Contains(publicID, "/image/") || strings.HasSuffix(publicID, ".jpg") || strings.HasSuffix(publicID, ".jpeg") || strings.HasSuffix(publicID, ".png") || strings.HasSuffix(publicID, ".webp") || strings.HasSuffix(publicID, ".gif") || strings.HasSuffix(publicID, ".svg"):
+	case strings.Contains(publicID, "/image/") || strings.HasSuffix(publicID, ".jpg") || strings.HasSuffix(publicID, ".jpeg") || strings.HasSuffix(publicID, ".png") || strings.HasSuffix(publicID, ".webp") || strings.HasSuffix(publicID, ".gif") || strings.HasSuffix(publicID, ".svg") || strings.HasSuffix(strings.ToLower(publicID), ".pdf"):
 		resourceType = "image"
 	case strings.Contains(publicID, "/video/") || strings.HasSuffix(publicID, ".mp4") || strings.HasSuffix(publicID, ".webm"):
 		resourceType = "video"

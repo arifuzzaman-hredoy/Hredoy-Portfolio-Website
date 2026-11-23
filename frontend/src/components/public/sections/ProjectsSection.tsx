@@ -55,7 +55,7 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
             return (
               <div key={project.slug || project.title} className="project-card col-lg-4 col-md-6 col-12 mb-0" data-category="">
                 <div className="card h-100 project-card-wrapper border-0 shadow-sm d-flex flex-column">
-                  <div className="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden" style={{ height: "230px", flexShrink: 0 }}>
+                  <div className="blog-card__thumb hover-effect-1 project-thumb position-relative overflow-hidden d-flex align-items-center justify-content-center" style={{ height: "230px", flexShrink: 0 }}>
                     {imgUrl && (
                       <img
                         src={imgUrl}
@@ -63,7 +63,9 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
                         alt={project.title}
                         width={1600}
                         height={800}
-                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        loading="lazy"
+                        decoding="async"
+                        style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain", display: "block", margin: "auto" }}
                       />
                     )}
                   </div>
