@@ -17,7 +17,6 @@ import ProcessSection from "./sections/ProcessSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import SearchOverlay from "./sections/SearchOverlay";
 import SkillsSection from "./sections/SkillsSection";
-import WhoIAmSection from "./sections/WhoIAmSection";
 
 type HomeContentProps = {
   content?: Record<string, string>;
@@ -86,7 +85,6 @@ export default function HomeContent({
             <SkillsSection data={data} />
             <ProcessSection data={data} />
             <CtaSection data={data} />
-            <WhoIAmSection data={data} />
             <MarqueeSection data={data} />
             <ProjectsSection data={data} />
             <CertificatesSection page={data.certificates} categories={data.categories} />
