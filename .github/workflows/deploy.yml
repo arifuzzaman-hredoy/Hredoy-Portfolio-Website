@@ -83,8 +83,14 @@ jobs:
             "docker login ghcr.io -u '$GHCR_USER' --password-stdin && \
              cd /opt/portfolio && \
              docker compose pull && \
-             docker compose up -d && \
-             docker image prune -f"
+             docker compose up -d --force-recreate && \
+             docker image prune -f && \
+             sleep 5 && \
+             TOKEN=\$(grep '^REVALIDATE_TOKEN=' /opt/portfolio/.env 2>/dev/null | cut -d= -f2-) && \
+             if [ -n \"\$TOKEN\" ]; then curl -s -X POST -H \"x-revalidate-token: \$TOKEN\" http://127.0.0.1:3000/api/revalidate || true; fi && \
+             CF_TOKEN=\$(grep '^CLOUDFLARE_API_TOKEN=' /opt/portfolio/.env 2>/dev/null | cut -d= -f2-) && \
+             CF_ZONE=\$(grep '^CLOUDFLARE_ZONE_ID=' /opt/portfolio/.env 2>/dev/null | cut -d= -f2-) && \
+             if [ -n \"\$CF_TOKEN\" ] && [ -n \"\$CF_ZONE\" ]; then curl -s -X POST \"https://api.cloudflare.com/client/v4/zones/\$CF_ZONE/purge_cache\" -H \"Authorization: Bearer \$CF_TOKEN\" -H \"Content-Type: application/json\" --data '{\"purge_everything\":true}' || true; fi"
 
       - name: Verify public site
         run: |
