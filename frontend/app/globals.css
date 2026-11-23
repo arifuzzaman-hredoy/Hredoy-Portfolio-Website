@@ -141,10 +141,27 @@
   color: #fee2e2;
 }
 
-/* Light (white) mode polish across header, cards, physics icons, forms, offcanvas, and footer */
+/* Light mode polish: soft slate-50 eye-comfort background instead of harsh glaring white */
 [data-bs-theme="light"] body {
-  background-color: var(--at-neutral-0, #fefefe);
-  color: var(--at-neutral-900, #1d1d1d);
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-bs-theme="light"] .bg-neutral-0 {
+  background-color: #f8fafc !important;
+}
+
+[data-bs-theme="light"] .bg-neutral-50 {
+  background-color: #f1f5f9 !important;
+}
+
+[data-bs-theme="light"] .bg-neutral-100 {
+  background-color: #e2e8f0 !important;
+}
+
+/* Moderate images in light mode to eliminate blinding glare and blown-out highlights */
+[data-bs-theme="light"] img:not(.header-brand-logo):not(.at-header-logo img):not(.invert-0) {
+  filter: brightness(0.97) contrast(1.02);
 }
 
 /* ==========================================================================
@@ -421,9 +438,15 @@
 }
 
 [data-bs-theme="light"] .project-card-wrapper {
-  background-color: var(--at-neutral-0, #fefefe);
-  color: var(--at-neutral-900, #1d1d1d);
-  border: 1px solid var(--at-neutral-100, #dfdfdf) !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-bs-theme="light"] .project-card-wrapper:hover {
+  border-color: #0d9488 !important;
+  box-shadow: 0 16px 36px rgba(13, 148, 136, 0.12) !important;
 }
 
 [data-bs-theme="light"] .blog-card__title {
@@ -645,28 +668,28 @@
 }
 
 [data-bs-theme="light"] .other-project-card {
-  background: #ffffff;
-  border-color: #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
 }
 
 [data-bs-theme="light"] .other-project-card:hover {
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
-  border-color: rgba(20, 184, 166, 0.5);
+  box-shadow: 0 16px 32px rgba(13, 148, 136, 0.12) !important;
+  border-color: #0d9488 !important;
 }
 
 [data-bs-theme="light"] .other-project-card__title {
-  color: #111827;
+  color: #0f172a !important;
 }
 
 [data-bs-theme="light"] .other-project-card__summary {
-  color: #4b5563;
+  color: #475569 !important;
 }
 
 [data-bs-theme="light"] .other-project-tag {
-  background: #f3f4f6;
-  color: #374151;
-  border-color: #e5e7eb;
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 [data-bs-theme="light"] .footer-7__hours-label,
@@ -1301,14 +1324,14 @@
 
 /* Light mode overrides for Interactive Process */
 [data-bs-theme="light"] .process-option-card {
-  background: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
 }
 
 [data-bs-theme="light"] .process-option-card:hover {
-  border-color: rgba(13, 148, 136, 0.5);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+  border-color: #0d9488 !important;
+  box-shadow: 0 12px 28px rgba(13, 148, 136, 0.1) !important;
 }
 
 [data-bs-theme="light"] .process-option-card.is-active {
@@ -1318,17 +1341,17 @@
 }
 
 [data-bs-theme="light"] .process-option-card__num {
-  color: #0d9488;
+  color: #0d9488 !important;
 }
 
 [data-bs-theme="light"] .process-option-card__title {
-  color: #0f172a;
+  color: #0f172a !important;
 }
 
 [data-bs-theme="light"] .process-detail-showcase {
-  background: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08) !important;
 }
 
 [data-bs-theme="light"] .process-detail-showcase__badge {

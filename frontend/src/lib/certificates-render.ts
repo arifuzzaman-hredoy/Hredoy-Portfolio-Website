@@ -134,24 +134,30 @@ export function renderCertificateCard(cert: Certificate): string {
     : "";
 
   return (
-    '                            <div class="blog-card col-lg-4 col-md-6 col-12 mb-30" data-cert-card="' +
+    '                            <div class="col-lg-4 col-md-6 col-12 mb-30" data-cert-card="' +
     escapeAttr(cert.id) +
     '">\n' +
-    '                                <div class="blog-card__thumb hover-effect-1">\n' +
-    `                                    <button type="button" class="blog-card__img-link cert-card__open" data-cert-open="${escapeAttr(cert.id)}" aria-label="View certificate: ${escapeAttr(cert.title)}">\n` +
+    '                                <div class="blog-card certificates-card h-100 d-flex flex-column">\n' +
+    '                                    <div class="blog-card__thumb hover-effect-1 certificates-card__thumb">\n' +
+    `                                        <button type="button" class="blog-card__img-link cert-card__open" data-cert-open="${escapeAttr(cert.id)}" aria-label="View certificate: ${escapeAttr(cert.title)}">\n` +
     thumb +
     "\n" +
-    "                                    </button>\n" +
-    "                                </div>\n" +
-    '                                <div class="blog-card__content">\n' +
-    (badges ? `                                    <p class="cert-card__badges mb-0">${badges}</p>\n` : "") +
-    '                                    <h2 class="h6 blog-card__title">\n' +
-    `                                        <button type="button" class="blog-card__title-link cert-card__open" data-cert-open="${escapeAttr(cert.id)}">${escapeText(cert.title)}</button>\n` +
-    "                                    </h2>\n" +
-    (meta ? `                                    <p class="blog-card__meta mb-0"><span class="blog-card__meta-text">${meta}</span></p>\n` : "") +
-    (range ? `                                    <p class="cert-card__date mb-0">${escapeText(range)}</p>\n` : "") +
+    "                                        </button>\n" +
+    "                                    </div>\n" +
+    '                                    <div class="blog-card__content certificates-card__content d-flex flex-column justify-content-between p-4 flex-grow-1">\n' +
+    '                                        <div>\n' +
+    (badges ? `                                            <p class="cert-card__badges mb-2">${badges}</p>\n` : "") +
+    '                                            <h2 class="h6 blog-card__title mb-2">\n' +
+    `                                                <button type="button" class="blog-card__title-link cert-card__open" data-cert-open="${escapeAttr(cert.id)}">${escapeText(cert.title)}</button>\n` +
+    "                                            </h2>\n" +
+    (meta ? `                                            <p class="blog-card__meta mb-2"><span class="blog-card__meta-text">${meta}</span></p>\n` : "") +
+    (range ? `                                            <p class="cert-card__date mb-3">${escapeText(range)}</p>\n` : "") +
+    "                                        </div>\n" +
+    '                                        <div class="mt-auto">\n' +
     verifyLink +
-    (skills ? `                                    <ul class="cert-card__skills list-unstyled mb-0">${skills}</ul>\n` : "") +
+    (skills ? `                                            <ul class="cert-card__skills list-unstyled d-flex flex-wrap gap-1 mb-0 mt-2">${skills}</ul>\n` : "") +
+    "                                        </div>\n" +
+    "                                    </div>\n" +
     "                                </div>\n" +
     "                            </div>"
   );
