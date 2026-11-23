@@ -51,11 +51,11 @@ export default function OffcanvasSidebar({ data }: { data: PortfolioData }) {
               </button>
             </div>
           </div>
-          <div className="at-offcanvas-content d-none d-xl-block">
+          <div className="at-offcanvas-content mb-30">
             <h3 className="at-offcanvas-title">Hi, I&apos;m {identity.owner_name ?? ""}</h3>
             <p className="fz-font-lg">{identity.bio ?? ""}</p>
           </div>
-          <div className="at-offcanvas-menu d-xl-none pb-50">
+          <div className="at-offcanvas-menu d-xl-none pb-30">
             <nav />
           </div>
           <div className="at-offcanvas-contact">

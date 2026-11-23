@@ -59,6 +59,16 @@
 
 .certificates-cms .cert-grid {
   position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .certificates-cms [data-cert-card] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
 }
 
 .certificates-cms .cert-grid[aria-busy="true"] {
