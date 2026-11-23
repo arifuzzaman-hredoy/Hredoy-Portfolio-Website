@@ -2,14 +2,6 @@ import { val, type PortfolioData } from "@/lib/portfolio-data";
 import CmsImage from "../CmsImage";
 import { ArrowDiagIcon, ArrowUpRightIcon } from "../Icons";
 
-const SLIDE_SLOTS = [
-  "slider-1-linux",
-  "slider-2-cloud",
-  "slider-3-cicd",
-  "slider-4-monitoring",
-  "slider-5-security",
-];
-
 export default function MissionSection({ data }: { data: PortfolioData }) {
   const { identity } = data;
   const eyebrow = val(data, "mission.eyebrow");
@@ -20,22 +12,7 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
   const githubLabel = github.replace(/^https?:\/\/(www\.)?/i, "");
 
   return (
-    <>
-      <div className="home-2-section-8 py-4">
-        <div className="swiper about-me-slider-active at-item-anime-area">
-          <div className="swiper-wrapper">
-            {SLIDE_SLOTS.map((slot) => (
-              <div key={slot} className="swiper-slide">
-                <div className="about-me-slider-thumb at-item-anime marque">
-                  <CmsImage data={data} slot={slot} className="w-100 rounded-4" width={1600} height={1000} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="sec-4-home-7 bg-neutral-50 pt-120 pb-120">
+    <div className="sec-4-home-7 bg-neutral-50 pt-120 pb-120">
         <div className="container-2200 px-lg-5 px-3">
           <div className="row g-4 g-xl-5 align-items-start">
             <div className="col-xl-3 col-lg-4 col-12">
@@ -117,6 +94,5 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
           </div>
         </div>
       </div>
-    </>
   );
 }

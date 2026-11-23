@@ -81,12 +81,12 @@ export default function HomeContent({
           <main>
             <HeroSection data={data} />
             <AboutSection data={data} />
+            <ProjectsSection data={data} />
             <MissionSection data={data} />
             <SkillsSection data={data} />
             <ProcessSection data={data} />
             <CtaSection data={data} />
             <MarqueeSection data={data} />
-            <ProjectsSection data={data} />
             <CertificatesSection page={data.certificates} categories={data.categories} />
             <ContactSection data={data} />
           </main>
