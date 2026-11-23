@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MD ARIFUZZAMAN HREDOY - DevOps Engineer Resume</title>
+    <style>
+      :root {
+        --primary-navy: #1e3a5f;
+        --dark-charcoal: #1e293b;
+        --body-text: #334155;
+        --muted-slate: #64748b;
+        --border-gray: #cbd5e1;
+        --accent-blue: #0284c7;
+        --bg-white: #ffffff;
+        --page-bg: #f8fafc;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+        color: var(--body-text);
+        background-color: #e2e8f0;
+        line-height: 1.38;
+        font-size: 13px;
+        padding: 24px;
+      }
+
+      .resume-sheet {
+        max-width: 850px;
+        margin: 0 auto 28px auto;
+        background: var(--bg-white);
+        border: 3.5px solid var(--primary-navy);
+        border-radius: 4px;
+        padding: 28px 32px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      /* Two-Column Grid */
+      .two-column-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 24px;
+      }
+
+      /* Left Sidebar */
+      .sidebar {
+        border-right: 1.5px solid var(--border-gray);
+        padding-right: 18px;
+      }
+
+      /* Right Main Content */
+      .main-content {
+        padding-left: 6px;
+      }
+
+      /* Header with left vertical bar accent */
+      .header-box {
+        border-left: 5px solid var(--primary-navy);
+        padding-left: 14px;
+        margin-bottom: 14px;
+      }
+
+      .candidate-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-navy);
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+        margin-bottom: 3px;
+      }
+
+      .candidate-headline {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--muted-slate);
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+
+      /* Section Headings */
+      h2.section-heading {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--primary-navy);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        border-bottom: 1.5px solid var(--primary-navy);
+        padding-bottom: 2.5px;
+        margin-top: 14px;
+        margin-bottom: 8px;
+      }
+
+      .sidebar h2.section-heading:first-of-type,
+      .main-content h2.section-heading:first-of-type {
+        margin-top: 0;
+      }
+
+      /* Contact Links */
+      .contact-item {
+        font-size: 11.5px;
+        margin-bottom: 3.5px;
+        color: var(--dark-charcoal);
+        word-break: break-word;
+      }
+
+      .contact-item a {
+        color: var(--accent-blue);
+        text-decoration: none;
+      }
+
+      .contact-item a:hover {
+        text-decoration: underline;
+      }
+
+      /* Bullet lists */
+      ul.bullet-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 8px;
+      }
+
+      ul.bullet-list li {
+        position: relative;
+        padding-left: 14px;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: var(--body-text);
+      }
+
+      ul.bullet-list li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--primary-navy);
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      ul.bullet-list li strong {
+        color: var(--primary-navy);
+        font-weight: 700;
+      }
+
+      /* Text block */
+      .summary-text {
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--body-text);
+        text-align: justify;
+        margin-bottom: 10px;
+      }
+
+      /* Experience & Project Blocks */
+      .entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-top: 8px;
+        margin-bottom: 1px;
+      }
+
+      .entry-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--primary-navy);
+      }
+
+      .entry-meta {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--dark-charcoal);
+        text-align: right;
+      }
+
+      .entry-submeta {
+        font-size: 11px;
+        font-style: italic;
+        color: var(--muted-slate);
+        margin-bottom: 3px;
+      }
+
+      .badge-links {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+
+      .badge-links a {
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-weight: 600;
+        margin-right: 8px;
+      }
+
+      .badge-links a:hover {
+        text-decoration: underline;
+      }
+
+      .tech-stack-line {
+        font-size: 11px;
+        font-style: italic;
+        color: var(--muted-slate);
+        margin-bottom: 5px;
+      }
+
+      /* Print styling */
+      @media print {
+        body {
+          background: none;
+          padding: 0;
+        }
+        .resume-sheet {
+          box-shadow: none;
+          max-width: 100%;
+          margin: 0;
+          border: 3px solid var(--primary-navy);
+          page-break-after: always;
+          height: 100%;
+        }
+      }
+    
+      /* ==================== RESPONSIVE MOBILE STYLES ==================== */
+      @media screen and (max-width: 768px) {
+        body {
+          padding: 8px 6px !important;
+          background-color: var(--page-bg, #f8fafc) !important;
+          font-size: 13px !important;
+        }
+
+        .resume-sheet {
+          max-width: 100% !important;
+          width: 100% !important;
+          margin: 0 auto 16px auto !important;
+          padding: 16px 14px !important;
+          border-width: 2px !important;
+          box-shadow: none !important;
+          box-sizing: border-box !important;
+        }
+
+        .two-column-layout {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 16px !important;
+        }
+
+        .main-content {
+          order: 1 !important;
+          width: 100% !important;
+          padding-left: 0 !important;
+        }
+
+        .sidebar {
+          order: 2 !important;
+          width: 100% !important;
+          border-right: none !important;
+          border-top: 1.5px solid var(--border-gray) !important;
+          padding-right: 0 !important;
+          padding-top: 16px !important;
+        }
+
+        .candidate-name {
+          font-size: 21px !important;
+          line-height: 1.15 !important;
+        }
+
+        .candidate-headline {
+          font-size: 12.5px !important;
+        }
+
+        .header-box {
+          padding-left: 10px !important;
+          border-left-width: 4px !important;
+          margin-bottom: 12px !important;
+        }
+
+        .entry-header {
+          flex-wrap: wrap !important;
+          gap: 2px 8px !important;
+        }
+
+        .entry-meta {
+          text-align: left !important;
+          width: 100% !important;
+        }
+
+        * {
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+          word-break: break-word !important;
+          overflow-wrap: break-word !important;
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <!-- ==================== PAGE 1 ==================== -->
+    <div class="resume-sheet">
+      <div class="two-column-layout">
+        <!-- LEFT COLUMN -->
+        <aside class="sidebar">
+          <!-- Contact -->
+          <h2 class="section-heading">Contact</h2>
+          <div class="contact-item">
+            <a href="mailto:arifuzzamanhredoy@gmail.com"
+              >arifuzzamanhredoy@gmail.com</a
+            >
+          </div>
+          <div class="contact-item">
+            <a href="tel:+8801625253231">+8801625253231</a>
+          </div>
+          <div class="contact-item">Rangpur City, Bangladesh</div>
+          <div class="contact-item">
+            <a href="https://github.com/arifuzzaman-hredoy" target="_blank"
+              >github.com/arifuzzaman-hredoy</a
+            >
+          </div>
+          <div class="contact-item">
+            <a
+              href="https://www.linkedin.com/in/arifuzzaman-hredoy"
+              target="_blank"
+              >linkedin.com/in/arifuzzaman-hredoy</a
+            >
+          </div>
+
+          <!-- Skills -->
+          <h2 class="section-heading">Skills</h2>
+          <ul class="bullet-list">
+            <li>
+              <strong>Cloud & Infra:</strong> AWS (EC2, VPC, IAM, S3, CLI),
+              Terraform, VPS Admin
+            </li>
+            <li>
+              <strong>Containers:</strong> Docker, Docker Compose, Multi-stage
+              Builds
+            </li>
+            <li><strong>Orchestration:</strong> Kubernetes, kubectl, Helm</li>
+            <li>
+              <strong>CI/CD & Automation:</strong> GitHub Actions, Jenkins, Bash
+              Automation
+            </li>
+            <li>
+              <strong>Web & Network:</strong> Nginx, Reverse Proxy, SSL/TLS,
+              SSH, TCP/IP
+            </li>
+            <li>
+              <strong>Operating System:</strong> Linux (Ubuntu), Shell
+              Scripting, systemd
+            </li>
+            <li><strong>Version Control:</strong> Git, GitHub, GitHub CLI</li>
+            <li>
+              <strong>Observability:</strong> Prometheus, Grafana, Loki, Grafana
+              Alloy
+            </li>
+            <li>
+              <strong>DevSecOps:</strong> Trivy, Container Security,
+              Vulnerability Scan
+            </li>
+            <li>
+              <strong>Programming:</strong> Python, TypeScript, JavaScript,
+              React, Node.js
+            </li>
+            <li>
+              <strong>Databases:</strong> PostgreSQL, MariaDB, SQL, Prisma,
+            </li>
+          </ul>
+
+          <!-- Education And Training -->
+          <h2 class="section-heading">Education And Training</h2>
+          <div style="margin-bottom: 8px">
+            <div
+              style="
+                font-size: 11px;
+                font-style: italic;
+                color: var(--muted-slate);
+              "
+            >
+              2025 – 2029 (Expected)
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--dark-charcoal);
+              "
+            >
+              Diploma in Engineering (CST)
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              Rangpur Polytechnic Institute
+            </div>
+            <div style="font-size: 11px; color: var(--body-text)">
+              3rd Semester Enrolled | Rangpur, BD<br />GPA: 1st Sem 3.93/4.00 |
+              2nd Sem 3.69/4.00
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <div
+              style="
+                font-size: 11px;
+                font-style: italic;
+                color: var(--muted-slate);
+              "
+            >
+              Graduated: 2025
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--dark-charcoal);
+              "
+            >
+              Secondary School Certificate (SSC)
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              Ranipukur High School & College
+            </div>
+            <div style="font-size: 11px; color: var(--body-text)">
+              Science Group | GPA: 5.00 / 5.00 | Rangpur, BD
+            </div>
+          </div>
+
+          <!-- Languages -->
+          <h2 class="section-heading">Languages</h2>
+          <ul class="bullet-list">
+            <li><strong>Bangla:</strong> Native speaker</li>
+            <li>
+              <strong>English:</strong> Intermediate (Working Technical
+              Proficiency)
+            </li>
+          </ul>
+        </aside>
+
+        <!-- RIGHT MAIN CONTENT -->
+        <main class="main-content">
+          <!-- Header -->
+          <div class="header-box">
+            <div class="candidate-name">MD ARIFUZZAMAN HREDOY</div>
+            <div class="candidate-headline">DEVOPS ENGINEER</div>
+          </div>
+
+          <!-- Summary -->
+          <h2 class="section-heading">Summary</h2>
+          <p class="summary-text">
+            Results-driven Junior DevOps Engineer with four years of continuous
+            technical learning and hands-on practice (2022–Present), including
+            approximately three years of focused DevOps engineering and 12
+            months of agency software delivery and infrastructure experience at
+            Tech Tem. Practical expertise deploying and managing web
+            applications using Linux server administration, Docker
+            containerization, Docker Compose multi-tier stacks, CI/CD pipeline
+            automation (GitHub Actions, Jenkins), AWS cloud infrastructure (EC2,
+            VPC, IAM, S3), Infrastructure as Code with Terraform, and Nginx
+            reverse proxy routing with SSL/TLS encryption. Experienced with
+            container security scanning using Trivy, monitoring with Prometheus
+            and Grafana, and shell automation. Proven track record of
+            independently architecting, containerizing, and deploying
+            production-oriented web applications with validated health
+            endpoints. Motivated, disciplined, and dedicated to building
+            resilient, automated cloud infrastructure.
+          </p>
+
+          <!-- Experience -->
+          <h2 class="section-heading">Experience</h2>
+          <div class="entry-header">
+            <div class="entry-title">
+              Tech Tem
+              <span style="font-weight: normal; font-size: 11px"
+                >[<a
+                  href="https://github.com/arifuzzaman-hredoy/All-Dev-Project"
+                  target="_blank"
+                  style="color: var(--accent-blue)"
+                  >Agency Projects Archive</a
+                >]</span
+              >
+            </div>
+            <div class="entry-meta">August 2025 – July 2026 (12 Months)</div>
+          </div>
+          <div class="entry-submeta">Full-Stack Web Developer • Bangladesh</div>
+
+          <div
+            style="
+              font-size: 11.5px;
+              font-weight: 700;
+              color: var(--dark-charcoal);
+              margin-top: 4px;
+              margin-bottom: 2px;
+            "
+          >
+            Full-Time Employment Phase
+            <span
+              style="
+                font-weight: normal;
+                color: var(--muted-slate);
+                font-style: italic;
+              "
+              >| October 2025 – July 2026 (10 Months)</span
+            >
+          </div>
+          <ul class="bullet-list">
+            <li>
+              <strong>DevOps & VPS Administration:</strong> Administered,
+              configured, and hardened Linux VPS environments for client staging
+              and production deployments, ensuring service availability,
+              database connectivity, and Nginx reverse proxy routing.
+            </li>
+            <li>
+              <strong>Deployment Automation & Containers:</strong> Containerized
+              application components with Docker and participated in deployment
+              and infrastructure-related tasks across diverse client
+              deliverables.
+            </li>
+            <li>
+              <strong>Full-Stack Software Engineering:</strong> Developed and
+              maintained full-stack web applications using TypeScript, React,
+              Docker, PostgreSQL, and MariaDB according to client technical
+              requirements.
+            </li>
+            <li>
+              <strong>Client Coordination & Team Management:</strong> Managed
+              development teams, coordinated directly with clients to handle
+              project requirements and discussions, and delivered complete
+              commercial solutions on schedule.
+            </li>
+          </ul>
+
+          <div
+            style="
+              font-size: 11.5px;
+              font-weight: 700;
+              color: var(--dark-charcoal);
+              margin-top: 4px;
+              margin-bottom: 2px;
+            "
+          >
+            Internship Phase
+            <span
+              style="
+                font-weight: normal;
+                color: var(--muted-slate);
+                font-style: italic;
+              "
+              >| August 2025 – September 2025 (2 Months)</span
+            >
+          </div>
+          <ul class="bullet-list">
+            <li>
+              <strong>VPS Deployment & Automation:</strong> Learned and
+              implemented deployment automation and worked hands-on with VPS
+              server deployments and environment configurations.
+            </li>
+            <li>
+              <strong>CI/CD & Container Workflows:</strong> Learned and
+              implemented CI/CD workflows and worked with Docker-based
+              application deployments under senior engineering guidance.
+            </li>
+          </ul>
+          <div class="tech-stack-line">
+            <strong>Technologies:</strong> TypeScript, Docker, React,
+            PostgreSQL, MariaDB, Linux VPS, Nginx, CI/CD
+          </div>
+
+          <!-- Featured Projects (Project 1) -->
+          <h2 class="section-heading">Featured Projects</h2>
+          <div class="entry-header">
+            <div class="entry-title">TaskFlow DevOps Platform</div>
+            <div class="badge-links">
+              <a
+                href="https://github.com/arifuzzaman-hredoy/taskflow-devops-platform"
+                target="_blank"
+                >[GitHub Repository]</a
+              >
+              <a href="https://taskflow.oxytumzone.com/" target="_blank"
+                >[Live Website]</a
+              >
+            </div>
+          </div>
+          <div class="tech-stack-line">
+            Python, Flask, SQLAlchemy, PostgreSQL, Docker, Docker Compose,
+            Nginx, AWS EC2, Prometheus, Grafana
+          </div>
+          <ul class="bullet-list">
+            <li>
+              <strong>Cloud Architecture & Deployment:</strong> Independently
+              developed and deployed a Flask-based application on an AWS EC2
+              instance using Docker and Docker Compose for multi-container
+              orchestration.
+            </li>
+            <li>
+              <strong>Reverse Proxy & Security:</strong> Configured Nginx as a
+              reverse proxy with SSL/TLS certificate integration for HTTPS
+              enforcement and custom domain routing (taskflow.oxytumzone.com).
+            </li>
+            <li>
+              <strong>Database & Health Monitoring:</strong> Integrated
+              PostgreSQL database services with persistent volume storage,
+              implemented application health and readiness checks, and
+              configured Prometheus and Grafana for system monitoring.
+            </li>
+          </ul>
+        </main>
+      </div>
+    </div>
+
+    <!-- ==================== PAGE 2 ==================== -->
+    <div class="resume-sheet">
+      <div class="two-column-layout">
+        <!-- LEFT COLUMN -->
+        <aside class="sidebar">
+          <!-- Qualifications & Training -->
+          <h2 class="section-heading">Qualifications & Training</h2>
+          <div style="margin-bottom: 8px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              National Skills Certificate (Level 3)
+            </div>
+            <div style="font-size: 11px; color: var(--dark-charcoal)">
+              Web Design & Development for Freelancing<br />NSDA, Government of
+              Bangladesh (360 Hours)
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              National Skills Certificate (Level 3)
+            </div>
+            <div style="font-size: 11px; color: var(--dark-charcoal)">
+              Web Design<br />NSDA, Government of Bangladesh (360 Hours)
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              Cybersecurity for Professionals
+            </div>
+            <div style="font-size: 11px; color: var(--dark-charcoal)">
+              Byte Capsule (Oct 2023 – Apr 2024)<br />Final Assessment Passed |
+              Issued: Jun 2024
+            </div>
+          </div>
+
+          <div style="margin-bottom: 12px">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-navy);
+              "
+            >
+              DevOps Training
+            </div>
+            <div style="font-size: 11px; color: var(--dark-charcoal)">
+              Ostad (Cloud & DevOps Program)<br /><strong>Status:</strong>
+              Ongoing
+            </div>
+          </div>
+
+          <!-- Interests & Activities -->
+          <h2 class="section-heading">Interests & Activities</h2>
+          <div
+            style="
+              font-size: 11.5px;
+              font-weight: 700;
+              color: var(--primary-navy);
+              margin-bottom: 3px;
+            "
+          >
+            Competitive Debating:
+          </div>
+          <ul class="bullet-list">
+            <li>National Debate Festival 2025 — Debate Bangladesh</li>
+            <li>1st LSCRDC Inter-School & College Debate Festival 2025</li>
+            <li>The Northern Discourse 2026 — Asian Parliamentary Debate</li>
+          </ul>
+
+          <div
+            style="
+              font-size: 11.5px;
+              font-weight: 700;
+              color: var(--primary-navy);
+              margin-top: 6px;
+              margin-bottom: 3px;
+            "
+          >
+            Scouting & Community Service:
+          </div>
+          <ul class="bullet-list">
+            <li>31st Annual Group Camp & 4th Camporee 2026 (Rover Scout)</li>
+            <li>
+              Rangpur Divisional Conference 2026 — Bondhumohol Blood Donor
+              Society
+            </li>
+          </ul>
+
+          <!-- Core Strengths -->
+          <h2 class="section-heading">Core Strengths</h2>
+          <ul class="bullet-list">
+            <li>Clear Technical Communication</li>
+            <li>Teamwork & Cross-functional Collaboration</li>
+            <li>Public Speaking & Presentation</li>
+            <li>Logical & Analytical Problem-Solving</li>
+          </ul>
+        </aside>
+
+        <!-- RIGHT MAIN CONTENT -->
+        <main class="main-content">
+          <!-- Featured Projects (Continued) -->
+          <h2 class="section-heading" style="margin-top: 0">
+            Featured Projects (Continued)
+          </h2>
+
+          <!-- Project 02 -->
+          <div class="entry-header">
+            <div class="entry-title">My Project Plan</div>
+            <div class="badge-links">
+              <a
+                href="https://github.com/arifuzzaman-hredoy/My_Project_Plan"
+                target="_blank"
+                >[GitHub Repository]</a
+              >
+              <span
+                style="
+                  font-size: 11px;
+                  color: var(--muted-slate);
+                  font-weight: 600;
+                "
+                >Status: Ongoing</span
+              >
+            </div>
+          </div>
+          <div class="tech-stack-line">
+            Next.js, React, TypeScript, Tailwind CSS, PostgreSQL, Python, PM2,
+            Nginx
+          </div>
+          <ul class="bullet-list">
+            <li>
+              <strong>Modern Full-Stack Architecture:</strong> Independently
+              developed a personal administration and planning platform
+              utilizing Next.js, React, and TypeScript with PostgreSQL database
+              integration for structured planning data.
+            </li>
+            <li>
+              <strong>Automation & Process Management:</strong> Built Python
+              automation routines for recurring tasks and configured application
+              deployment and process management using PM2 and Nginx reverse
+              proxy.
+            </li>
+          </ul>
+
+          <!-- Project 03 -->
+          <div class="entry-header" style="margin-top: 10px">
+            <div class="entry-title">Life Planning Platform</div>
+            <div class="badge-links">
+              <a
+                href="https://github.com/arifuzzaman-hredoy/Life-Planning-Platform"
+                target="_blank"
+                >[GitHub Repository]</a
+              >
+              <a href="https://myplan.oxytumzone.com" target="_blank"
+                >[Live Website]</a
+              >
+            </div>
+          </div>
+          <div class="tech-stack-line">
+            Next.js, React, TypeScript, Node.js, Prisma, PostgreSQL, Docker,
+            Nginx, Terraform
+          </div>
+          <ul class="bullet-list">
+            <li>
+              <strong>Containerization & Web Infrastructure:</strong>
+              Independently developed and deployed a personal productivity
+              platform on a Linux VPS, containerizing application services with
+              Docker and securing web traffic with Nginx and HTTPS.
+            </li>
+            <li>
+              <strong>Data Layer & Infrastructure as Code:</strong> Integrated
+              PostgreSQL with Prisma ORM for type-safe data access and utilized
+              Terraform for declarative application infrastructure management.
+            </li>
+          </ul>
+
+          <!-- Core DevOps Competencies & Practices -->
+          <h2 class="section-heading">Core DevOps Competencies & Practices</h2>
+          <ul class="bullet-list">
+            <li>
+              <strong>Infrastructure as Code (IaC):</strong> Hands-on
+              provisioning and state management of cloud and VPS resources
+              utilizing Terraform and AWS CLI.
+            </li>
+            <li>
+              <strong>Containerization & Multi-Stage Builds:</strong> Packaging
+              production container images with Docker, optimizing layers, and
+              orchestrating multi-container services via Docker Compose.
+            </li>
+            <li>
+              <strong>Continuous Integration & Deployment:</strong> Authoring
+              automated CI/CD workflows using GitHub Actions and Jenkins for
+              build validation, testing, and automated VPS deployment.
+            </li>
+            <li>
+              <strong>Linux Hardening & Web Server Routing:</strong>
+              Administering Ubuntu Linux servers, managing systemd services, SSH
+              key hardening, UFW firewall configuration, and Nginx reverse proxy
+              with automated Let's Encrypt SSL/TLS certificates.
+            </li>
+            <li>
+              <strong>Observability & System Monitoring:</strong> Configuring
+              Prometheus metric collection scrapers, deploying Grafana
+              visualization dashboards, and implementing application health and
+              readiness probes for operational visibility.
+            </li>
+            <li>
+              <strong>DevSecOps & Image Scanning:</strong> Integrating container
+              vulnerability scanning using Trivy to detect CVEs and
+              misconfigurations within build pipelines.
+            </li>
+          </ul>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
