@@ -12,7 +12,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [loadingHtml, setLoadingHtml] = useState<boolean>(false);
   const [htmlError, setHtmlError] = useState<boolean>(false);
-  const [viewerMode, setViewerMode] = useState<"native" | "gdocs">("native");
+  const [viewerMode, setViewerMode] = useState<"image" | "native" | "gdocs">("image");
 
   useEffect(() => {
     setMounted(true);
@@ -99,11 +99,15 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
       setHtmlError(false);
     }
 
-    // Default viewer mode for PDF: if Cloudinary raw URL, default to Google Docs viewer
-    if (isPdf && activeUrl.includes("/raw/upload/")) {
-      setViewerMode("gdocs");
-    } else {
-      setViewerMode("native");
+    // Set viewer mode for PDF: if Cloudinary image upload, default to crisp page rendering
+    if (isPdf) {
+      if (activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/")) {
+        setViewerMode("image");
+      } else if (activeUrl.includes("/raw/upload/")) {
+        setViewerMode("gdocs");
+      } else {
+        setViewerMode("native");
+      }
     }
   }, [activeDoc, activeUrl, activeFormat, isHtml, isPdf]);
 
@@ -322,6 +326,24 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                 <div className="d-flex align-items-center gap-2">
                   {isPdf && (
                     <div className="d-none d-sm-flex align-items-center gap-1 p-1 me-2" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
+                      {activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") && (
+                        <button
+                          type="button"
+                          onClick={() => setViewerMode("image")}
+                          style={{
+                            fontSize: "11px",
+                            padding: "3px 8px",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            background: viewerMode === "image" ? "#14b8a6" : "transparent",
+                            color: viewerMode === "image" ? "#020617" : "#94a3b8",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Preview
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => setViewerMode("native")}
@@ -418,7 +440,15 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                     />
                   </div>
                 ) : isPdf ? (
-                  viewerMode === "native" ? (
+                  viewerMode === "image" && activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") ? (
+                    <div className="d-flex align-items-center justify-content-center p-3 p-md-4" style={{ minHeight: "65vh", background: "#0b1e22", overflow: "auto" }}>
+                      <img
+                        src={activeUrl.replace(/\.pdf$/i, ".png")}
+                        alt={activeTitle}
+                        style={{ maxWidth: "100%", maxHeight: "78vh", objectFit: "contain", borderRadius: "8px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}
+                      />
+                    </div>
+                  ) : viewerMode === "native" ? (
                     <iframe
                       src={`${activeUrl}#toolbar=0`}
                       className="resume-modal-iframe"

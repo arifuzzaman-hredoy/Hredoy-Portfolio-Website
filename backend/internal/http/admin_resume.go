@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -194,6 +195,13 @@ func (d HandlerDeps) adminResumeUpload(w http.ResponseWriter, r *http.Request) {
 		d.Logger.Error("cloudinary not configured for resume upload")
 		http.Redirect(w, r, "/super-admin/resume?error=cloudinary", http.StatusSeeOther)
 		return
+	}
+
+	// Persist a local backup copy if upload directory is available
+	if d.UploadDir != "" {
+		_ = os.MkdirAll(d.UploadDir, 0o755)
+		localFilename := fmt.Sprintf("%d_%s", time.Now().Unix(), filepath.Base(header.Filename))
+		_ = os.WriteFile(filepath.Join(d.UploadDir, localFilename), data, 0o644)
 	}
 
 	result, upErr := d.Cloudinary.Upload(data, filepath.Base(header.Filename), mime)
