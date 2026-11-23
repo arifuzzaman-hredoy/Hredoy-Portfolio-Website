@@ -90,7 +90,7 @@
 }
 
 .sec-10-home-7__grid .blog-card__thumb.project-thumb img {
-  object-fit: contain !important;
+  object-fit: cover !important;
 }
 
 [data-bs-theme="light"] .project-thumb {

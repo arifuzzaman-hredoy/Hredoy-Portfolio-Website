@@ -36,16 +36,18 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
       </div>
 
       <div className="sec-1-home-7__img-wrap">
-        <div className="anim-zoomin">
-          <CmsImage
-            data={data}
-            slot="hero-portrait"
-            className="sec-1-home-7__img"
-            width={1024}
-            height={1053}
-            loading="eager"
-            fetchPriority="high"
-          />
+        <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+          <div className="anim-zoomin">
+            <CmsImage
+              data={data}
+              slot="hero-portrait"
+              className="sec-1-home-7__img"
+              width={1024}
+              height={1053}
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
         </div>
         {floatChips.map((chip) => (
           <span key={chip.id} className="hero-float-chip" aria-hidden="true">

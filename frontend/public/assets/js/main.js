@@ -711,14 +711,12 @@
     // 19. anim-zoomin + gallery isotope
     if (typeof gsap !== 'undefined') {
         $('.anim-zoomin').each(function () {
-            // Add wrap <div>.
-            $(this).wrap('<div class="anim-zoomin-wrap"></div>');
-
-            // Add overflow hidden.
-            $('.anim-zoomin-wrap').css({ overflow: 'hidden' });
-
             let $this = $(this);
-            let $asiWrap = $this.parents('.anim-zoomin-wrap');
+            let $asiWrap = $this.closest('.anim-zoomin-wrap');
+            if (!$asiWrap.length) {
+                $this.wrap('<div class="anim-zoomin-wrap" style="overflow: hidden;"></div>');
+                $asiWrap = $this.closest('.anim-zoomin-wrap');
+            }
 
             if ($asiWrap.length && $this.length) {
                 let tp_ZoomIn = gsap.timeline({
@@ -728,7 +726,7 @@
                         markers: false,
                     },
                 });
-                tp_ZoomIn.from($this[0], { duration: 2, autoAlpha: 0, scale: 1.2, ease: Power2.easeOut, clearProps: 'all' });
+                tp_ZoomIn.from($this[0], { duration: 1.5, scale: 1.15, ease: Power2.easeOut, clearProps: 'all' });
             }
         });
     }

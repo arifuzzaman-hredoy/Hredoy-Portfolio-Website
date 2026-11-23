@@ -33,14 +33,16 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
 
           <div className="col-xl-3 col-lg-5 col-12 mx-lg-auto">
             <div className="sec-5-home-7__photo scroll-move-up">
-              <div className="fix anim-zoomin">
-                <CmsImage
-                  data={data}
-                  slot="technical-skills"
-                  className="w-100 object-fit-contain"
-                  width={900}
-                  loading="lazy"
-                />
+              <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+                <div className="fix anim-zoomin">
+                  <CmsImage
+                    data={data}
+                    slot="technical-skills"
+                    className="w-100 object-fit-contain"
+                    width={900}
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
           </div>

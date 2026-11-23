@@ -21,15 +21,20 @@ export default function MissionSection({ data }: { data: PortfolioData }) {
                 <ArrowDiagIcon />
               </div>
               <div className="sec-4-home-7__frame overflow-hidden mt-4 at-hover-parallax" data-parallax-strength="18" data-parallax-scale="1.05">
-                <CmsImage
-                  data={data}
-                  slot="mission-learning-path"
-                  className="sec-4-home-7__img fix anim-zoomin"
-                  width={900}
-                  height={1040}
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="anim-zoomin-wrap w-100 h-100 position-absolute start-0 top-0" style={{ overflow: "hidden" }}>
+                  <div className="anim-zoomin w-100 h-100 position-relative">
+                    <CmsImage
+                      data={data}
+                      slot="mission-learning-path"
+                      className="sec-4-home-7__img"
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                      width={900}
+                      height={1040}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="col-xl-9 col-lg-8 col-12">

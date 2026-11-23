@@ -12,14 +12,16 @@ export default function CtaSection({ data }: { data: PortfolioData }) {
         <div className="row align-items-center g-4 g-xxl-5">
           <div className="col-xxl-5 col-xl-6 col-12">
             <div className="sec-7-home-7__media">
-              <div className="fix anim-zoomin">
-                <CmsImage
-                  data={data}
-                  slot="cta-connect"
-                  width={1500}
-                  height={1000}
-                  loading="lazy"
-                />
+              <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+                <div className="fix anim-zoomin">
+                  <CmsImage
+                    data={data}
+                    slot="cta-connect"
+                    width={1500}
+                    height={1000}
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
           </div>

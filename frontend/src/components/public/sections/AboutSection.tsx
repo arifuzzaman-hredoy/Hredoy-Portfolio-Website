@@ -30,8 +30,10 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
           <div className="sec-2-home-7__row">
             <div className="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-1">
               <div className="sec-2-home-7__img-wrap">
-                <div className="thumb fix anim-zoomin">
-                  <CmsImage data={data} slot="about-linux" dataSpeed=".8" width={1000} height={1080} />
+                <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+                  <div className="thumb fix anim-zoomin">
+                    <CmsImage data={data} slot="about-linux" dataSpeed=".8" width={1000} height={1080} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -57,8 +59,10 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
           <div className="sec-2-home-7__row">
             <div className="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-2">
               <div className="sec-2-home-7__img-wrap ms-2">
-                <div className="thumb fix anim-zoomin">
-                  <CmsImage data={data} slot="about-cloud" dataSpeed=".8" width={1000} height={1080} />
+                <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+                  <div className="thumb fix anim-zoomin">
+                    <CmsImage data={data} slot="about-cloud" dataSpeed=".8" width={1000} height={1080} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -93,8 +97,10 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
             </div>
             <div className="sec-2-home-7__cell sec-2-home-7__cell--img sec-2-home-7__col-3">
               <div className="sec-2-home-7__img-wrap ms-2">
-                <div className="thumb fix anim-zoomin">
-                  <CmsImage data={data} slot="about-cicd" dataSpeed=".8" width={1000} height={1080} />
+                <div className="anim-zoomin-wrap" style={{ overflow: "hidden" }}>
+                  <div className="thumb fix anim-zoomin">
+                    <CmsImage data={data} slot="about-cicd" dataSpeed=".8" width={1000} height={1080} />
+                  </div>
                 </div>
               </div>
             </div>
