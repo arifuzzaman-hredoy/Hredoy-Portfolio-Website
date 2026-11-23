@@ -2045,6 +2045,9 @@ main {
     line-height: 1.2 !important;
     margin-bottom: 10px !important;
     text-align: left !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
   }
 
   .sec-2-home-7__feature-desc,

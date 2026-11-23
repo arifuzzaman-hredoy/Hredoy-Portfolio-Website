@@ -44,7 +44,7 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
                     <path fillRule="evenodd" clipRule="evenodd" d="M40 20V0H20H0V20V40H20L40 20ZM40 20H20V40L0 20L20 0L40 20Z" fill="currentColor" />
                   </svg>
                 </div>
-                <h3 className="sec-2-home-7__feature-title at-char-animation">{val(data, "about.feature.1.title")}</h3>
+                <h3 className="sec-2-home-7__feature-title">{val(data, "about.feature.1.title")}</h3>
                 <p className="sec-2-home-7__feature-desc mb-0 at_fade_anim">{val(data, "about.feature.1.desc")}</p>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
                     <path d="M8 20L0 12V0H12L20 8H8V20Z" fill="currentColor" />
                   </svg>
                 </div>
-                <h3 className="sec-2-home-7__feature-title at-char-animation">{val(data, "about.feature.2.title")}</h3>
+                <h3 className="sec-2-home-7__feature-title">{val(data, "about.feature.2.title")}</h3>
                 <p className="sec-2-home-7__feat-desc mb-0 at_fade_anim" data-delay="0.1">{val(data, "about.feature.2.desc")}</p>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function AboutSection({ data }: { data: PortfolioData }) {
                     <path fillRule="evenodd" clipRule="evenodd" d="M39.5 0.5L26.5 13.5L13.5 0.5L0.5 13.5V39.5L13.5 26.5L26.5 39.5L39.5 26.5V0.5ZM13.5 26.5V13.5H26.5V26.5H13.5Z" fill="currentColor" />
                   </svg>
                 </div>
-                <h3 className="sec-2-home-7__feature-title at-char-animation">{val(data, "about.feature.3.title")}</h3>
+                <h3 className="sec-2-home-7__feature-title">{val(data, "about.feature.3.title")}</h3>
                 <p className="sec-2-home-7__feature-desc mb-0 at_fade_anim">{val(data, "about.feature.3.desc")}</p>
               </div>
             </div>

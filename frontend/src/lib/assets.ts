@@ -1,7 +1,7 @@
 // ASSET_VERSION ensures all static assets (CSS, JS) carry a cache-busting query parameter.
 // When updated, EVERY browser (desktop, mobile, tablet) and CDN edge node is GUARANTEED
 // to bypass its cache and fetch the latest assets immediately.
-export const ASSET_VERSION = "20261124-v14";
+export const ASSET_VERSION = "20261124-v15";
 
 export function assetUrl(path: string): string {
   if (!path) return "";
