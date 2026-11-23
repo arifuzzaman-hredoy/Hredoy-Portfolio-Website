@@ -789,16 +789,37 @@ main {
   contain: paint !important;
 }
 
-/* Light mode for Marquee Ticker: white background, black text, black star */
+/* Marquee in Dark Mode: bg color dark mode's theme color, text color white */
+.sec-9-home-7,
+.sec-9-home-7__ticker,
+.sec-9-home-7__row {
+  background: var(--at-neutral-0, #0c0c0c) !important;
+}
+
+.sec-9-home-7 {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.sec-9-home-7__item {
+  color: #ffffff !important;
+}
+
+.sec-9-home-7__sep img,
+.sec-9-home-7__sep svg {
+  filter: brightness(1) !important;
+}
+
+/* Marquee in Light Mode: bg color light mode's theme color (#f8fafc / var(--at-neutral-0)), text color black */
 [data-bs-theme="light"] .sec-9-home-7,
 [data-bs-theme="light"] .sec-9-home-7__ticker,
 [data-bs-theme="light"] .sec-9-home-7__row {
-  background: #ffffff !important;
+  background: var(--at-neutral-0, #f8fafc) !important;
 }
 
 [data-bs-theme="light"] .sec-9-home-7 {
-  border-top: 1px solid #e2e8f0 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  border-top: 1px solid var(--at-neutral-100, #e2e8f0) !important;
+  border-bottom: 1px solid var(--at-neutral-100, #e2e8f0) !important;
 }
 
 [data-bs-theme="light"] .sec-9-home-7__item {

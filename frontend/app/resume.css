@@ -178,8 +178,8 @@
   pointer-events: auto !important;
   padding: 12px 24px;
   border-radius: 0 !important;
-  background: rgba(255, 255, 255, 0.12) !important;
-  border: 1px solid rgba(255, 255, 255, 0.32) !important;
+  background: var(--at-neutral-0, #0c0c0c) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #ffffff !important;
   font-size: 14px;
   font-weight: 600;
@@ -197,7 +197,7 @@
 }
 
 .btn-resume-download:hover {
-  background: rgba(255, 255, 255, 0.24) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.6) !important;
   color: #ffffff !important;
   transform: translateY(-2px);
@@ -205,20 +205,20 @@
 }
 
 [data-bs-theme="light"] .btn-resume-download {
-  background: #ffffff !important;
+  background: var(--at-neutral-0, #f8fafc) !important;
   border: 1px solid #cbd5e1 !important;
-  color: #0f172a !important;
+  color: #000000 !important;
 }
 
 [data-bs-theme="light"] .btn-resume-download svg {
-  color: #0f172a !important;
-  stroke: #0f172a !important;
+  color: #000000 !important;
+  stroke: #000000 !important;
 }
 
 [data-bs-theme="light"] .btn-resume-download:hover {
-  background: #f1f5f9 !important;
+  background: #e2e8f0 !important;
   border-color: #94a3b8 !important;
-  color: #0f172a !important;
+  color: #000000 !important;
 }
 
 /* ==========================================================================
