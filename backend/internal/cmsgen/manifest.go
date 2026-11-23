@@ -189,6 +189,8 @@ var Manifest = []Entry{
 		Hint:    "Local path (/assets/docs/...) or external cloud link (Google Drive, Cloudinary, AWS S3, etc.)"},
 	{Key: "resume.cv.file_size", Label: "CV file size", Group: "Resume & CV", Type: TypeText,
 		Default: "1.2 MB"},
+	{Key: "resume.cv.pages", Label: "CV page count", Group: "Resume & CV", Type: TypeText,
+		Default: "4"},
 	{Key: "resume.resume.title", Label: "Resume card title", Group: "Resume & CV", Type: TypeText,
 		Default: "DevOps Engineer Resume"},
 	{Key: "resume.resume.badge", Label: "Resume badge", Group: "Resume & CV", Type: TypeText,
@@ -204,6 +206,8 @@ var Manifest = []Entry{
 		Hint:    "Local path (/assets/docs/...) or external cloud link (Google Drive, Cloudinary, AWS S3, etc.)"},
 	{Key: "resume.resume.file_size", Label: "Resume file size", Group: "Resume & CV", Type: TypeText,
 		Default: "240 KB"},
+	{Key: "resume.resume.pages", Label: "Resume page count", Group: "Resume & CV", Type: TypeText,
+		Default: "1"},
 
 	// --- Contact ---------------------------------------------------------
 	{Key: "contact.eyebrow", Label: "Eyebrow", Group: "Contact", Type: TypeText, Default: "Contact Me"},

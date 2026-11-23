@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -39,6 +40,7 @@ type resumeDocView struct {
 	Updated  string
 	FileURL  string
 	FileSize string
+	Pages    string
 }
 
 type resumeUploadItem struct {
@@ -92,6 +94,7 @@ func (d HandlerDeps) adminResume(w http.ResponseWriter, r *http.Request) {
 		Updated:  valMap["resume.cv.updated"],
 		FileURL:  valMap["resume.cv.file_url"],
 		FileSize: valMap["resume.cv.file_size"],
+		Pages:    valMap["resume.cv.pages"],
 	}
 	if cv.Title == "" {
 		cv.Title = "Curriculum Vitae (CV)"
@@ -109,6 +112,7 @@ func (d HandlerDeps) adminResume(w http.ResponseWriter, r *http.Request) {
 		Updated:  valMap["resume.resume.updated"],
 		FileURL:  valMap["resume.resume.file_url"],
 		FileSize: valMap["resume.resume.file_size"],
+		Pages:    valMap["resume.resume.pages"],
 	}
 	if resume.Title == "" {
 		resume.Title = "DevOps Engineer Resume"
@@ -239,6 +243,12 @@ func (d HandlerDeps) adminResumeUpload(w http.ResponseWriter, r *http.Request) {
 		Key:   prefix + "updated",
 		Value: updatedLabel,
 	})
+	if result.Pages > 0 {
+		_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+			Key:   prefix + "pages",
+			Value: strconv.Itoa(result.Pages),
+		})
+	}
 
 	// Also record into media table for history / listing
 	docName := "Curriculum Vitae (CV)"
@@ -316,6 +326,12 @@ func (d HandlerDeps) adminResumeSetActive(w http.ResponseWriter, r *http.Request
 		Key:   prefix + "updated",
 		Value: updatedLabel,
 	})
+	if pages := strings.TrimSpace(r.FormValue("pages")); pages != "" {
+		_ = d.Queries.UpdateContentBlockValue(ctx, db.UpdateContentBlockValueParams{
+			Key:   prefix + "pages",
+			Value: pages,
+		})
+	}
 
 	d.Logger.Info("activated resume document from history", "target", target, "url", fileURL, "format", formatLabel)
 	http.Redirect(w, r, "/super-admin/resume?saved=1", http.StatusSeeOther)

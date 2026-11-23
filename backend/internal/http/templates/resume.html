@@ -98,8 +98,8 @@
             <strong>{{.Filename}}</strong>
             <div class="muted" style="font-size: 12px;">{{.Alt}}</div>
           </td>
-          <td>{{.FormattedSize}}</td>
-          <td class="time">{{.CreatedAt.Format "02 Jan 2006, 15:04"}}</td>
+          <td>{{if .FormattedSize}}{{.FormattedSize}}{{else}}-{{end}}</td>
+          <td class="time">{{if not .CreatedAt.IsZero}}{{.CreatedAt.Format "02 Jan 2006, 15:04"}}{{else}}-{{end}}</td>
           <td>
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
               <a href="{{.Path}}" target="_blank" rel="noopener" class="btn-sm" style="display: inline-flex; align-items: center; text-decoration: none;">Open &rarr;</a>

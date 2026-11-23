@@ -38,6 +38,7 @@ type UploadResult struct {
 	Bytes        int64  `json:"bytes"`
 	Width        int    `json:"width"`
 	Height       int    `json:"height"`
+	Pages        int    `json:"pages"`
 }
 
 // New returns a Client. Pass empty strings to disable Cloudinary integration.

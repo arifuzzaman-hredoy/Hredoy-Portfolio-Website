@@ -6,6 +6,17 @@ import { val, type PortfolioData } from "@/lib/portfolio-data";
 import { assetUrl } from "@/lib/assets";
 import { ArrowDiagIcon } from "../Icons";
 
+function getCloudinaryPageUrl(url: string, page: number): string {
+  const pngUrl = url.replace(/\.pdf$/i, ".png");
+  if (pngUrl.includes("/image/upload/")) {
+    if (/\/image\/upload\/pg_\d+\//.test(pngUrl)) {
+      return pngUrl.replace(/\/image\/upload\/pg_\d+\//, `/image/upload/pg_${page}/`);
+    }
+    return pngUrl.replace("/image/upload/", `/image/upload/pg_${page}/`);
+  }
+  return pngUrl;
+}
+
 export default function ResumeSection({ data }: { data: PortfolioData }) {
   const [activeDoc, setActiveDoc] = useState<"cv" | "resume" | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -14,6 +25,8 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const [htmlError, setHtmlError] = useState<boolean>(false);
   const [viewerMode, setViewerMode] = useState<"image" | "native" | "gdocs">("image");
   const [fitMode, setFitMode] = useState<"width" | "page">("width");
+  const [pdfPages, setPdfPages] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     setMounted(true);
@@ -35,6 +48,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const cvUpdated = val(data, "resume.cv.updated") || "Updated Nov 2026";
   const cvUrl = assetUrl(val(data, "resume.cv.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-CV.pdf");
   const cvSize = val(data, "resume.cv.file_size") || "1.2 MB";
+  const cvPages = parseInt(val(data, "resume.cv.pages") || "4", 10) || 4;
 
   // Resume details
   const resumeTitle = val(data, "resume.resume.title") || "DevOps Engineer Resume";
@@ -46,6 +60,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const resumeUpdated = val(data, "resume.resume.updated") || "Updated Nov 2026";
   const resumeUrl = assetUrl(val(data, "resume.resume.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-Resume.pdf");
   const resumeSize = val(data, "resume.resume.file_size") || "240 KB";
+  const resumePages = parseInt(val(data, "resume.resume.pages") || "1", 10) || 1;
 
   // Active document for modal preview
   const activeTitle = activeDoc === "cv" ? cvTitle : resumeTitle;
@@ -53,6 +68,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const activeFormat = activeDoc === "cv" ? cvFormat : resumeFormat;
   const activeSize = activeDoc === "cv" ? cvSize : resumeSize;
   const activeBadge = activeDoc === "cv" ? cvBadge : resumeBadge;
+  const initialConfiguredPages = activeDoc === "cv" ? cvPages : resumePages;
 
   const isHtml =
     (activeFormat || "").toUpperCase() === "HTML" ||
@@ -67,6 +83,52 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
   const isImage =
     ["PNG", "JPG", "JPEG", "WEBP", "SVG", "GIF"].includes((activeFormat || "").toUpperCase()) ||
     /\.(png|jpe?g|webp|svg|gif)$/i.test(activeUrl || "");
+
+  const isCloudinaryImageUpload =
+    activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/");
+
+  // Dynamically probe for multi-page PDF count in Cloudinary
+  useEffect(() => {
+    if (!activeDoc || !activeUrl) {
+      setPdfPages(1);
+      setCurrentPage(1);
+      return;
+    }
+
+    if (isPdf && isCloudinaryImageUpload) {
+      // Start with configured count (default 4 for CV, 1 for Resume)
+      const count = initialConfiguredPages > 0 ? initialConfiguredPages : 1;
+      setPdfPages(count);
+      setCurrentPage(1);
+
+      // Probe beyond configured count or verify availability
+      let cancelled = false;
+      const probePage = (page: number) => {
+        if (cancelled || page > 15) return;
+        const img = new Image();
+        img.onload = () => {
+          if (cancelled) return;
+          setPdfPages((prev) => Math.max(prev, page));
+          probePage(page + 1);
+        };
+        img.onerror = () => {
+          if (cancelled) return;
+          // Page not found; if page was higher than current max, stop
+        };
+        img.src = getCloudinaryPageUrl(activeUrl, page);
+      };
+
+      // Probe pages 1 through 10
+      probePage(1);
+
+      return () => {
+        cancelled = true;
+      };
+    } else {
+      setPdfPages(1);
+      setCurrentPage(1);
+    }
+  }, [activeDoc, activeUrl, isPdf, isCloudinaryImageUpload, initialConfiguredPages]);
 
   // Load HTML text if previewing an HTML document
   useEffect(() => {
@@ -95,30 +157,63 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
               `$&<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">`
             );
           }
-          // Inject mobile responsive stylesheet overrides into the embedded document
+          // Inject comprehensive mobile responsive stylesheet overrides
           const responsiveOverrides = `
             <style id="mobile-viewport-responsive">
               @media (max-width: 768px) {
                 html, body {
-                  padding: 8px !important;
+                  padding: 8px 6px !important;
                   margin: 0 !important;
                   width: 100% !important;
                   max-width: 100% !important;
                   overflow-x: hidden !important;
                   font-size: 13px !important;
+                  background: #f8fafc !important;
+                  box-sizing: border-box !important;
                 }
                 .resume-sheet, .container, .page, [class*="resume"], [class*="sheet"] {
                   max-width: 100% !important;
                   width: 100% !important;
-                  padding: 14px 10px !important;
-                  margin: 0 auto !important;
+                  padding: 16px 12px !important;
+                  margin: 0 0 16px 0 !important;
                   box-sizing: border-box !important;
+                  border-width: 2px !important;
                   box-shadow: none !important;
-                  border-width: 1px !important;
                 }
-                table {
+                .two-column-layout, [class*="column-layout"], [class*="two-col"], [class*="grid-2"] {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  grid-template-columns: 1fr !important;
+                  width: 100% !important;
+                  gap: 16px !important;
+                }
+                .main-content, [class*="main-content"] {
+                  order: 1 !important;
                   width: 100% !important;
                   max-width: 100% !important;
+                  padding-left: 0 !important;
+                  padding-right: 0 !important;
+                }
+                .sidebar, [class*="sidebar"] {
+                  order: 2 !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  border-right: none !important;
+                  border-top: 1.5px solid var(--border-gray, #cbd5e1) !important;
+                  padding-right: 0 !important;
+                  padding-top: 16px !important;
+                  margin-top: 8px !important;
+                }
+                table, tr, td, th {
+                  max-width: 100% !important;
+                  box-sizing: border-box !important;
+                  word-break: break-word !important;
+                }
+                * {
+                  max-width: 100% !important;
+                  box-sizing: border-box !important;
+                  word-break: break-word !important;
+                  overflow-wrap: break-word !important;
                 }
               }
             </style>
@@ -141,9 +236,9 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
       setHtmlError(false);
     }
 
-    // Set viewer mode for PDF: if Cloudinary image upload, default to crisp page rendering
+    // Set viewer mode for PDF: if Cloudinary image upload, default to crisp image rendering
     if (isPdf) {
-      if (activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/")) {
+      if (isCloudinaryImageUpload) {
         setViewerMode("image");
       } else if (activeUrl.includes("/raw/upload/")) {
         setViewerMode("gdocs");
@@ -151,7 +246,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
         setViewerMode("native");
       }
     }
-  }, [activeDoc, activeUrl, activeFormat, isHtml, isPdf]);
+  }, [activeDoc, activeUrl, activeFormat, isHtml, isPdf, isCloudinaryImageUpload]);
 
   // Handle ESC key to close modal and strictly lock background website scrolling
   useEffect(() => {
@@ -184,6 +279,15 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
       };
     }
   }, [activeDoc]);
+
+  // Jump smoothly to a specific page
+  const scrollToPage = (pageNum: number) => {
+    setCurrentPage(pageNum);
+    const el = document.getElementById(`resume-page-${pageNum}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <section className="resume-cv-section pt-120 pb-120" id="resume">
@@ -376,92 +480,17 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
             >
               {/* Modal Head */}
               <div className="resume-modal-head p-3 p-md-4">
+                {/* Main Row: Title, Badges, and Action Icons */}
                 <div className="d-flex align-items-center justify-content-between gap-2">
                   <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
                     <h3 className="resume-modal-title mb-0 text-truncate" id="resume-modal-title">
                       {activeTitle}
                     </h3>
-                    <span className="resume-badge resume-badge--accent d-none d-md-inline-block text-truncate">
+                    <span className="resume-badge resume-badge--accent d-none d-sm-inline-block text-truncate">
                       {activeBadge}
                     </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 flex-shrink-0">
-                    {/* Fit Mode Toggle for Desktop */}
-                    {((isPdf && viewerMode === "image") || isImage) && (
-                      <button
-                        type="button"
-                        onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
-                        className="d-none d-md-inline-flex align-items-center gap-1 p-1 px-2 me-1"
-                        style={{
-                          background: "rgba(255,255,255,0.08)",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          borderRadius: "8px",
-                          fontSize: "11px",
-                          fontWeight: 600,
-                          color: "#94a3b8",
-                          cursor: "pointer",
-                        }}
-                        title={fitMode === "width" ? "Switch to Fit Page" : "Switch to Fit Width (Scrollable)"}
-                      >
-                        <span>{fitMode === "width" ? "📜 Full Width (Scroll)" : "🔍 Fit Page"}</span>
-                      </button>
-                    )}
-
-                    {isPdf && (
-                      <div className="d-none d-md-flex align-items-center gap-1 p-1 me-1" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
-                        {activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") && (
-                          <button
-                            type="button"
-                            onClick={() => setViewerMode("image")}
-                            style={{
-                              fontSize: "11px",
-                              padding: "3px 8px",
-                              border: "none",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              background: viewerMode === "image" ? "#14b8a6" : "transparent",
-                              color: viewerMode === "image" ? "#020617" : "#94a3b8",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Preview
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => setViewerMode("native")}
-                          style={{
-                            fontSize: "11px",
-                            padding: "3px 8px",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            background: viewerMode === "native" ? "#14b8a6" : "transparent",
-                            color: viewerMode === "native" ? "#020617" : "#94a3b8",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Native PDF
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setViewerMode("gdocs")}
-                          style={{
-                            fontSize: "11px",
-                            padding: "3px 8px",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            background: viewerMode === "gdocs" ? "#14b8a6" : "transparent",
-                            color: viewerMode === "gdocs" ? "#020617" : "#94a3b8",
-                            fontWeight: 600,
-                          }}
-                        >
-                          Docs Viewer
-                        </button>
-                      </div>
-                    )}
-
                     <a
                       href={activeUrl}
                       target="_blank"
@@ -490,36 +519,89 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                   </div>
                 </div>
 
-                {/* Mobile subheader row */}
-                <div className="d-flex d-md-none align-items-center justify-content-between gap-2 mt-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span className="resume-badge resume-badge--accent text-truncate" style={{ maxWidth: "210px", fontSize: "10px" }}>
-                    {activeBadge}
-                  </span>
-                  <div className="d-flex align-items-center gap-1">
+                {/* Unified Responsive Controls Toolbar (Available on Phone, Tablet & Desktop) */}
+                <div className="resume-modal-toolbar mt-3 pt-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                  {/* Left: View Mode Switcher */}
+                  <div className="d-flex align-items-center gap-1 flex-wrap">
+                    {isPdf && (
+                      <div className="resume-segmented-control d-inline-flex align-items-center p-1">
+                        {isCloudinaryImageUpload && (
+                          <button
+                            type="button"
+                            onClick={() => setViewerMode("image")}
+                            className={`resume-segmented-btn ${viewerMode === "image" ? "resume-segmented-btn--active" : ""}`}
+                            title="High-definition multi-page view"
+                          >
+                            <span>🖼️ Preview</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setViewerMode("native")}
+                          className={`resume-segmented-btn ${viewerMode === "native" ? "resume-segmented-btn--active" : ""}`}
+                          title="Browser native PDF reader"
+                        >
+                          <span>📄 PDF</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setViewerMode("gdocs")}
+                          className={`resume-segmented-btn ${viewerMode === "gdocs" ? "resume-segmented-btn--active" : ""}`}
+                          title="Google Docs document viewer"
+                        >
+                          <span>🌐 Docs</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Fit Mode Toggle for Image View */}
                     {((isPdf && viewerMode === "image") || isImage) && (
                       <button
                         type="button"
                         onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
-                        style={{
-                          fontSize: "10px",
-                          padding: "2px 8px",
-                          border: "1px solid rgba(255,255,255,0.15)",
-                          borderRadius: "6px",
-                          background: "rgba(255,255,255,0.06)",
-                          color: "#14b8a6",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        }}
+                        className="resume-toolbar-btn d-inline-flex align-items-center gap-1"
+                        title={fitMode === "width" ? "Switch to Fit Page" : "Switch to Full Width"}
                       >
-                        {fitMode === "width" ? "Fit Width" : "Fit Page"}
+                        <span>{fitMode === "width" ? "📜 Full Width" : "🔍 Fit Page"}</span>
                       </button>
                     )}
                   </div>
+
+                  {/* Right: Multi-Page Navigator (when PDF in image mode and multiple pages exist) */}
+                  {isPdf && viewerMode === "image" && pdfPages > 1 && (
+                    <div className="resume-page-nav d-inline-flex align-items-center gap-1">
+                      <span className="resume-page-nav-label">
+                        {pdfPages} Pages
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const el = document.getElementById("resume-viewport");
+                          if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="resume-page-jump-btn"
+                        title="Scroll to Top"
+                      >
+                        All
+                      </button>
+                      {Array.from({ length: pdfPages }, (_, i) => i + 1).map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => scrollToPage(num)}
+                          className={`resume-page-jump-btn ${currentPage === num ? "resume-page-jump-btn--active" : ""}`}
+                          title={`Jump to Page ${num}`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Modal Body / Viewer */}
-              <div className="resume-modal-body p-0">
+              <div className="resume-modal-body p-0" id="resume-viewport">
                 {isHtml ? (
                   loadingHtml ? (
                     <div className="d-flex flex-column align-items-center justify-content-center p-5 text-center" style={{ minHeight: "65vh" }}>
@@ -552,13 +634,37 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                     />
                   </div>
                 ) : isPdf ? (
-                  viewerMode === "image" && activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") ? (
+                  viewerMode === "image" && isCloudinaryImageUpload ? (
                     <div className="resume-document-viewport">
-                      <img
-                        src={activeUrl.replace(/\.pdf$/i, ".png")}
-                        alt={activeTitle}
-                        className={`resume-document-img ${fitMode === "page" ? "resume-document-img--fit-page" : ""}`}
-                      />
+                      {Array.from({ length: pdfPages }, (_, i) => i + 1).map((pageNum) => (
+                        <div
+                          key={pageNum}
+                          className="resume-document-page mb-4"
+                          id={`resume-page-${pageNum}`}
+                        >
+                          <div className="resume-page-header d-flex align-items-center justify-content-between mb-2 px-1">
+                            <span className="resume-page-badge">
+                              Page {pageNum} of {pdfPages}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const el = document.getElementById("resume-viewport");
+                                if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                              className="resume-page-top-link"
+                            >
+                              ↑ Top
+                            </button>
+                          </div>
+                          <img
+                            src={getCloudinaryPageUrl(activeUrl, pageNum)}
+                            alt={`${activeTitle} - Page ${pageNum} of ${pdfPages}`}
+                            className={`resume-document-img ${fitMode === "page" ? "resume-document-img--fit-page" : ""}`}
+                            loading={pageNum === 1 ? "eager" : "lazy"}
+                          />
+                        </div>
+                      ))}
                     </div>
                   ) : viewerMode === "native" ? (
                     <iframe
@@ -587,6 +693,9 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                 <div className="d-flex align-items-center justify-content-between gap-3 resume-modal-foot-inner">
                   <span className="resume-modal-meta-text">
                     Format: <strong>{activeFormat}</strong> &middot; Size: <strong>{activeSize}</strong>
+                    {isPdf && viewerMode === "image" && pdfPages > 1 && (
+                      <span> &middot; <strong>{pdfPages} Pages</strong></span>
+                    )}
                   </span>
                   <div className="d-flex align-items-center gap-2 resume-modal-foot-actions">
                     <button

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"bytes"
 	"embed"
 	"html/template"
 	"io/fs"
@@ -41,16 +42,18 @@ func renderPage(w http.ResponseWriter, r *http.Request, page string, data map[st
 	if token := csrfTokenFromContext(r.Context()); token != "" {
 		data["csrf"] = token
 	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tpl, err := pageTemplate(page)
 	if err != nil {
 		http.Error(w, "template error", http.StatusInternalServerError)
 		return
 	}
-	if err := tpl.ExecuteTemplate(w, "layout", data); err != nil {
+	var buf bytes.Buffer
+	if err := tpl.ExecuteTemplate(&buf, "layout", data); err != nil {
 		http.Error(w, "render error", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = buf.WriteTo(w)
 }
 
 // adminStatic serves the embedded admin stylesheet.

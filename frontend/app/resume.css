@@ -380,6 +380,181 @@
 }
 
 /* Document Viewport & Image inside Modal Body */
+.resume-modal-toolbar {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-bs-theme="light"] .resume-modal-toolbar {
+  border-top: 1px solid #e2e8f0;
+}
+
+.resume-segmented-control {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  gap: 2px;
+}
+
+[data-bs-theme="light"] .resume-segmented-control {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.resume-segmented-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  color: #94a3b8;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+[data-bs-theme="light"] .resume-segmented-btn {
+  color: #475569;
+}
+
+.resume-segmented-btn--active {
+  background: #14b8a6 !important;
+  color: #020617 !important;
+  font-weight: 700;
+}
+
+.resume-toolbar-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.resume-toolbar-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+[data-bs-theme="light"] .resume-toolbar-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-bs-theme="light"] .resume-toolbar-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.resume-page-nav {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+[data-bs-theme="light"] .resume-page-nav {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.resume-page-nav-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  padding: 0 4px;
+}
+
+[data-bs-theme="light"] .resume-page-nav-label {
+  color: #64748b;
+}
+
+.resume-page-jump-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.resume-page-jump-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.resume-page-jump-btn--active {
+  background: #14b8a6 !important;
+  color: #020617 !important;
+  font-weight: 700;
+}
+
+[data-bs-theme="light"] .resume-page-jump-btn {
+  color: #475569;
+}
+
+[data-bs-theme="light"] .resume-page-jump-btn--active {
+  background: #0f766e !important;
+  color: #ffffff !important;
+}
+
+/* Multi-Page Document Page Container */
+.resume-document-page {
+  width: 100%;
+  max-width: 840px;
+  margin: 0 auto 28px auto;
+  position: relative;
+}
+
+.resume-document-page:last-child {
+  margin-bottom: 0;
+}
+
+.resume-page-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 4px;
+}
+
+[data-bs-theme="light"] .resume-page-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.resume-page-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #14b8a6;
+}
+
+[data-bs-theme="light"] .resume-page-badge {
+  color: #0f766e;
+}
+
+.resume-page-top-link {
+  font-size: 11px;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.resume-page-top-link:hover {
+  color: #14b8a6;
+}
+
 .resume-document-viewport {
   width: 100%;
   min-height: 100%;
@@ -387,7 +562,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 32px 16px 64px;
+  padding: 28px 16px 64px;
   box-sizing: border-box;
   background: #0b1e22;
   overflow-y: visible;
@@ -523,6 +698,36 @@
   .resume-document-viewport {
     padding: 8px 4px 40px !important;
     background: #020617 !important;
+  }
+  .resume-modal-toolbar {
+    margin-top: 8px !important;
+    padding-top: 6px !important;
+    gap: 6px !important;
+  }
+  .resume-segmented-control {
+    padding: 1px !important;
+  }
+  .resume-segmented-btn {
+    font-size: 10px !important;
+    padding: 3px 7px !important;
+  }
+  .resume-toolbar-btn {
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+  }
+  .resume-page-nav {
+    padding: 2px 4px !important;
+  }
+  .resume-page-nav-label {
+    font-size: 10px !important;
+    padding: 0 2px !important;
+  }
+  .resume-page-jump-btn {
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+  }
+  .resume-document-page {
+    margin-bottom: 16px !important;
   }
   .resume-document-img {
     width: 100% !important;
