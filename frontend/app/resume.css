@@ -35,7 +35,7 @@
 .resume-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  border-radius: 0 !important;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   z-index: 3;
@@ -62,7 +62,7 @@
 .resume-card__icon-box {
   width: 56px;
   height: 56px;
-  border-radius: 14px;
+  border-radius: 0 !important;
   background: rgba(20, 184, 166, 0.12);
   border: 1px solid rgba(20, 184, 166, 0.3);
   color: #14b8a6;
@@ -144,7 +144,7 @@
   z-index: 10;
   pointer-events: auto !important;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 0 !important;
   background: rgba(20, 184, 166, 0.12);
   border: 1px solid rgba(20, 184, 166, 0.35);
   color: #14b8a6;
@@ -173,33 +173,52 @@
 }
 
 .btn-resume-download {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
   padding: 12px 24px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--at-common-white, #ffffff);
+  border-radius: 0 !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.32) !important;
+  color: #ffffff !important;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-resume-download svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 .btn-resume-download:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 [data-bs-theme="light"] .btn-resume-download {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-bs-theme="light"] .btn-resume-download svg {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
 }
 
 [data-bs-theme="light"] .btn-resume-download:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
 }
 
 /* ==========================================================================
@@ -232,7 +251,7 @@
   max-height: 880px;
   background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
+  border-radius: 0 !important;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
@@ -347,7 +366,7 @@
 
 .btn-resume-modal-secondary {
   padding: 8px 18px;
-  border-radius: 8px;
+  border-radius: 0 !important;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #94a3b8;
@@ -374,7 +393,7 @@
 
 .btn-resume-modal-primary {
   padding: 8px 20px;
-  border-radius: 8px;
+  border-radius: 0 !important;
   background: #14b8a6;
   border: 1px solid #14b8a6;
   color: #04201c;

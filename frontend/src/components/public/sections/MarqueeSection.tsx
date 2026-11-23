@@ -14,7 +14,7 @@ function MarqueeRow({
   const doubled = [...items, ...items];
   return (
     <div className="sec-9-home-7__row">
-      <div className={`sec-9-home-7__ticker py-3 changeless carouselTicker carouselTicker-${direction}`}>
+      <div className={`sec-9-home-7__ticker py-3 carouselTicker carouselTicker-${direction}`}>
         <ul className={`d-flex align-items-center gap-4 carouselTicker__list scroll-move-${direction} list-unstyled mb-0 sec-9-home-7__list`}>
           {doubled.map((item, idx) => (
             <Fragment key={`${direction}-${item}-${idx}`}>

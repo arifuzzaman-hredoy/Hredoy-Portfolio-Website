@@ -789,6 +789,27 @@ main {
   contain: paint !important;
 }
 
+/* Light mode for Marquee Ticker: white background, black text, black star */
+[data-bs-theme="light"] .sec-9-home-7,
+[data-bs-theme="light"] .sec-9-home-7__ticker,
+[data-bs-theme="light"] .sec-9-home-7__row {
+  background: #ffffff !important;
+}
+
+[data-bs-theme="light"] .sec-9-home-7 {
+  border-top: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-bs-theme="light"] .sec-9-home-7__item {
+  color: #000000 !important;
+}
+
+[data-bs-theme="light"] .sec-9-home-7__sep img,
+[data-bs-theme="light"] .sec-9-home-7__sep svg {
+  filter: brightness(0) !important;
+}
+
 /* ==========================================================================
    Other Projects Section (Compact & Sleek)
    ========================================================================== */
