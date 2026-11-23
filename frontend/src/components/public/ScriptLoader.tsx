@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { assetUrl } from "@/lib/assets";
 
 const CORE_SCRIPTS = [
   "/assets/js/vendors/color-modes.js",
@@ -30,14 +31,14 @@ const DEFERRED_PHYSICS_SCRIPTS = [
 ];
 
 function appendScripts(list: string[]) {
-  for (const src of list) {
-    if (document.querySelector(`script[data-orisa-src="${src}"]`)) {
+  for (const rawSrc of list) {
+    if (document.querySelector(`script[data-orisa-src="${rawSrc}"]`)) {
       continue;
     }
     const s = document.createElement("script");
-    s.src = src;
+    s.src = assetUrl(rawSrc);
     s.async = false;
-    s.setAttribute("data-orisa-src", src);
+    s.setAttribute("data-orisa-src", rawSrc);
     document.body.appendChild(s);
   }
 }

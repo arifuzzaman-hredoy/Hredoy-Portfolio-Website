@@ -49,13 +49,13 @@ func TestPurgePostsExpectedRequest(t *testing.T) {
 	}
 
 	var payload struct {
-		Files []string `json:"files"`
+		PurgeEverything bool `json:"purge_everything"`
 	}
 	if err := json.Unmarshal([]byte(gotBody), &payload); err != nil {
 		t.Fatalf("decode body: %v", err)
 	}
-	if len(payload.Files) != 1 || payload.Files[0] != "https://oxytumzone.com/" {
-		t.Errorf("files = %v", payload.Files)
+	if !payload.PurgeEverything {
+		t.Errorf("purge_everything = %v, want true", payload.PurgeEverything)
 	}
 }
 

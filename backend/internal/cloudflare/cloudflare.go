@@ -56,7 +56,7 @@ func (c *Client) Purge(ctx context.Context) error {
 	}
 
 	payload, err := json.Marshal(map[string]any{
-		"files": []string{c.siteURL + "/"},
+		"purge_everything": true,
 	})
 	if err != nil {
 		return fmt.Errorf("encode payload: %w", err)

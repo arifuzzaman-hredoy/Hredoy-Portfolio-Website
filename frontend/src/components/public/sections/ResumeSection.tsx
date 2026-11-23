@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { val, type PortfolioData } from "@/lib/portfolio-data";
+import { assetUrl } from "@/lib/assets";
 import { ArrowDiagIcon } from "../Icons";
 
 export default function ResumeSection({ data }: { data: PortfolioData }) {
@@ -27,7 +28,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
     "Complete record of educational qualifications, polytechnic diploma, Linux & cloud training, extracurricular debates, and engineering achievements.";
   const cvFormat = val(data, "resume.cv.format") || "PDF";
   const cvUpdated = val(data, "resume.cv.updated") || "Updated Nov 2026";
-  const cvUrl = val(data, "resume.cv.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-CV.pdf";
+  const cvUrl = assetUrl(val(data, "resume.cv.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-CV.pdf");
   const cvSize = val(data, "resume.cv.file_size") || "1.2 MB";
 
   // Resume details
@@ -38,7 +39,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
     "Compact, recruiter-focused single-page resume highlighting production Docker, CI/CD pipelines, AWS EC2, Linux administration, and IaC skills.";
   const resumeFormat = val(data, "resume.resume.format") || "PDF";
   const resumeUpdated = val(data, "resume.resume.updated") || "Updated Nov 2026";
-  const resumeUrl = val(data, "resume.resume.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-Resume.pdf";
+  const resumeUrl = assetUrl(val(data, "resume.resume.file_url") || "/assets/docs/Arifuzzaman-Hredoy-DevOps-Resume.pdf");
   const resumeSize = val(data, "resume.resume.file_size") || "240 KB";
 
   // Active document for modal preview

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
+import { assetUrl } from "@/lib/assets";
 import "./globals.css";
 import "./certificates.css";
 import "./resume.css";
@@ -137,14 +138,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Flex:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
-        <link rel="stylesheet" href="/assets/css/vendors/bootstrap.min.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/carouselTicker.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/swiper-bundle.min.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/nice-select.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/magnific-popup.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/odometer.css" />
-        <link rel="stylesheet" href="/assets/css/vendors/spacing.css" />
-        <link rel="stylesheet" href="/assets/css/main.css" />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/bootstrap.min.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/carouselTicker.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/swiper-bundle.min.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/nice-select.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/magnific-popup.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/odometer.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/vendors/spacing.css")} />
+        <link rel="stylesheet" href={assetUrl("/assets/css/main.css")} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
+              });
+            }`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

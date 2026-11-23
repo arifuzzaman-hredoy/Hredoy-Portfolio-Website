@@ -9,8 +9,6 @@ import {
   type CertificateFilters,
   type CertificatePage,
 } from "./certificates-render";
-import { cacheLife, cacheTag } from "next/cache";
-
 export type { Certificate, CertificatePage, Project };
 
 // Every CMS read is tagged with this, so a single admin save can expire all of
@@ -67,10 +65,10 @@ const BACKEND_URL = (
   process.env.PORTFOLIO_BACKEND_URL ?? "http://localhost:8080"
 ).replace(/\/$/, "");
 
-async function getJSON<T>(path: string, revalidate = 30): Promise<T> {
+async function getJSON<T>(path: string): Promise<T> {
   try {
     const res = await fetch(`${BACKEND_URL}${path}`, {
-      next: { revalidate },
+      cache: "no-store",
       headers: { Accept: "application/json" },
       signal: AbortSignal.timeout(3000),
     });
@@ -90,9 +88,6 @@ async function getJSON<T>(path: string, revalidate = 30): Promise<T> {
 }
 
 const fetchContentCached = cache(async (): Promise<ContentPayload> => {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const data = await getJSON<ContentPayload>("/api/v1/content");
   return {
     count: data.count ?? data.blocks?.length ?? 0,
@@ -107,18 +102,12 @@ export function getContent(): Promise<ContentPayload> {
 }
 
 export const getProjects = cache(async (): Promise<Project[]> => {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const data = await getJSON<ProjectsPayload>("/api/v1/projects");
   return data.projects ?? [];
 });
 
 // Repeatable homepage lists, grouped by parent_key.
 export const getContentItems = cache(async (): Promise<Record<string, ContentItem[]>> => {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const data = await getJSON<ContentItemsPayload>("/api/v1/content-items");
   return data.groups ?? {};
 });
@@ -130,9 +119,6 @@ export type SiteImagesBundle = {
 };
 
 export const getSiteImagesBundle = cache(async (): Promise<SiteImagesBundle> => {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const data = await getJSON<SiteImagesPayload>("/api/v1/site-images");
   const alts: Record<string, string> = {};
   const mobiles: Record<string, string> = {};
@@ -153,9 +139,6 @@ export async function getSiteImages(): Promise<Record<string, string>> {
 
 // Owner identity used by the metadata, the JSON-LD block and the contact links.
 export const getSiteSettings = cache(async (): Promise<Record<string, string>> => {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   return getJSON<Record<string, string>>("/api/v1/site-settings");
 });
 
@@ -164,9 +147,6 @@ export const getSiteSettings = cache(async (): Promise<Record<string, string>> =
 export async function getCertificates(
   filters: Partial<CertificateFilters> = {},
 ): Promise<CertificatePage> {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const params = new URLSearchParams();
   if (filters.search) params.set("search", filters.search);
   if (filters.category) params.set("category", filters.category);
@@ -186,9 +166,6 @@ export async function getCertificates(
 }
 
 export async function getCertificateCategories(): Promise<string[]> {
-  "use cache";
-  cacheTag(CMS_CACHE_TAG);
-  cacheLife("minutes");
   const data = await getJSON<{ count: number; categories: string[] }>(
     "/api/v1/certificates/categories",
   );

@@ -1,5 +1,8 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import ScriptLoader from "@/components/public/ScriptLoader";
 import HomeContent from "@/components/public/HomeContent";
 import SiteInteractions from "@/components/public/SiteInteractions";
