@@ -1943,3 +1943,142 @@ main {
   }
 }
 
+/* ==========================================================================
+   About Section (sec-2-home-7) Mobile Viewport Fixes
+   - Match card size to exact image dimensions so diagrams are 100% visible
+   - Maintain uniform vertical order on mobile: Image -> Feature -> Stat
+   - Straight left-alignment for icons, titles, descriptions, and stats
+   ========================================================================== */
+@media (max-width: 991.98px) {
+  .sec-2-home-7__grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  .sec-2-home-7__row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+    padding: 32px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .sec-2-home-7__row:last-child {
+    border-bottom: none !important;
+  }
+
+  [data-bs-theme="light"] .sec-2-home-7__row {
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  /* 1. Image Cell: full natural dimension without any cropping */
+  .sec-2-home-7__cell--img {
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sec-2-home-7__cell--img .sec-2-home-7__img-wrap {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .sec-2-home-7__cell--img .sec-2-home-7__img-wrap .anim-zoomin-wrap,
+  .sec-2-home-7__cell--img .sec-2-home-7__img-wrap .thumb {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .sec-2-home-7__cell--img .sec-2-home-7__img-wrap img {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    display: block !important;
+    border-radius: 16px !important;
+  }
+
+  /* 2. Feature Cell: flush left aligned with image and stat */
+  .sec-2-home-7__cell--feature {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sec-2-home-7__cell--feature .ps-4,
+  .sec-2-home-7__cell--feature > div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .sec-2-home-7__feature-icon {
+    margin-left: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .sec-2-home-7__feature-title {
+    font-size: clamp(22px, 5.5vw, 28px) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 10px !important;
+    text-align: left !important;
+  }
+
+  .sec-2-home-7__feature-desc,
+  .sec-2-home-7__feat-desc {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    text-align: left !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* 3. Stat Cell: flush left aligned directly under feature */
+  .sec-2-home-7__cell--stat {
+    order: 3 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sec-2-home-7__stat-value {
+    font-size: clamp(48px, 12vw, 64px) !important;
+    line-height: 1 !important;
+    margin-bottom: 6px !important;
+    margin-left: 0 !important;
+    text-align: left !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  .sec-2-home-7__stat-label {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    margin-left: 0 !important;
+    text-align: left !important;
+  }
+}
+
+
