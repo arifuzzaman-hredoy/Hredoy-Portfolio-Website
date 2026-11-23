@@ -17,21 +17,6 @@
   filter: none !important;
 }
 
-/* Prevent GSAP ScrollTrigger from leaving sections, headings, or contact inputs invisible or dimmed */
-.at_fade_anim,
-.reveal-text,
-.reveal-text *,
-.sec-1-home-7__headline,
-.sec-1-home-7__desc,
-.sec-1-home-7__cta,
-.sec-11-home-7__form .sec-4-about-form__field,
-.sec-11-home-7__form .sec-4-about-form__actions,
-.sec-11-home-7__form .sec-4-about-form__disclaimer,
-.footer-7 .at_fade_anim {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
 /* Keep hero portrait flush at the bottom of the hero display with zero empty space below */
 @media (min-width: 1200px) {
   .sec-1-home-7__img-wrap {

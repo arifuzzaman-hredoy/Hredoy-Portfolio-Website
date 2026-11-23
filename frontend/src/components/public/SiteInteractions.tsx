@@ -13,7 +13,7 @@ const ROUTES: Array<{ pattern: RegExp; target: string }> = [
 ];
 
 type ScrollSmootherLike = {
-  scrollTo: (target: number | string | Element, smooth?: boolean) => void;
+  scrollTo: (target: number | string | Element, smooth?: boolean, position?: string) => void;
 };
 
 function closeOverlays() {
@@ -52,7 +52,7 @@ function scrollToTarget(target: string) {
   const smoother = (window as unknown as { ScrollSmoother?: { get?: () => ScrollSmootherLike | null } }).ScrollSmoother?.get?.();
 
   if (smoother) {
-    smoother.scrollTo(target === "#" ? 0 : target, true);
+    smoother.scrollTo(target === "#" ? 0 : target, true, target === "#" ? undefined : "top 80px");
     return;
   }
 
@@ -76,18 +76,47 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
       header.classList.add("nav-ready", "nav-settled");
     }
 
-    // Release ScrollSmoother scroll-jacking once initialized so native 60/120fps
-    // scrolling and section anchor jumps work without lag or missed triggers.
-    const releaseSmoother = window.setInterval(() => {
-      const smoother = (
-        window as unknown as { ScrollSmoother?: { get?: () => { kill?: () => void } | null } }
-      ).ScrollSmoother?.get?.();
-      if (smoother?.kill) {
-        smoother.kill();
-        window.clearInterval(releaseSmoother);
-      }
-    }, 100);
-    window.setTimeout(() => window.clearInterval(releaseSmoother), 4000);
+    // Refresh ScrollTrigger once fonts and images load to ensure trigger positions match the rendered DOM.
+    const refreshTriggers = () => {
+      const st = (window as unknown as { ScrollTrigger?: { refresh?: () => void } }).ScrollTrigger;
+      st?.refresh?.();
+    };
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(refreshTriggers);
+    }
+    const refreshTimer = window.setTimeout(refreshTriggers, 800);
+    window.addEventListener("load", refreshTriggers, { once: true });
+
+    // Infallible safety net: if any animated element enters the viewport and
+    // remains un-revealed after 1.5s (e.g. if a trigger calculation was missed),
+    // smoothly reveal it so content is NEVER stuck or hidden.
+    const animatedSelector = ".at_fade_anim, .reveal-text, .at-char-animation, .at-rise-animation";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            window.setTimeout(() => {
+              const style = window.getComputedStyle(el);
+              if (parseFloat(style.opacity || "1") < 0.9) {
+                el.style.opacity = "1";
+                el.style.visibility = "visible";
+                el.style.transform = "none";
+              }
+              el.querySelectorAll<HTMLElement>(".split-line *").forEach((child) => {
+                if (parseFloat(window.getComputedStyle(child).opacity || "1") < 0.9) {
+                  child.style.opacity = "1";
+                  child.style.transform = "none";
+                }
+              });
+            }, 1200);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -5% 0px", threshold: 0.15 },
+    );
+    document.querySelectorAll(animatedSelector).forEach((el) => observer.observe(el));
 
     const params = new URLSearchParams(window.location.search);
     const sent = params.get("sent") === "1";
@@ -138,6 +167,18 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
       const href = anchor?.getAttribute("href");
       if (!href) return;
 
+      // Smooth internal anchor jump with ScrollSmoother awareness
+      if (href.startsWith("#")) {
+        if (href === "#") return;
+        const targetEl = document.querySelector(href);
+        if (targetEl) {
+          event.preventDefault();
+          closeOverlays();
+          scrollToTarget(href);
+          return;
+        }
+      }
+
       const url = new URL(href, window.location.href);
       if (url.origin !== window.location.origin) return;
       if (!/\.html$/i.test(url.pathname)) return;
@@ -159,7 +200,9 @@ export default function SiteInteractions({ contactEmail }: { contactEmail: strin
     document.addEventListener("click", handleClick);
     document.addEventListener("submit", handleSearchSubmit);
     return () => {
-      window.clearInterval(releaseSmoother);
+      window.clearTimeout(refreshTimer);
+      window.removeEventListener("load", refreshTriggers);
+      observer.disconnect();
       document.removeEventListener("click", handleClick);
       document.removeEventListener("submit", handleSearchSubmit);
       statusEl?.remove();

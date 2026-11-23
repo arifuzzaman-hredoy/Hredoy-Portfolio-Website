@@ -216,7 +216,8 @@
             ScrollSmoother.create({
                 smooth: 0.8,
                 effects: false,
-                smoothTouch: 0.15,
+                smoothTouch: 0,
+                normalizeScroll: false,
                 ignoreMobileResize: true,
             });
 
@@ -594,24 +595,27 @@
             if (el.split && el.split.chars && el.split.chars.length > 0) {
                 if ($(el).hasClass('reveal-text')) {
                     gsap.set(el.split.chars, {
-                        opacity: 0.4,
+                        opacity: 0.35,
                         x: '-7',
                     });
                 }
                 el.anim = gsap.to(el.split.chars, {
                     scrollTrigger: {
                         trigger: el,
-                        start: 'top 80%',
-                        end: 'top 20%',
+                        start: 'top 85%',
+                        end: 'bottom 60%',
                         markers: false,
-                        scrub: 1,
+                        scrub: 0.8,
+                        onLeave: function () {
+                            gsap.to(el.split.chars, { opacity: 1, x: 0, duration: 0.2, overwrite: 'auto' });
+                        },
                     },
 
                     x: '0',
                     y: '0',
                     opacity: 1,
                     duration: 0.7,
-                    stagger: 0.2,
+                    stagger: 0.05,
                 });
             }
         });
@@ -3632,228 +3636,4 @@
     }
 
         initSec1Home15TitleMeta();
-
-////////////////////////////////////////////////////
-// 64. Premium animation system (transform-only, content always visible)
-// No opacity:0 start — elements are visible by default. Animation only shifts
-// them slightly via transform. If GSAP fails to load, all content remains visible.
-////////////////////////////////////////////////////
-(function initPremiumAnimations() {
-    const POLL_MAX = 50; // ~5 seconds max wait for GSAP CDN
-    let polls = 0;
-
-    function tryInit() {
-        if (typeof gsap === 'undefined') {
-            polls++;
-            if (polls < POLL_MAX) {
-                setTimeout(tryInit, 100);
-            }
-            return;
-        }
-
-        gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrollToPlugin);
-
-        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        // Consistent animation defaults — one source of truth for timing/easing
-        const ANIM = {
-            duration: reduceMotion ? 0 : 0.6,
-            ease: 'power2.out',
-            hoverEase: 'power2.inOut',
-            stagger: reduceMotion ? 0 : 0.08,
-            fadeOffset: reduceMotion ? 0 : 30,
-        };
-
-        // Scroll-triggered reveal: transform y offset only. NO opacity:0 —
-        // content stays visible even if GSAP never runs.
-        function revealOnScroll(selector, delayPerItem = 0) {
-            const els = document.querySelectorAll(selector + ':not(.at_fade_anim)');
-            if (!els.length) return;
-            els.forEach((el, i) => {
-                gsap.fromTo(el,
-                    { y: ANIM.fadeOffset },
-                    {
-                        y: 0,
-                        duration: ANIM.duration,
-                        ease: ANIM.ease,
-                        delay: delayPerItem ? i * delayPerItem : 0,
-                        scrollTrigger: {
-                            trigger: el,
-                            start: 'top 85%',
-                            end: 'bottom 60%',
-                            toggleActions: 'play none none reverse',
-                            once: true,
-                        },
-                    }
-                );
-            });
-        }
-
-        // --- Hero: immediate entrance (above the fold, no scroll wait) ---
-        const heroSelectors = [
-            '.sec-1-home-7__brackets > li',
-            '.sec-1-home-7__headline',
-            '.sec-1-home-7__headline-arrow',
-            '.sec-1-home-7__desc',
-            '.sec-1-home-7__cta-btn',
-            '.sec-1-home-7__cta-arrow',
-            '.sec-1-home-7__proof-text',
-            '.sec-1-home-7__avatar',
-            '.sec-1-home-7__tag',
-        ];
-        heroSelectors.forEach((sel, sIdx) => {
-            const els = document.querySelectorAll(sel);
-            els.forEach((el, i) => {
-                gsap.fromTo(el,
-                    { y: ANIM.fadeOffset },
-                    {
-                        y: 0,
-                        duration: ANIM.duration,
-                        ease: ANIM.ease,
-                        delay: sIdx * 0.06 + i * 0.04,
-                    }
-                );
-            });
-        });
-
-        // --- About section ---
-        revealOnScroll('.sec-2-home-7__eyebrow, .sec-2-home-7__headline, .sec-2-home-7__desc');
-        revealOnScroll('.sec-2-home-7__stat-value');
-
-        // --- Skills section ---
-        revealOnScroll('.sec-5-home-7__eyebrow, .sec-5-home-7__title');
-        document.querySelectorAll('.sec-5-home-7__acc-item:not(.at_fade_anim)').forEach((item, i) => {
-            gsap.fromTo(item,
-                { y: ANIM.fadeOffset },
-                {
-                    y: 0,
-                    duration: ANIM.duration,
-                    ease: ANIM.ease,
-                    delay: i * 0.1,
-                    scrollTrigger: {
-                        trigger: item,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse',
-                        once: true,
-                    },
-                }
-            );
-        });
-        revealOnScroll('.sec-5-home-7__photo');
-
-        // --- Projects section: card entrance + hover effects ---
-        document.querySelectorAll('.project-card-wrapper').forEach((card, i) => {
-            gsap.fromTo(card,
-                { y: ANIM.fadeOffset },
-                {
-                    y: 0,
-                    duration: ANIM.duration,
-                    ease: ANIM.ease,
-                    delay: i * 0.1,
-                    scrollTrigger: {
-                        trigger: card,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse',
-                        once: true,
-                    },
-                }
-            );
-            const img = card.querySelector('.project-img');
-            if (img) {
-                card.addEventListener('mouseenter', () => gsap.to(img, { scale: 1.03, duration: 0.4, ease: ANIM.hoverEase }));
-                card.addEventListener('mouseleave', () => gsap.to(img, { scale: 1, duration: 0.4, ease: ANIM.hoverEase }));
-            }
-            const btn = card.querySelector('.btn-view-project');
-            if (btn) {
-                btn.addEventListener('mouseenter', () => gsap.to(btn, { scale: 1.05, y: -2, duration: 0.2, ease: 'power2.out' }));
-                btn.addEventListener('mouseleave', () => gsap.to(btn, { scale: 1, y: 0, duration: 0.2, ease: 'power2.out' }));
-            }
-        });
-
-        // --- Certificates section ---
-        document.querySelectorAll('.certificate-card:not(.at_fade_anim), .cert-card:not(.at_fade_anim), .cert-item:not(.at_fade_anim)').forEach((card, i) => {
-            gsap.fromTo(card,
-                { y: ANIM.fadeOffset },
-                {
-                    y: 0,
-                    duration: ANIM.duration,
-                    ease: ANIM.ease,
-                    delay: i * 0.06,
-                    scrollTrigger: {
-                        trigger: card,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse',
-                        once: true,
-                    },
-                }
-            );
-        });
-
-        // --- Contact section ---
-        revealOnScroll('.sec-11-home-7__eyebrow, .sec-11-home-7__title');
-
-        // --- Process section ---
-        document.querySelectorAll('.sec-6-home-7__card-wrap:not(.at_fade_anim)').forEach((wrap, i) => {
-            gsap.fromTo(wrap,
-                { y: ANIM.fadeOffset },
-                {
-                    y: 0,
-                    duration: ANIM.duration,
-                    ease: ANIM.ease,
-                    delay: i * 0.12,
-                    scrollTrigger: {
-                        trigger: wrap,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse',
-                        once: true,
-                    },
-                }
-            );
-        });
-
-        // --- Who I Am section ---
-        revealOnScroll('.sec-8-home-7__heading, .sec-8-home-7__desc');
-        document.querySelectorAll('.sec-8-home-7__card:not(.at_fade_anim)').forEach((el, i) => {
-            gsap.fromTo(el,
-                { y: ANIM.fadeOffset },
-                {
-                    y: 0,
-                    duration: ANIM.duration,
-                    ease: ANIM.ease,
-                    delay: i * 0.1,
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse',
-                        once: true,
-                    },
-                }
-            );
-        });
-
-        // --- Mission section ---
-        revealOnScroll('.sec-4-home-7__eyebrow, .sec-4-home-7__title');
-
-        // --- Smooth scroll for anchor links ---
-        document.querySelectorAll('a[href^="#"]').forEach((link) => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                if (href && href.length > 1) {
-                    const target = document.querySelector(href);
-                    if (target) {
-                        e.preventDefault();
-                        gsap.to(window, {
-                            duration: 0.8,
-                            scrollTo: { y: target, autoKill: false },
-                            ease: 'power2.inOut',
-                        });
-                    }
-                }
-            });
-        });
-    }
-
-    tryInit();
-})();
-
-    })(jQuery);
+})(jQuery);

@@ -156,7 +156,7 @@ export default function Footer({ data }: { data: PortfolioData }) {
           </div>
         </div>
 
-        <div className="footer-7__bottom" data-delay="0.1" data-start="10%">
+        <div className="footer-7__bottom" data-delay="0.1">
           <div className="footer-7__bottom-inner d-flex flex-wrap gap-3 align-items-center justify-content-between">
             <span className="footer-7__copy">
               {val(data, "footer.copyright") || ownerName} © {year}

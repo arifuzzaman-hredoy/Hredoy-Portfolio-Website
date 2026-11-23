@@ -61,20 +61,20 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
             <div className="sec-1-home-7__content">
               <ul className="sec-1-home-7__brackets list-unstyled d-flex flex-wrap gap-4 mb-30">
                 {brackets.map((item, idx) => (
-                  <li key={`${item}-${idx}`} className="at_fade_anim" data-start="10%" data-delay={String(idx * 0.1)}>
+                  <li key={`${item}-${idx}`} className="at_fade_anim" data-on-scroll="0" data-delay={String(idx * 0.1)}>
                     [ {item} ]
                   </li>
                 ))}
               </ul>
 
               <div className="sec-1-home-7__headline-wrap p-relative">
-                <h1 className="sec-1-home-7__headline text-white text-uppercase fw-700 mb-30 at_fade_anim" data-start="10%" data-delay="0">
+                <h1 className="sec-1-home-7__headline text-white text-uppercase fw-700 mb-30 at_fade_anim" data-on-scroll="0" data-delay="0">
                   <span className="sec-1-home-7__headline-line">{val(data, "hero.headline.1")}</span>
                   <span className="sec-1-home-7__headline-line">{val(data, "hero.headline.2")}</span>
                   <span className="sec-1-home-7__headline-line">{val(data, "hero.headline.3")}</span>
                 </h1>
                 <span className="sec-1-home-7__headline-arrow-cover d-none d-md-inline-block">
-                  <span className="sec-1-home-7__headline-arrow at_fade_anim" data-start="10%" data-delay="0.1">
+                  <span className="sec-1-home-7__headline-arrow at_fade_anim" data-on-scroll="0" data-delay="0.1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="53" viewBox="0 0 69 53" fill="none" aria-hidden="true">
                       <path d="M40.2 0L67.72 25.4267L69 26.7141L67.72 27.6797L40.2 53.1064L38.6 51.4971L64.2 27.6797H-59V25.4267H64.2L38.6 1.60928L40.2 0Z" fill="currentColor" />
                     </svg>
@@ -82,12 +82,12 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
                 </span>
               </div>
 
-              <p className="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-start="10%" data-delay="0.2">
+              <p className="sec-1-home-7__desc text-white mb-40 at_fade_anim" data-on-scroll="0" data-delay="0.2">
                 {val(data, "hero.desc")}
               </p>
 
               <div className="sec-1-home-7__cta d-flex align-items-center flex-wrap gap-2 mb-60">
-                <a href="#contact" className="sec-1-home-7__cta-btn at_fade_anim" data-start="10%" data-delay="0.3">
+                <a href="#contact" className="sec-1-home-7__cta-btn at_fade_anim" data-on-scroll="0" data-delay="0.3">
                   <span>{ctaText}</span>
                 </a>
                 <a href="#contact" className="sec-1-home-7__cta-arrow" aria-label={ctaText}>
@@ -99,7 +99,7 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
 
               <div className="sec-1-home-7__meta">
                 <div className="sec-1-home-7__proof">
-                  <p className="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-start="10%" data-delay="0.3">
+                  <p className="sec-1-home-7__proof-text text-white fw-700 mb-0 at_fade_anim" data-on-scroll="0" data-delay="0.3">
                     {proofLines.map((line, idx) => (
                       <Fragment key={`${line}-${idx}`}>
                         {idx > 0 && <br className="d-none d-xl-inline" />}
@@ -109,7 +109,7 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
                   </p>
                   <div className="sec-1-home-7__avatars">
                     {HERO_BADGE_SLOTS.map((slot, idx) => (
-                      <span key={slot} className="sec-1-home-7__avatar at_fade_anim" data-start="10%" data-delay={String(idx * 0.1)}>
+                      <span key={slot} className="sec-1-home-7__avatar at_fade_anim" data-on-scroll="0" data-delay={String(idx * 0.1)}>
                         <span className="sec-1-home-7__badge" tabIndex={0} title={data.imageAlts[slot] ?? ""}>
                           <CmsImage data={data} slot={slot} width={36} height={36} loading="eager" decoding="async" />
                         </span>
@@ -120,7 +120,7 @@ export default function HeroSection({ data }: { data: PortfolioData }) {
 
                 <div className="sec-1-home-7__tags">
                   {tags.map((tag, idx) => (
-                    <a key={`${tag}-${idx}`} href="#skills" className="sec-1-home-7__tag at_fade_anim" data-start="10%" data-delay={String(idx * 0.1)}>
+                    <a key={`${tag}-${idx}`} href="#skills" className="sec-1-home-7__tag at_fade_anim" data-on-scroll="0" data-delay={String(idx * 0.1)}>
                       <span>{tag}</span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="0 0 9 10" fill="none" aria-hidden="true">
                         <path d="M5.62494 9.99994L0.562517 10L0.5625 8.75003L4.49994 8.74996L4.5 2.39273L2.27828 4.86124L1.48278 3.97739L5.0625 0L8.64225 3.97739L7.84676 4.86124L5.625 2.3927L5.62494 9.99994Z" fill="currentColor" />

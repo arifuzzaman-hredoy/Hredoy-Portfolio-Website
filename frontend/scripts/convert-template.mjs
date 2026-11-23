@@ -59,8 +59,8 @@ const REPLACEMENTS = [
   ['<span>UI/UX Excellence</span>', '<span>GitHub Actions</span>'],
 
   // ---- Hero brackets ----
-  ['<li class="at_fade_anim" data-start="10%" data-delay="0.1">[ GROW ]</li>', '<li class="at_fade_anim" data-start="10%" data-delay="0.1">[ AUTOMATE ]</li>'],
-  ['<li class="at_fade_anim" data-start="10%" data-delay="0.3">[ BOOST ]</li>', '<li class="at_fade_anim" data-start="10%" data-delay="0.3">[ DEPLOY ]</li>'],
+  ['<li class="at_fade_anim" data-on-scroll="0" data-delay="0.1">[ GROW ]</li>', '<li class="at_fade_anim" data-on-scroll="0" data-delay="0.1">[ AUTOMATE ]</li>'],
+  ['<li class="at_fade_anim" data-on-scroll="0" data-delay="0.3">[ BOOST ]</li>', '<li class="at_fade_anim" data-on-scroll="0" data-delay="0.3">[ DEPLOY ]</li>'],
 
   // ---- Hero headline ----
   ['Advancing Startup Innovation', 'Junior DevOps Engineer'],
