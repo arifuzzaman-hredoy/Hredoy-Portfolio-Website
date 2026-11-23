@@ -12,6 +12,7 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
     "Continuously learning and expanding my DevOps skillset across the modern cloud-native stack.";
 
   const rawAccordionItems = listItems(data, "skills.accordion");
+  const physicsTools = listItems(data, "skills.throwables");
 
   // Fallback if no items in DB
   const items =
@@ -280,6 +281,18 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
           ))}
         </p>
       </section>
+
+      {/* Physics Falling Tools Stage */}
+      <div className="container-fluid px-0">
+        <div className="client-capsule-wrapper-box" data-tech-physics="true">
+          <div className="client-capsule-wrapper tech-phys-stage" data-tech-physics-stage="" />
+          <ul className="visually-hidden tech-phys-a11y">
+            {physicsTools.map((tool) => (
+              <li key={tool.id}>{tool.title}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </>
   );
 }

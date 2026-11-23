@@ -86,30 +86,6 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
             );
           })}
         </div>
-
-        <div className="sec-10-home-7__all mt-50">
-          <h3 className="h6 mb-3">All {visible.length} Projects</h3>
-          <ul className="list-unstyled d-flex flex-wrap gap-3 mb-0">
-            {visible.map((project, idx) => {
-              const label = `${String(idx + 1).padStart(2, "0")}. ${project.title}`;
-              const repoHref = safeHref(project.repo_url);
-              const liveHref = safeHref(project.live_url, "");
-              return (
-                <li key={project.slug || project.title}>
-                  <a href={repoHref} target="_blank" rel="noopener">{label}</a>
-                  {liveHref && (
-                    <>
-                      {" "}
-                      <a href={liveHref} target="_blank" rel="noopener" style={{ color: "var(--at-theme-primary)", fontWeight: 600 }}>
-                        Live
-                      </a>
-                    </>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
       </div>
     </div>
   );
