@@ -13,6 +13,7 @@ import HeroSection from "./sections/HeroSection";
 import MarqueeSection from "./sections/MarqueeSection";
 import MissionSection from "./sections/MissionSection";
 import OffcanvasSidebar from "./sections/OffcanvasSidebar";
+import OtherProjectsSection from "./sections/OtherProjectsSection";
 import ProcessSection from "./sections/ProcessSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import SearchOverlay from "./sections/SearchOverlay";
@@ -87,6 +88,7 @@ export default function HomeContent({
             <ProcessSection data={data} />
             <CtaSection data={data} />
             <MarqueeSection data={data} />
+            <OtherProjectsSection data={data} />
             <CertificatesSection page={data.certificates} categories={data.categories} />
             <ContactSection data={data} />
           </main>

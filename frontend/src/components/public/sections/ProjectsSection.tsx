@@ -38,7 +38,7 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
             <p className="sec-10-home-7__lead mb-0 reveal-text">{val(data, "projects.desc")}</p>
           </div>
           <div className="col-xl-3 col-lg-12 mt-4 mt-lg-4 mt-xl-0 ms-xl-auto text-xl-end">
-            <a href={allUrl} target="_blank" rel="noopener" className="sec-10-home-7__btn-all d-inline-flex align-items-center gap-2 at_fade_anim">
+            <a href="#other-projects" className="sec-10-home-7__btn-all d-inline-flex align-items-center gap-2 at_fade_anim">
               <span>{val(data, "projects.cta")}</span>
               <ArrowDiagIcon />
             </a>

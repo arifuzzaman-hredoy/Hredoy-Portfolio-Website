@@ -25,14 +25,6 @@ function SocialLinks({ data }: { data: PortfolioData }) {
   );
 }
 
-const OFFCANVAS_AVATARS = [
-  "avatar-linux",
-  "avatar-docker",
-  "avatar-aws",
-  "avatar-github-actions",
-  "avatar-terraform",
-];
-
 export default function OffcanvasSidebar({ data }: { data: PortfolioData }) {
   const { identity } = data;
   const email = identity.email ?? "";
@@ -65,15 +57,6 @@ export default function OffcanvasSidebar({ data }: { data: PortfolioData }) {
           </div>
           <div className="at-offcanvas-menu d-xl-none pb-50">
             <nav />
-          </div>
-          <div className="at-offcanvas-gallery d-none d-xl-block">
-            <div className="sec-2-home-5__avatars-row d-flex gap-2">
-              {OFFCANVAS_AVATARS.map((slot) => (
-                <div key={slot} className="sec-2-home-5__avatar-sm at-offcanvas-gallery-img">
-                  <CmsImage data={data} slot={slot} className="img-cover" width={103} height={103} />
-                </div>
-              ))}
-            </div>
           </div>
           <div className="at-offcanvas-contact">
             <h4 className="h5 at-offcanvas-title sm">{val(data, "contact.title")}</h4>

@@ -55,12 +55,15 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
   const sectionId = useId();
 
   const totalCount = items.length;
-  const activeItem = items[activeIdx] ?? items[0];
+  const activeItem = activeIdx >= 0 ? items[activeIdx] : null;
   const activeRawTitle = activeItem?.title ?? "";
-  const activeCleanName = activeRawTitle.replace(/^\d+[\.\s]+/, "");
+  const activeCleanName = activeItem ? activeRawTitle.replace(/^\d+[\.\s]+/, "") : "Click to view skill";
 
   const handleSelectSkill = (idx: number) => {
-    if (idx === activeIdx) return;
+    if (idx === activeIdx) {
+      setActiveIdx(-1);
+      return;
+    }
     setCurNameOpacity(0);
     setActiveIdx(idx);
     setTimeout(() => {
@@ -164,7 +167,8 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
                       <span
                         id="curNum"
                         style={{
-                          transform: `translateY(${-activeIdx}em)`,
+                          transform: `translateY(${-(activeIdx >= 0 ? activeIdx : 0)}em)`,
+                          opacity: activeIdx >= 0 ? 1 : 0.5,
                         }}
                       >
                         {items.map((_, i) => (
@@ -203,7 +207,7 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
                       <button
                         key={item.id ?? i}
                         type="button"
-                        className={i <= activeIdx ? "on" : ""}
+                        className={activeIdx >= 0 && i <= activeIdx ? "on" : ""}
                         aria-label={`Skill ${i + 1}: ${item.title}`}
                         onClick={() => handleSelectSkill(i)}
                       />
@@ -236,7 +240,6 @@ export default function SkillsSection({ data }: { data: PortfolioData }) {
                         >
                           <span className="num">{num}.</span>
                           {cleanTitle}
-                          <span className="pm" aria-hidden="true" />
                         </button>
                       </h3>
                       <div
