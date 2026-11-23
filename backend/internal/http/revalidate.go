@@ -97,6 +97,7 @@ var publicContentPrefixes = []string{
 	"/super-admin/site-images",
 	"/super-admin/projects",
 	"/super-admin/media",
+	"/super-admin/resume",
 	"/super-admin/settings",
 }
 

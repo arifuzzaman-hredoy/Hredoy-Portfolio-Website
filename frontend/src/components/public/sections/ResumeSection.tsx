@@ -145,7 +145,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                 </button>
                 <a
                   href={cvUrl}
-                  download="Arifuzzaman-Hredoy-DevOps-CV.pdf"
+                  download={`Arifuzzaman-Hredoy-DevOps-CV.${(cvFormat || "pdf").toLowerCase()}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-resume-download d-inline-flex align-items-center justify-content-center gap-2"
@@ -218,7 +218,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                 </button>
                 <a
                   href={resumeUrl}
-                  download="Arifuzzaman-Hredoy-DevOps-Resume.pdf"
+                  download={`Arifuzzaman-Hredoy-DevOps-Resume.${(resumeFormat || "pdf").toLowerCase()}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-resume-download d-inline-flex align-items-center justify-content-center gap-2"
@@ -292,17 +292,29 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
 
               {/* Modal Body / Viewer */}
               <div className="resume-modal-body p-0">
-                <iframe
-                  src={`${activeUrl}#toolbar=0`}
-                  className="resume-modal-iframe"
-                  title={`${activeTitle} Document Preview`}
-                />
+                {(activeFormat || "").toUpperCase() === "PDF" || (activeUrl || "").toLowerCase().includes(".pdf") ? (
+                  <iframe
+                    src={`${activeUrl}#toolbar=0`}
+                    className="resume-modal-iframe"
+                    title={`${activeTitle} Document Preview`}
+                  />
+                ) : ["PNG", "JPG", "JPEG", "WEBP"].includes((activeFormat || "").toUpperCase()) ? (
+                  <div className="d-flex align-items-center justify-content-center p-4" style={{ minHeight: "60vh" }}>
+                    <img src={activeUrl} alt={activeTitle} style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain", borderRadius: "8px" }} />
+                  </div>
+                ) : (
+                  <iframe
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(activeUrl)}&embedded=true`}
+                    className="resume-modal-iframe"
+                    title={`${activeTitle} Document Preview`}
+                  />
+                )}
               </div>
 
               {/* Modal Foot */}
               <div className="resume-modal-foot d-flex align-items-center justify-content-between p-3 p-md-4">
                 <span className="resume-modal-meta-text">
-                  Format: <strong>{activeFormat}</strong> · File size: <strong>{activeSize}</strong>
+                  Format: <strong>{activeFormat}</strong> &middot; File size: <strong>{activeSize}</strong>
                 </span>
                 <div className="d-flex align-items-center gap-3">
                   <button
@@ -314,7 +326,7 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
                   </button>
                   <a
                     href={activeUrl}
-                    download={activeDoc === "cv" ? "Arifuzzaman-Hredoy-DevOps-CV.pdf" : "Arifuzzaman-Hredoy-DevOps-Resume.pdf"}
+                    download={activeDoc === "cv" ? `Arifuzzaman-Hredoy-DevOps-CV.${(activeFormat || "pdf").toLowerCase()}` : `Arifuzzaman-Hredoy-DevOps-Resume.${(activeFormat || "pdf").toLowerCase()}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-resume-modal-primary d-inline-flex align-items-center gap-2"

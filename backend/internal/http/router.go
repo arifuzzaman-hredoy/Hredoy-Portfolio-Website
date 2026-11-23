@@ -141,6 +141,9 @@ func NewRouter(cfg *config.Config, logger *slog.Logger, dbPool *pgxpool.Pool) ht
 		r.Post("/super-admin/media/alt", deps.adminMediaAlt)
 		r.Post("/super-admin/media/delete", deps.adminMediaDelete)
 
+		r.Get("/super-admin/resume", deps.adminResume)
+		r.Post("/super-admin/resume/upload", deps.adminResumeUpload)
+
 		r.Get("/super-admin/content", deps.adminContent)
 		r.Post("/super-admin/content/update", deps.adminContentUpdate)
 		r.Post("/super-admin/content/reset", deps.adminContentReset)

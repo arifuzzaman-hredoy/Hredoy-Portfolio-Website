@@ -1,0 +1,115 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>CV &amp; Resume</h1>
+  <p class="muted">Upload and manage your Curriculum Vitae and DevOps Resume files. Uploads are stored on your Cloudinary CDN and immediately update the public site.</p>
+</header>
+{{if .success}}<p class="alert success">File uploaded to Cloudinary successfully and live site updated.</p>{{end}}
+{{if .error}}<p class="alert">Upload failed. Please check the file and Cloudinary settings, then try again.</p>{{end}}
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+  <!-- Card 1: Curriculum Vitae (CV) -->
+  <section class="card stack">
+    <div class="card-head">
+      <h2>{{.cv.Title}}</h2>
+      <span class="tag">{{.cv.Format}}</span>
+    </div>
+
+    <div style="background: var(--bg-2); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="muted" style="font-size: 13px;">Active File</span>
+        <span class="tag" style="background: rgba(20, 184, 166, 0.2); color: var(--primary);">{{.cv.FileSize}}</span>
+      </div>
+      <div style="word-break: break-all; font-size: 13px; margin-bottom: 8px;">
+        {{if .cv.FileURL}}
+        <a href="{{.cv.FileURL}}" target="_blank" rel="noopener" style="font-weight: 600;">View / Download Current CV &rarr;</a>
+        {{else}}
+        <span class="muted">No file set</span>
+        {{end}}
+      </div>
+      <div class="muted" style="font-size: 12px;">{{.cv.Updated}} &middot; {{.cv.Badge}}</div>
+    </div>
+
+    <form method="post" action="/super-admin/resume/upload" enctype="multipart/form-data" class="stack">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="target" value="cv">
+      <label class="field">
+        <span>Upload New CV (Any file: PDF, DOCX, DOC, etc.)</span>
+        <input type="file" name="file" required>
+      </label>
+      <button class="btn" type="submit">Upload CV to Cloudinary</button>
+    </form>
+  </section>
+
+  <!-- Card 2: DevOps Resume -->
+  <section class="card stack">
+    <div class="card-head">
+      <h2>{{.resume.Title}}</h2>
+      <span class="tag">{{.resume.Format}}</span>
+    </div>
+
+    <div style="background: var(--bg-2); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="muted" style="font-size: 13px;">Active File</span>
+        <span class="tag" style="background: rgba(20, 184, 166, 0.2); color: var(--primary);">{{.resume.FileSize}}</span>
+      </div>
+      <div style="word-break: break-all; font-size: 13px; margin-bottom: 8px;">
+        {{if .resume.FileURL}}
+        <a href="{{.resume.FileURL}}" target="_blank" rel="noopener" style="font-weight: 600;">View / Download Current Resume &rarr;</a>
+        {{else}}
+        <span class="muted">No file set</span>
+        {{end}}
+      </div>
+      <div class="muted" style="font-size: 12px;">{{.resume.Updated}} &middot; {{.resume.Badge}}</div>
+    </div>
+
+    <form method="post" action="/super-admin/resume/upload" enctype="multipart/form-data" class="stack">
+      <input type="hidden" name="csrf_token" value="{{$.csrf}}">
+      <input type="hidden" name="target" value="resume">
+      <label class="field">
+        <span>Upload New Resume (Any file: PDF, DOCX, DOC, etc.)</span>
+        <input type="file" name="file" required>
+      </label>
+      <button class="btn" type="submit">Upload Resume to Cloudinary</button>
+    </form>
+  </section>
+</div>
+
+<!-- Uploaded Document Library -->
+<section class="card">
+  <div class="card-head">
+    <h2>Uploaded Documents &amp; History</h2>
+    <span class="muted">{{len .uploads}} files</span>
+  </div>
+  {{if .uploads}}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Size</th>
+          <th>Uploaded Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .uploads}}
+        <tr>
+          <td>
+            <strong>{{.Filename}}</strong>
+            <div class="muted" style="font-size: 12px;">{{.Alt}}</div>
+          </td>
+          <td>{{.FormattedSize}}</td>
+          <td class="time">{{.CreatedAt.Format "02 Jan 2006, 15:04"}}</td>
+          <td>
+            <a href="{{.Path}}" target="_blank" rel="noopener" class="btn-sm" style="display: inline-block;">Open &rarr;</a>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  <p class="empty">No document uploads recorded yet. Upload a CV or Resume above to start your Cloudinary document library.</p>
+  {{end}}
+</section>
+{{end}}

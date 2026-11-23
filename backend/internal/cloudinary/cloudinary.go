@@ -64,12 +64,12 @@ func (c *Client) Upload(data []byte, filename, mimeType string) (*UploadResult, 
 		return nil, fmt.Errorf("cloudinary client not configured")
 	}
 
-	resourceType := "image"
+	resourceType := "raw"
 	switch {
+	case strings.HasPrefix(mimeType, "image/"):
+		resourceType = "image"
 	case strings.HasPrefix(mimeType, "video/"):
 		resourceType = "video"
-	case mimeType == "application/pdf":
-		resourceType = "raw"
 	}
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
@@ -141,12 +141,12 @@ func (c *Client) Delete(publicID string) error {
 		return nil
 	}
 
-	resourceType := "image"
+	resourceType := "raw"
 	switch {
+	case strings.Contains(publicID, "/image/") || strings.HasSuffix(publicID, ".jpg") || strings.HasSuffix(publicID, ".jpeg") || strings.HasSuffix(publicID, ".png") || strings.HasSuffix(publicID, ".webp") || strings.HasSuffix(publicID, ".gif") || strings.HasSuffix(publicID, ".svg"):
+		resourceType = "image"
 	case strings.Contains(publicID, "/video/") || strings.HasSuffix(publicID, ".mp4") || strings.HasSuffix(publicID, ".webm"):
 		resourceType = "video"
-	case strings.HasSuffix(strings.ToLower(publicID), ".pdf"):
-		resourceType = "raw"
 	}
 
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)

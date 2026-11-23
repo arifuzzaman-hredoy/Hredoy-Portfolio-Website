@@ -12,6 +12,12 @@
     <h2>{{.Name}}</h2>
     <span class="muted">{{len .Blocks}} fields</span>
   </div>
+  {{if eq .Name "Resume & CV"}}
+  <div style="background:var(--bg-2); border-radius:8px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <span>Need to upload a new CV or Resume file directly to Cloudinary?</span>
+    <a href="/super-admin/resume" class="btn-sm" style="display:inline-block;">Go to CV &amp; Resume Upload &rarr;</a>
+  </div>
+  {{end}}
   <div class="settings-list">
     {{range .Blocks}}
     <div class="setting-row">
