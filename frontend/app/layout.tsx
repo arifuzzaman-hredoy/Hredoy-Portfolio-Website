@@ -132,6 +132,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Flex:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
         <link rel="stylesheet" href="/assets/css/vendors/bootstrap.min.css" />
         <link rel="stylesheet" href="/assets/css/vendors/carouselTicker.css" />
         <link rel="stylesheet" href="/assets/css/vendors/swiper-bundle.min.css" />
