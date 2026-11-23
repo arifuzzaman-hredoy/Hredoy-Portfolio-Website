@@ -1,0 +1,420 @@
+/* ==========================================================================
+   Resume & CV Section Styles
+   ========================================================================== */
+
+.resume-cv-section {
+  scroll-margin-top: 90px;
+  position: relative;
+  z-index: 3;
+  background: var(--at-neutral-0);
+}
+
+.resume-cv-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--at-theme-primary);
+}
+
+.resume-cv-title {
+  font-family: var(--at-heading-font);
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--at-neutral-900);
+}
+
+.resume-cv-lead {
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--at-neutral-500);
+}
+
+/* Resume Cards */
+.resume-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.resume-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(20, 184, 166, 0.4);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+[data-bs-theme="light"] .resume-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-bs-theme="light"] .resume-card:hover {
+  border-color: rgba(15, 118, 110, 0.4);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+}
+
+.resume-card__icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  color: #14b8a6;
+  flex-shrink: 0;
+}
+
+[data-bs-theme="light"] .resume-card__icon-box {
+  background: rgba(15, 118, 110, 0.08);
+  border-color: rgba(15, 118, 110, 0.2);
+  color: #0f766e;
+}
+
+.resume-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--at-neutral-300, #b7b7b7);
+}
+
+.resume-badge--accent {
+  background: rgba(20, 184, 166, 0.12);
+  border-color: rgba(20, 184, 166, 0.3);
+  color: #14b8a6;
+}
+
+[data-bs-theme="light"] .resume-badge {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #475569;
+}
+
+[data-bs-theme="light"] .resume-badge--accent {
+  background: rgba(15, 118, 110, 0.08);
+  border-color: rgba(15, 118, 110, 0.25);
+  color: #0f766e;
+}
+
+.resume-card__title {
+  font-size: clamp(20px, 2.5vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--at-neutral-900);
+}
+
+.resume-card__desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--at-neutral-500);
+}
+
+.resume-card__meta {
+  color: var(--at-neutral-500);
+}
+
+.resume-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--at-neutral-500);
+}
+
+/* Action Buttons */
+.resume-card__actions {
+  position: relative;
+  z-index: 5;
+}
+
+.btn-resume-preview {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  color: #14b8a6;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-resume-preview:hover {
+  background: #14b8a6;
+  color: #04201c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.25);
+}
+
+[data-bs-theme="light"] .btn-resume-preview {
+  background: rgba(15, 118, 110, 0.1);
+  border-color: rgba(15, 118, 110, 0.3);
+  color: #0f766e;
+}
+
+[data-bs-theme="light"] .btn-resume-preview:hover {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.btn-resume-download {
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--at-common-white, #ffffff);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.btn-resume-download:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+[data-bs-theme="light"] .btn-resume-download {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+[data-bs-theme="light"] .btn-resume-download:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* ==========================================================================
+   In-Website Document Viewer Modal
+   ========================================================================== */
+
+.resume-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999999 !important;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: resumeFadeIn 0.2s ease-out;
+}
+
+@keyframes resumeFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.resume-modal-dialog {
+  width: 100%;
+  max-width: 960px;
+  height: 88vh;
+  max-height: 880px;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: resumeSlideUp 0.25s ease-out;
+}
+
+@keyframes resumeSlideUp {
+  from { transform: translateY(20px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+[data-bs-theme="light"] .resume-modal-dialog {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+}
+
+.resume-modal-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+[data-bs-theme="light"] .resume-modal-head {
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.resume-modal-title {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 700;
+  color: var(--at-common-white, #ffffff);
+}
+
+[data-bs-theme="light"] .resume-modal-title {
+  color: #0f172a;
+}
+
+.resume-modal-link-btn,
+.resume-modal-close-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.resume-modal-link-btn:hover,
+.resume-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+[data-bs-theme="light"] .resume-modal-link-btn,
+[data-bs-theme="light"] .resume-modal-close-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+[data-bs-theme="light"] .resume-modal-link-btn:hover,
+[data-bs-theme="light"] .resume-modal-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.resume-modal-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #020617;
+}
+
+[data-bs-theme="light"] .resume-modal-body {
+  background: #f1f5f9;
+}
+
+.resume-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.resume-modal-foot {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+[data-bs-theme="light"] .resume-modal-foot {
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.resume-modal-meta-text {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+[data-bs-theme="light"] .resume-modal-meta-text {
+  color: #64748b;
+}
+
+.btn-resume-modal-secondary {
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-resume-modal-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+[data-bs-theme="light"] .btn-resume-modal-secondary {
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-bs-theme="light"] .btn-resume-modal-secondary:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-resume-modal-primary {
+  padding: 8px 20px;
+  border-radius: 8px;
+  background: #14b8a6;
+  border: 1px solid #14b8a6;
+  color: #04201c;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-resume-modal-primary:hover {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+}
+
+/* Mobile responsive */
+@media (max-width: 767.98px) {
+  .resume-modal-backdrop {
+    padding: 8px;
+  }
+  .resume-modal-dialog {
+    height: 94vh;
+    border-radius: 16px;
+  }
+  .resume-card__actions {
+    flex-direction: column;
+  }
+  .btn-resume-preview,
+  .btn-resume-download {
+    width: 100%;
+    text-align: center;
+  }
+  .resume-modal-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .resume-modal-foot .d-flex {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

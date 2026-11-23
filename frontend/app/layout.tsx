@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { getContent, getSiteImages, getSiteSettings } from "@/lib/cms";
 import "./globals.css";
 import "./certificates.css";
+import "./resume.css";
 
 const SITE_URL =
   process.env.SITE_URL ??

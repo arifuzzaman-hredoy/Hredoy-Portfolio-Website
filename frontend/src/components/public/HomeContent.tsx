@@ -16,6 +16,7 @@ import OffcanvasSidebar from "./sections/OffcanvasSidebar";
 import OtherProjectsSection from "./sections/OtherProjectsSection";
 import ProcessSection from "./sections/ProcessSection";
 import ProjectsSection from "./sections/ProjectsSection";
+import ResumeSection from "./sections/ResumeSection";
 import SearchOverlay from "./sections/SearchOverlay";
 import SkillsSection from "./sections/SkillsSection";
 
@@ -90,6 +91,7 @@ export default function HomeContent({
             <MarqueeSection data={data} />
             <OtherProjectsSection data={data} />
             <CertificatesSection page={data.certificates} categories={data.categories} />
+            <ResumeSection data={data} />
             <ContactSection data={data} />
           </main>
           <Footer data={data} />
