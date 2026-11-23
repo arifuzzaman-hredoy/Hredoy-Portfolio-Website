@@ -491,14 +491,70 @@
   color: #ffffff;
 }
 
-/* Mobile responsive */
+/* Mobile responsive for CV & Resume Modal */
 @media (max-width: 767.98px) {
   .resume-modal-backdrop {
-    padding: 8px;
+    padding: 6px !important;
   }
   .resume-modal-dialog {
-    height: 94vh;
-    border-radius: 16px;
+    width: 100% !important;
+    height: 96vh !important;
+    max-height: 96vh !important;
+    border-radius: 12px !important;
+  }
+  .resume-modal-head {
+    padding: 10px 12px !important;
+  }
+  .resume-modal-title {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+  }
+  .resume-modal-link-btn,
+  .resume-modal-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+  }
+  .resume-modal-link-btn svg,
+  .resume-modal-close-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .resume-document-viewport {
+    padding: 8px 4px 40px !important;
+    background: #020617 !important;
+  }
+  .resume-document-img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  }
+  .resume-modal-foot {
+    padding: 10px 12px !important;
+  }
+  .resume-modal-foot-inner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .resume-modal-meta-text {
+    text-align: center !important;
+    font-size: 11px !important;
+  }
+  .resume-modal-foot-actions {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+  .btn-resume-modal-secondary,
+  .btn-resume-modal-primary {
+    flex: 1 !important;
+    padding: 10px 8px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    justify-content: center !important;
   }
   .resume-card__actions {
     flex-direction: column;
@@ -508,13 +564,23 @@
     width: 100%;
     text-align: center;
   }
-  .resume-modal-foot {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+}
+
+@media (max-width: 420px) {
+  .resume-modal-backdrop {
+    padding: 2px !important;
   }
-  .resume-modal-foot .d-flex {
-    width: 100%;
-    justify-content: flex-end;
+  .resume-modal-dialog {
+    height: 98vh !important;
+    max-height: 98vh !important;
+    border-radius: 8px !important;
+  }
+  .resume-modal-title {
+    font-size: 14px !important;
+  }
+  .btn-resume-modal-secondary,
+  .btn-resume-modal-primary {
+    font-size: 11px !important;
+    padding: 8px 6px !important;
   }
 }

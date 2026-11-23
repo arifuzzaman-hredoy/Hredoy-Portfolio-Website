@@ -87,7 +87,48 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
           return res.text();
         })
         .then((text) => {
-          setHtmlContent(text);
+          let processed = text;
+          // Ensure responsive viewport tag exists for mobile devices
+          if (!processed.includes('name="viewport"')) {
+            processed = processed.replace(
+              /<head[^>]*>/i,
+              `$&<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">`
+            );
+          }
+          // Inject mobile responsive stylesheet overrides into the embedded document
+          const responsiveOverrides = `
+            <style id="mobile-viewport-responsive">
+              @media (max-width: 768px) {
+                html, body {
+                  padding: 8px !important;
+                  margin: 0 !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  overflow-x: hidden !important;
+                  font-size: 13px !important;
+                }
+                .resume-sheet, .container, .page, [class*="resume"], [class*="sheet"] {
+                  max-width: 100% !important;
+                  width: 100% !important;
+                  padding: 14px 10px !important;
+                  margin: 0 auto !important;
+                  box-sizing: border-box !important;
+                  box-shadow: none !important;
+                  border-width: 1px !important;
+                }
+                table {
+                  width: 100% !important;
+                  max-width: 100% !important;
+                }
+              }
+            </style>
+          `;
+          if (processed.includes("</head>")) {
+            processed = processed.replace("</head>", `${responsiveOverrides}</head>`);
+          } else {
+            processed = responsiveOverrides + processed;
+          }
+          setHtmlContent(processed);
           setLoadingHtml(false);
         })
         .catch(() => {
@@ -334,114 +375,146 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
               aria-labelledby="resume-modal-title"
             >
               {/* Modal Head */}
-              <div className="resume-modal-head d-flex align-items-center justify-content-between p-3 p-md-4">
-                <div className="d-flex align-items-center gap-3">
-                  <span className="resume-badge resume-badge--accent">{activeBadge}</span>
-                  <h3 className="resume-modal-title mb-0" id="resume-modal-title">
-                    {activeTitle}
-                  </h3>
-                </div>
-                <div className="d-flex align-items-center gap-2">
-                  {/* Fit Mode Toggle for Image View */}
-                  {((isPdf && viewerMode === "image") || isImage) && (
-                    <button
-                      type="button"
-                      onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
-                      className="d-none d-sm-inline-flex align-items-center gap-1 p-1 px-2 me-1"
-                      style={{
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        borderRadius: "8px",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        color: "#94a3b8",
-                        cursor: "pointer",
-                      }}
-                      title={fitMode === "width" ? "Switch to Fit Page" : "Switch to Fit Width (Scrollable)"}
-                    >
-                      <span>{fitMode === "width" ? "📜 Full Width (Scroll)" : "🔍 Fit Page"}</span>
-                    </button>
-                  )}
+              <div className="resume-modal-head p-3 p-md-4">
+                <div className="d-flex align-items-center justify-content-between gap-2">
+                  <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                    <h3 className="resume-modal-title mb-0 text-truncate" id="resume-modal-title">
+                      {activeTitle}
+                    </h3>
+                    <span className="resume-badge resume-badge--accent d-none d-md-inline-block text-truncate">
+                      {activeBadge}
+                    </span>
+                  </div>
+                  <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                    {/* Fit Mode Toggle for Desktop */}
+                    {((isPdf && viewerMode === "image") || isImage) && (
+                      <button
+                        type="button"
+                        onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
+                        className="d-none d-md-inline-flex align-items-center gap-1 p-1 px-2 me-1"
+                        style={{
+                          background: "rgba(255,255,255,0.08)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          borderRadius: "8px",
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          color: "#94a3b8",
+                          cursor: "pointer",
+                        }}
+                        title={fitMode === "width" ? "Switch to Fit Page" : "Switch to Fit Width (Scrollable)"}
+                      >
+                        <span>{fitMode === "width" ? "📜 Full Width (Scroll)" : "🔍 Fit Page"}</span>
+                      </button>
+                    )}
 
-                  {isPdf && (
-                    <div className="d-none d-sm-flex align-items-center gap-1 p-1 me-2" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
-                      {activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") && (
+                    {isPdf && (
+                      <div className="d-none d-md-flex align-items-center gap-1 p-1 me-1" style={{ background: "rgba(255,255,255,0.08)", borderRadius: "8px" }}>
+                        {activeUrl.includes("res.cloudinary.com") && activeUrl.includes("/image/upload/") && (
+                          <button
+                            type="button"
+                            onClick={() => setViewerMode("image")}
+                            style={{
+                              fontSize: "11px",
+                              padding: "3px 8px",
+                              border: "none",
+                              borderRadius: "6px",
+                              cursor: "pointer",
+                              background: viewerMode === "image" ? "#14b8a6" : "transparent",
+                              color: viewerMode === "image" ? "#020617" : "#94a3b8",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Preview
+                          </button>
+                        )}
                         <button
                           type="button"
-                          onClick={() => setViewerMode("image")}
+                          onClick={() => setViewerMode("native")}
                           style={{
                             fontSize: "11px",
                             padding: "3px 8px",
                             border: "none",
                             borderRadius: "6px",
                             cursor: "pointer",
-                            background: viewerMode === "image" ? "#14b8a6" : "transparent",
-                            color: viewerMode === "image" ? "#020617" : "#94a3b8",
+                            background: viewerMode === "native" ? "#14b8a6" : "transparent",
+                            color: viewerMode === "native" ? "#020617" : "#94a3b8",
                             fontWeight: 600,
                           }}
                         >
-                          Preview
+                          Native PDF
                         </button>
-                      )}
+                        <button
+                          type="button"
+                          onClick={() => setViewerMode("gdocs")}
+                          style={{
+                            fontSize: "11px",
+                            padding: "3px 8px",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            background: viewerMode === "gdocs" ? "#14b8a6" : "transparent",
+                            color: viewerMode === "gdocs" ? "#020617" : "#94a3b8",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Docs Viewer
+                        </button>
+                      </div>
+                    )}
+
+                    <a
+                      href={activeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="resume-modal-link-btn"
+                      title="Open in new browser tab"
+                      aria-label="Open document in new browser tab"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                    <button
+                      type="button"
+                      className="resume-modal-close-btn"
+                      onClick={() => setActiveDoc(null)}
+                      aria-label="Close document preview"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile subheader row */}
+                <div className="d-flex d-md-none align-items-center justify-content-between gap-2 mt-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span className="resume-badge resume-badge--accent text-truncate" style={{ maxWidth: "210px", fontSize: "10px" }}>
+                    {activeBadge}
+                  </span>
+                  <div className="d-flex align-items-center gap-1">
+                    {((isPdf && viewerMode === "image") || isImage) && (
                       <button
                         type="button"
-                        onClick={() => setViewerMode("native")}
+                        onClick={() => setFitMode((prev) => (prev === "width" ? "page" : "width"))}
                         style={{
-                          fontSize: "11px",
-                          padding: "3px 8px",
-                          border: "none",
+                          fontSize: "10px",
+                          padding: "2px 8px",
+                          border: "1px solid rgba(255,255,255,0.15)",
                           borderRadius: "6px",
-                          cursor: "pointer",
-                          background: viewerMode === "native" ? "#14b8a6" : "transparent",
-                          color: viewerMode === "native" ? "#020617" : "#94a3b8",
+                          background: "rgba(255,255,255,0.06)",
+                          color: "#14b8a6",
                           fontWeight: 600,
+                          cursor: "pointer",
                         }}
                       >
-                        Native PDF
+                        {fitMode === "width" ? "Fit Width" : "Fit Page"}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setViewerMode("gdocs")}
-                        style={{
-                          fontSize: "11px",
-                          padding: "3px 8px",
-                          border: "none",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          background: viewerMode === "gdocs" ? "#14b8a6" : "transparent",
-                          color: viewerMode === "gdocs" ? "#020617" : "#94a3b8",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Docs Viewer
-                      </button>
-                    </div>
-                  )}
-                  <a
-                    href={activeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="resume-modal-link-btn"
-                    title="Open in new browser tab"
-                    aria-label="Open document in new browser tab"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  </a>
-                  <button
-                    type="button"
-                    className="resume-modal-close-btn"
-                    onClick={() => setActiveDoc(null)}
-                    aria-label="Close document preview"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -510,32 +583,34 @@ export default function ResumeSection({ data }: { data: PortfolioData }) {
               </div>
 
               {/* Modal Foot */}
-              <div className="resume-modal-foot d-flex align-items-center justify-content-between p-3 p-md-4">
-                <span className="resume-modal-meta-text">
-                  Format: <strong>{activeFormat}</strong> &middot; File size: <strong>{activeSize}</strong>
-                </span>
-                <div className="d-flex align-items-center gap-3">
-                  <button
-                    type="button"
-                    className="btn-resume-modal-secondary"
-                    onClick={() => setActiveDoc(null)}
-                  >
-                    Close
-                  </button>
-                  <a
-                    href={activeUrl}
-                    download={activeDoc === "cv" ? `Arifuzzaman-Hredoy-DevOps-CV.${(activeFormat || "pdf").toLowerCase()}` : `Arifuzzaman-Hredoy-DevOps-Resume.${(activeFormat || "pdf").toLowerCase()}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-resume-modal-primary d-inline-flex align-items-center gap-2"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    <span>Download ({activeSize})</span>
-                  </a>
+              <div className="resume-modal-foot p-3 p-md-4">
+                <div className="d-flex align-items-center justify-content-between gap-3 resume-modal-foot-inner">
+                  <span className="resume-modal-meta-text">
+                    Format: <strong>{activeFormat}</strong> &middot; Size: <strong>{activeSize}</strong>
+                  </span>
+                  <div className="d-flex align-items-center gap-2 resume-modal-foot-actions">
+                    <button
+                      type="button"
+                      className="btn-resume-modal-secondary"
+                      onClick={() => setActiveDoc(null)}
+                    >
+                      Close
+                    </button>
+                    <a
+                      href={activeUrl}
+                      download={activeDoc === "cv" ? `Arifuzzaman-Hredoy-DevOps-CV.${(activeFormat || "pdf").toLowerCase()}` : `Arifuzzaman-Hredoy-DevOps-Resume.${(activeFormat || "pdf").toLowerCase()}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-resume-modal-primary d-inline-flex align-items-center justify-content-center gap-2"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      <span>Download ({activeSize})</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
