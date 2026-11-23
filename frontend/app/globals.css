@@ -317,13 +317,16 @@ main {
 }
 
 .sec-10-home-7__grid .blog-card__thumb.project-thumb {
-  height: 230px !important;
+  aspect-ratio: 16 / 9 !important;
+  width: 100% !important;
+  height: auto !important;
   flex: 0 0 auto !important;
-  background: #0b1e22;
+  background: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 10px !important;
+  padding: 2px !important;
+  margin: 0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px 12px 0 0;
   overflow: hidden;
@@ -333,12 +336,12 @@ main {
   object-fit: contain !important;
   max-width: 100% !important;
   max-height: 100% !important;
-  width: auto !important;
-  height: auto !important;
-  margin: auto !important;
-  border-radius: 6px;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 10px 10px 0 0;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .sec-10-home-7__grid .project-card-wrapper:hover .project-thumb img {
@@ -347,18 +350,113 @@ main {
 
 [data-bs-theme="light"] .sec-10-home-7__grid .blog-card__thumb.project-thumb,
 [data-bs-theme="light"] .project-thumb {
-  background: #f1f5f9 !important;
+  background: #ffffff !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.btn-view-project {
-  background-color: var(--at-theme-primary, #0f766e) !important;
-  border-color: var(--at-theme-primary, #0f766e) !important;
-  color: #ffffff !important;
+/* Project card rich summary */
+.project-card__summary {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--at-neutral-300, #94a3b8);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
 }
 
-.btn-view-project:hover {
-  opacity: 0.92;
+[data-bs-theme="light"] .project-card__summary {
+  color: #475569 !important;
+}
+
+/* Capsule / Pill Button for Projects (Matching screenshot 2 & user requirements) */
+.btn-project-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Dark Mode Default: White button inside, dark mode text color */
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ffffff !important;
+}
+
+.btn-project-pill svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.25s ease;
+}
+
+.btn-project-pill svg path,
+.btn-project-pill svg {
+  fill: currentColor !important;
+}
+
+.btn-project-pill:hover {
+  background: #f1f5f9 !important;
+  color: #000000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+}
+
+.btn-project-pill:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* Light Mode: Button inside is BLACK, text color is LIGHT mode text (white) */
+[data-bs-theme="light"] .btn-project-pill {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+}
+
+[data-bs-theme="light"] .btn-project-pill svg path,
+[data-bs-theme="light"] .btn-project-pill svg {
+  fill: currentColor !important;
+}
+
+[data-bs-theme="light"] .btn-project-pill:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* Live Demo outline pill */
+.btn-project-pill--live {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-project-pill--live:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+[data-bs-theme="light"] .btn-project-pill--live {
+  background: transparent !important;
+  color: #000000 !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-bs-theme="light"] .btn-project-pill--live:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  box-shadow: none !important;
 }
 
 /* Contact form status banner — readable in both dark and light modes */

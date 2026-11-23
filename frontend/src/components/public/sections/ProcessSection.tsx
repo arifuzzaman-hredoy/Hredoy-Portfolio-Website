@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { listItems, metaText, optimizeCloudinaryUrl, val, type PortfolioData } from "@/lib/portfolio-data";
-import CmsImage from "../CmsImage";
+import { listItems, metaText, val, type PortfolioData } from "@/lib/portfolio-data";
 import { ArrowDiagIcon } from "../Icons";
 
 type ProcessDetailInfo = {
@@ -76,9 +75,6 @@ export default function ProcessSection({ data }: { data: PortfolioData }) {
   const activeNum = activeCard
     ? metaText(activeCard, "number") || `[${String((activeIdx ?? 0) + 1).padStart(2, "0")}]`
     : "";
-  const activeImageVal = activeCard ? metaText(activeCard, "image") : "";
-  const activeImageAlt = activeCard ? metaText(activeCard, "image_alt") || activeCard.title : "";
-  const isDirectUrl = /^(\/|https?:\/\/)/i.test(activeImageVal);
   const detail = activeIdx !== null ? PROCESS_INFO[activeIdx] : null;
 
   const handleSelect = (idx: number) => {
@@ -155,120 +151,104 @@ export default function ProcessSection({ data }: { data: PortfolioData }) {
         {/* Process Detail Showcase (Clicking any process shows its rich details) */}
         {activeCard ? (
           <div className="process-detail-showcase" id={`process-detail-${activeCard.id}`}>
-            <div className="row g-4 align-items-center">
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <span className="process-detail-showcase__badge">
+                {detail?.phase || `Process Step ${(activeIdx ?? 0) + 1} of ${cards.length}`}
+              </span>
+              <button
+                type="button"
+                onClick={() => setActiveIdx(null)}
+                className="process-detail-showcase__close-btn"
+                aria-label="Close process details"
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <h3 className="process-detail-showcase__title mb-2">
+                <span className="text-theme me-2" style={{ color: "var(--at-theme-primary, #14b8a6)" }}>
+                  {activeNum}
+                </span>
+                {activeCard.title}
+              </h3>
+
+              {detail?.tagline && (
+                <p className="process-detail-showcase__tagline mb-3" style={{ color: "var(--at-theme-primary, #14b8a6)" }}>
+                  {detail.tagline}
+                </p>
+              )}
+
+              <p className="process-detail-showcase__desc mb-0" style={{ maxWidth: "900px" }}>
+                {activeCard.body}
+              </p>
+            </div>
+
+            <div className="row g-4 align-items-stretch mb-4">
+              {/* Left: Core Implementation Practices */}
               <div className="col-lg-7 col-12">
-                <div className="process-detail-showcase__content pe-lg-4">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <span className="process-detail-showcase__badge">
-                      {detail?.phase || `Process Step ${(activeIdx ?? 0) + 1} of ${cards.length}`}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveIdx(null)}
-                      className="process-detail-showcase__close-btn"
-                      aria-label="Close process details"
-                    >
-                      ✕ Close
-                    </button>
-                  </div>
-
-                  <h3 className="process-detail-showcase__title mb-2">
-                    <span className="text-theme me-2" style={{ color: "var(--at-theme-primary, #14b8a6)" }}>
-                      {activeNum}
-                    </span>
-                    {activeCard.title}
-                  </h3>
-
-                  {detail?.tagline && (
-                    <p className="process-detail-showcase__tagline mb-3" style={{ color: "var(--at-theme-primary, #14b8a6)" }}>
-                      {detail.tagline}
-                    </p>
-                  )}
-
-                  <p className="process-detail-showcase__desc mb-4">{activeCard.body}</p>
-
-                  {/* Core Implementation Practices */}
-                  {detail && detail.practices.length > 0 && (
-                    <div className="process-detail-practices mb-4">
-                      <h4 className="process-detail-subheading mb-2">Key Implementation Practices:</h4>
-                      <ul className="process-detail-practice-list list-unstyled mb-0">
-                        {detail.practices.map((practice, pIdx) => (
-                          <li key={pIdx} className="process-detail-practice-item d-flex align-items-start mb-2">
-                            <span className="process-detail-check-icon me-2" aria-hidden="true">
-                              ✓
-                            </span>
-                            <span>{practice}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Key Deliverable Box */}
-                  {detail?.deliverable && (
-                    <div className="process-detail-deliverable mb-4 p-3 rounded">
-                      <span className="process-detail-deliverable-title d-block mb-1">
-                        🎯 Key Milestone Deliverable:
-                      </span>
-                      <span className="process-detail-deliverable-text">{detail.deliverable}</span>
-                    </div>
-                  )}
-
-                  {/* Tools & Tech Stack */}
-                  {detail && detail.tools.length > 0 && (
-                    <div className="process-detail-tools mb-4">
-                      <span className="process-detail-tools-label d-block mb-2">Tools & Technologies:</span>
-                      <div className="d-flex flex-wrap gap-2">
-                        {detail.tools.map((tool, tIdx) => (
-                          <span key={tIdx} className="process-detail-tool-tag">
-                            {tool}
+                {detail && detail.practices.length > 0 && (
+                  <div className="process-detail-practices h-100 p-4 rounded-3" style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                    <h4 className="process-detail-subheading mb-3">Key Implementation Practices:</h4>
+                    <ul className="process-detail-practice-list list-unstyled mb-0">
+                      {detail.practices.map((practice, pIdx) => (
+                        <li key={pIdx} className="process-detail-practice-item d-flex align-items-start mb-3">
+                          <span className="process-detail-check-icon me-2" aria-hidden="true">
+                            ✓
                           </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="process-detail-showcase__actions d-flex flex-wrap gap-2 pt-2">
-                    {activeIdx !== null && activeIdx > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveIdx(activeIdx - 1)}
-                        className="btn process-detail-nav-btn"
-                      >
-                        ← Prev Step
-                      </button>
-                    )}
-                    {activeIdx !== null && activeIdx < cards.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveIdx(activeIdx + 1)}
-                        className="btn process-detail-nav-btn process-detail-nav-btn--primary"
-                      >
-                        Next: {cards[activeIdx + 1].title} →
-                      </button>
-                    )}
+                          <span>{practice}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
+                )}
               </div>
 
-              <div className="col-lg-5 col-12">
-                <div className="process-detail-showcase__media">
-                  {activeImageVal &&
-                    (isDirectUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={optimizeCloudinaryUrl(activeImageVal)}
-                        alt={activeImageAlt}
-                        width={1200}
-                        height={900}
-                        loading="eager"
-                        className="img-fluid"
-                      />
-                    ) : (
-                      <CmsImage data={data} slot={activeImageVal} width={1200} height={900} />
-                    ))}
-                </div>
+              {/* Right: Milestone Deliverable & Tools */}
+              <div className="col-lg-5 col-12 d-flex flex-column gap-3">
+                {detail?.deliverable && (
+                  <div className="process-detail-deliverable p-3 rounded-3">
+                    <span className="process-detail-deliverable-title d-block mb-1">
+                      🎯 Key Milestone Deliverable:
+                    </span>
+                    <span className="process-detail-deliverable-text">{detail.deliverable}</span>
+                  </div>
+                )}
+
+                {detail && detail.tools.length > 0 && (
+                  <div className="process-detail-tools p-3 rounded-3" style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                    <span className="process-detail-tools-label d-block mb-2">Tools & Technologies:</span>
+                    <div className="d-flex flex-wrap gap-2">
+                      {detail.tools.map((tool, tIdx) => (
+                        <span key={tIdx} className="process-detail-tool-tag">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
+
+            <div className="process-detail-showcase__actions d-flex flex-wrap gap-2 pt-2">
+              {activeIdx !== null && activeIdx > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveIdx(activeIdx - 1)}
+                  className="btn process-detail-nav-btn"
+                >
+                  ← Prev Step
+                </button>
+              )}
+              {activeIdx !== null && activeIdx < cards.length - 1 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveIdx(activeIdx + 1)}
+                  className="btn process-detail-nav-btn process-detail-nav-btn--primary"
+                >
+                  Next: {cards[activeIdx + 1].title} →
+                </button>
+              )}
             </div>
           </div>
         ) : (
