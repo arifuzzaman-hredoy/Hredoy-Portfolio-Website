@@ -55,12 +55,17 @@
   <div class="settings-list">
     {{range .projects}}
     <div class="setting-row">
-      <div style="flex:1 1 220px;">
-        <strong>{{.Title}}</strong>
-        <div class="muted" style="font-size:13px;">{{.Slug}}</div>
-        {{if .LiveURL}}<a href="{{.LiveURL}}" target="_blank" rel="noopener">Live →</a>{{end}}
-        {{if .RepoURL}} · <a href="{{.RepoURL}}" target="_blank" rel="noopener">Repo →</a>{{end}}
-        {{if .Published}}<span class="tag" style="margin-left:8px;">Published</span>{{else}}<span class="tag read" style="margin-left:8px;">Hidden</span>{{end}}
+      <div style="flex:1 1 280px; display:flex; align-items:center; gap:14px;">
+        {{if .ImagePath}}
+        <img src="{{.ImagePath}}" alt="{{.Title}}" style="width:60px; height:44px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.15); flex-shrink:0;">
+        {{end}}
+        <div>
+          <strong>{{.Title}}</strong>
+          <div class="muted" style="font-size:13px;">{{.Slug}}</div>
+          {{if .LiveURL}}<a href="{{.LiveURL}}" target="_blank" rel="noopener">Live →</a>{{end}}
+          {{if .RepoURL}} · <a href="{{.RepoURL}}" target="_blank" rel="noopener">Repo →</a>{{end}}
+          {{if .Published}}<span class="tag" style="margin-left:8px;">Published</span>{{else}}<span class="tag read" style="margin-left:8px;">Hidden</span>{{end}}
+        </div>
       </div>
       <form method="post" action="/super-admin/projects/delete" onsubmit="return confirm('Delete this project?')">
         <input type="hidden" name="csrf_token" value="{{$.csrf}}">
@@ -85,7 +90,15 @@
           <label class="field"><span>Tech</span><input type="text" name="tech" value="{{.Tech}}"></label>
           <label class="field"><span>Repo URL</span><input type="text" name="repo_url" value="{{.RepoURL}}"></label>
           <label class="field"><span>Live URL</span><input type="text" name="live_url" value="{{.LiveURL}}"></label>
-          <label class="field"><span>Image path</span><input type="text" name="image_path" value="{{.ImagePath}}"></label>
+          <label class="field">
+            <span>Image path</span>
+            <input type="text" name="image_path" value="{{.ImagePath}}">
+            {{if .ImagePath}}
+            <div style="margin-top:6px;">
+              <img src="{{.ImagePath}}" alt="" style="max-width:120px; max-height:70px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.15);">
+            </div>
+            {{end}}
+          </label>
         </div>
         <button class="btn-sm" type="submit">Save changes</button>
       </form>

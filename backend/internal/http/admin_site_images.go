@@ -84,9 +84,8 @@ func formatInt(n int64) string {
 // All other slots use scalable SVGs or logos where one image works at every
 // breakpoint via CSS object-fit and container sizing.
 var mobileCapableSlots = map[string]bool{
-	"hero-portrait":     true,
-	"who-i-am-portrait": true,
-	"cta-connect":       true,
+	"hero-portrait": true,
+	"cta-connect":   true,
 }
 
 // Requirements describes the accepted formats, max size, and preferred
@@ -109,7 +108,9 @@ var defaultRequirements = Requirements{
 // tighter size and aspect-ratio guidance.
 var slotRequirements = map[string]Requirements{
 	// Brand
-	"brand-logo": {Formats: "PNG, SVG", MaxSize: "2 MiB", Dimensions: "Square (1:1)"},
+	"brand-logo":       {Formats: "PNG, SVG", MaxSize: "2 MiB", Dimensions: "Square (1:1)"},
+	"apple-touch-icon": {Formats: "PNG", MaxSize: "1 MiB", Dimensions: "Square (180x180)"},
+	"favicon":          {Formats: "ICO, PNG, SVG", MaxSize: "500 KiB", Dimensions: "Square (32x32 or 48x48)"},
 	// Hero
 	"hero-portrait":         {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Portrait (4:5)"},
 	"hero-badge-docker":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
@@ -117,18 +118,11 @@ var slotRequirements = map[string]Requirements{
 	"hero-badge-aws":        {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
 	"hero-badge-terraform":  {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
 	"hero-badge-grafana":    {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
-	// Avatars
-	"avatar-linux":          {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
-	"avatar-docker":         {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
-	"avatar-aws":            {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
-	"avatar-github-actions": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
-	"avatar-terraform":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Square (1:1)"},
 	// Section cards & photography (real professional photos)
 	"about-linux":                              {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
 	"about-cloud":                              {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
 	"about-cicd":                               {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
 	"mission-learning-path":                    {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Flexible"},
-	"technical-skills":                         {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Flexible"},
 	"process-1-fundamentals":                   {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
 	"process-2-practice":                       {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
 	"process-3-projects":                       {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (3:2)"},
@@ -147,8 +141,9 @@ var slotRequirements = map[string]Requirements{
 	"sec7-plus":          {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
 	"sec7-btn-arrow":     {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
 	"sec7-eyebrow-arrow": {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
-	// Photo
-	"who-i-am-portrait": {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Portrait (4:5)"},
+	"star-asterisk":      {Formats: "SVG", MaxSize: "200 KiB", Dimensions: "Flexible"},
+	// SEO
+	"og-image": {Formats: "JPG, PNG, WEBP", MaxSize: "5 MiB", Dimensions: "Landscape (1200x630)"},
 }
 
 func requirementsFor(key string) Requirements {
@@ -383,6 +378,29 @@ func (d HandlerDeps) adminSiteImageReplace(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// If this image belongs to a project, sync it to the projects table
+	if strings.HasPrefix(key, "project-") {
+		slug := strings.TrimPrefix(key, "project-")
+		if proj, err := d.Queries.GetProjectBySlug(ctx, slug); err == nil {
+			_, updateErr := d.Queries.UpdateProject(ctx, db.UpdateProjectParams{
+				ID:          proj.ID,
+				Title:       proj.Title,
+				Slug:        proj.Slug,
+				Summary:     proj.Summary,
+				Description: proj.Description,
+				Tech:        proj.Tech,
+				RepoUrl:     proj.RepoUrl,
+				LiveUrl:     proj.LiveUrl,
+				ImagePath:   result.SecureURL,
+				SortOrder:   proj.SortOrder,
+				Published:   proj.Published,
+			})
+			if updateErr != nil {
+				d.Logger.Warn("failed to sync project image_path on site image replace", "slug", slug, "error", updateErr)
+			}
+		}
+	}
+
 	// Best-effort cleanup of the old asset on Cloudinary.
 	if old, getErr := d.Queries.GetSiteImage(ctx, key); getErr == nil {
 		_ = old
@@ -423,6 +441,28 @@ func (d HandlerDeps) adminSiteImageReset(w http.ResponseWriter, r *http.Request)
 		d.Logger.Error("reset site image failed", "key", key, "error", err)
 		http.Redirect(w, r, "/super-admin/site-images?error=failed", http.StatusSeeOther)
 		return
+	}
+
+	if strings.HasPrefix(key, "project-") {
+		slug := strings.TrimPrefix(key, "project-")
+		if proj, err := d.Queries.GetProjectBySlug(ctx, slug); err == nil {
+			_, updateErr := d.Queries.UpdateProject(ctx, db.UpdateProjectParams{
+				ID:          proj.ID,
+				Title:       proj.Title,
+				Slug:        proj.Slug,
+				Summary:     proj.Summary,
+				Description: proj.Description,
+				Tech:        proj.Tech,
+				RepoUrl:     proj.RepoUrl,
+				LiveUrl:     proj.LiveUrl,
+				ImagePath:   existing.DefaultUrl,
+				SortOrder:   proj.SortOrder,
+				Published:   proj.Published,
+			})
+			if updateErr != nil {
+				d.Logger.Warn("failed to sync project image_path on site image reset", "slug", slug, "error", updateErr)
+			}
+		}
 	}
 	http.Redirect(w, r, "/super-admin/site-images?saved=1", http.StatusSeeOther)
 }

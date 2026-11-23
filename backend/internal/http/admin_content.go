@@ -164,6 +164,15 @@ func (d HandlerDeps) adminProjectCreate(w http.ResponseWriter, r *http.Request) 
 		http.Redirect(w, r, "/super-admin/projects?error=failed", http.StatusSeeOther)
 		return
 	}
+	if params.ImagePath != "" {
+		siteImgKey := "project-" + slug
+		if img, err := d.Queries.GetSiteImage(ctx, siteImgKey); err == nil && img.Url != params.ImagePath {
+			_ = d.Queries.UpdateSiteImageURL(ctx, db.UpdateSiteImageURLParams{
+				Key: siteImgKey,
+				Url: params.ImagePath,
+			})
+		}
+	}
 	http.Redirect(w, r, "/super-admin/projects?saved=1", http.StatusSeeOther)
 }
 
@@ -207,6 +216,15 @@ func (d HandlerDeps) adminProjectUpdate(w http.ResponseWriter, r *http.Request) 
 		d.Logger.Error("update project failed", "error", err)
 		http.Redirect(w, r, "/super-admin/projects?error=failed", http.StatusSeeOther)
 		return
+	}
+	if params.ImagePath != "" {
+		siteImgKey := "project-" + slug
+		if img, err := d.Queries.GetSiteImage(ctx, siteImgKey); err == nil && img.Url != params.ImagePath {
+			_ = d.Queries.UpdateSiteImageURL(ctx, db.UpdateSiteImageURLParams{
+				Key: siteImgKey,
+				Url: params.ImagePath,
+			})
+		}
 	}
 	http.Redirect(w, r, "/super-admin/projects?saved=1", http.StatusSeeOther)
 }

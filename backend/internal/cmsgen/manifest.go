@@ -155,21 +155,6 @@ var Manifest = []Entry{
 		Default: "I'm looking for a junior DevOps or cloud role where I can keep learning and contribute."},
 	{Key: "cta.cta", Label: "Button label", Group: "Call to action", Type: TypeText, Default: "Get In Touch"},
 
-	// --- Who I Am --------------------------------------------------------
-	{Key: "whoami.eyebrow", Label: "Eyebrow", Group: "Who I Am", Type: TypeText, Default: "About Me"},
-	{Key: "whoami.title", Label: "Title", Group: "Who I Am", Type: TypeText, Default: "Who I Am"},
-	{Key: "whoami.paragraph", Label: "Paragraph", Group: "Who I Am", Type: TypeHTML,
-		Default: "Hello! I'm Arifuzzaman Hredoy, an aspiring DevOps Engineer and Computer Science and Technology (CST) student from Bangladesh.",
-		Hint:    "Basic HTML is allowed, for example <strong>bold</strong>."},
-	{Key: "whoami.quote", Label: "Quote", Group: "Who I Am", Type: TypeText,
-		Default: "Learn by Building, Grow by Solving, and Improve by Automating.",
-		Hint:    "Quotation marks are added automatically."},
-	{Key: "whoami.name", Label: "Display name", Group: "Who I Am", Type: TypeText,
-		Default: "Arifuzzaman Hredoy"},
-	{Key: "whoami.role", Label: "Display role", Group: "Who I Am", Type: TypeText,
-		Default: "Junior DevOps Engineer"},
-	{Key: "whoami.cta", Label: "Button label", Group: "Who I Am", Type: TypeText, Default: "Get In Touch"},
-
 	// --- Projects --------------------------------------------------------
 	{Key: "projects.eyebrow", Label: "Eyebrow", Group: "Projects", Type: TypeText, Default: "Projects"},
 	{Key: "projects.title", Label: "Title", Group: "Projects", Type: TypeText, Default: "Featured Projects",
@@ -177,6 +162,10 @@ var Manifest = []Entry{
 	{Key: "projects.desc", Label: "Description", Group: "Projects", Type: TypeText,
 		Default: "A selection of hands-on DevOps projects covering Linux, Docker, CI/CD, AWS, Terraform, Kubernetes, and DevSecOps."},
 	{Key: "projects.cta", Label: "Button label", Group: "Projects", Type: TypeText, Default: "All Projects"},
+	{Key: "projects.other.eyebrow", Label: "Other Projects eyebrow", Group: "Projects", Type: TypeText, Default: "ENGINEERING LABS"},
+	{Key: "projects.other.title", Label: "Other Projects title", Group: "Projects", Type: TypeText, Default: "Other Projects"},
+	{Key: "projects.other.desc", Label: "Other Projects description", Group: "Projects", Type: TypeText,
+		Default: "Additional hands-on engineering, automation labs, and infrastructure builds."},
 
 	// --- Resume & CV -----------------------------------------------------
 	{Key: "resume.eyebrow", Label: "Section eyebrow", Group: "Resume & CV", Type: TypeText,

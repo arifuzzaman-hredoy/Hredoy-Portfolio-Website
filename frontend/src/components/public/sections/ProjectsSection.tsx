@@ -47,7 +47,9 @@ export default function ProjectsSection({ data }: { data: PortfolioData }) {
 
         <div className="row g-3 sec-10-home-7__grid">
           {featured.map((project) => {
-            const imgUrl = optimizeCloudinaryUrl(getProjectImage(project));
+            const imgKey = `project-${project.slug}`;
+            const rawImg = (data.images && data.images[imgKey]) || getProjectImage(project);
+            const imgUrl = optimizeCloudinaryUrl(rawImg);
             const repoHref = safeHref(project.repo_url);
             const liveHref = safeHref(project.live_url, "");
             return (
